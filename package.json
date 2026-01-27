@@ -68,7 +68,7 @@
     "lottie-react": "^2.4.1",
     "mapbox-gl": "^3.15.0",
     "mui-tiptap": "^1.28.1",
-    "next": "15.5.6",
+    "next": "15.5.10",
     "next-auth": "^4.24.11",
     "notistack": "^3.0.2",
     "re-resizable": "^6.11.2",
