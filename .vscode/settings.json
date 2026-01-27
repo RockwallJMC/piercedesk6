@@ -1,0 +1,26 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact"
+  ],
+  "files.associations": {
+    "*.jsx": "javascriptreact",
+    "*.js": "javascript"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/out": true,
+    "**/build": true
+  },
+  "files.exclude": {
+    "**/.next": true,
+    "**/node_modules": false
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
