@@ -37,4 +37,64 @@ export function createClient(request) {
   return { supabase, response };
 }
 
+/**
+ * Check if a pathname matches public routes
+ * @param {string} pathname - The request pathname
+ * @returns {boolean} True if the route is public
+ */
+function isPublicRoute(pathname) {
+  const publicRoutes = [
+    '/authentication',
+    '/auth/callback',
+    '/_next',
+    '/favicon.ico',
+    '/api',
+  ];
+  return publicRoutes.some(route => pathname.startsWith(route));
+}
+
+/**
+ * Check if a pathname matches protected routes
+ * @param {string} pathname - The request pathname
+ * @returns {boolean} True if the route is protected
+ */
+function isProtectedRoute(pathname) {
+  const protectedRoutes = [
+    '/dashboard',
+    '/apps',
+    '/pages',
+  ];
+  return protectedRoutes.some(route => pathname.startsWith(route));
+}
+
+/**
+ * Update session and handle route protection
+ * Refreshes the Supabase session and redirects based on auth state
+ *
+ * @param {Request} request - The incoming request
+ * @returns {Promise<Response>} Response with updated session or redirect
+ */
+export async function updateSession(request) {
+  const { supabase, response } = createClient(request);
+
+  // Refresh session by calling getUser
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  const pathname = request.nextUrl.pathname;
+
+  // If there's an auth error or no user on protected route, redirect to login
+  if ((error || !user) && isProtectedRoute(pathname)) {
+    const loginUrl = new URL('/authentication/default/jwt/login', request.nextUrl.origin);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // If user is authenticated and trying to access auth pages, redirect to dashboard
+  if (user && pathname.startsWith('/authentication') && !pathname.includes('/callback')) {
+    const dashboardUrl = new URL('/dashboard', request.nextUrl.origin);
+    return NextResponse.redirect(dashboardUrl);
+  }
+
+  return response;
+}
+
 export default createClient;

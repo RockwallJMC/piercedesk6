@@ -1,6 +1,6 @@
-import { FlatCompat } from '@eslint/eslintrc';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import { FlatCompat } from '@eslint/eslintrc';
 import globals from 'globals';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -18,7 +18,7 @@ const eslintConfig = [
 
   // Modern flat config additions
   {
-    ignores: ['.next', 'dist'],
+    ignores: ['.next', 'dist', 'coverage'],
   },
   {
     files: ['**/*.{js,jsx}'],

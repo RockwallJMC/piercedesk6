@@ -1,5 +1,5 @@
-import { getSession } from 'next-auth/react';
 import axios from 'axios';
+import { createBrowserClient } from '@supabase/ssr';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -8,13 +8,23 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Adding authorization header to axios instance if session exists
+// Adding authorization header to axios instance if Supabase session exists
 axiosInstance.interceptors.request.use(async (config) => {
-  const session = await getSession();
-  console.log(session, 'axios');
-  const authToken = session?.authToken;
-  if (authToken) {
-    config.headers.Authorization = `Bearer ${authToken}`;
+  try {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    );
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (session?.access_token) {
+      config.headers.Authorization = `Bearer ${session.access_token}`;
+    }
+  } catch (error) {
+    console.error('Error getting Supabase session:', error);
   }
 
   return config;

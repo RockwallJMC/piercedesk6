@@ -8,6 +8,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Important note (repo reality):** Some sections below reference a future/alternate monorepo layout (e.g. `apps/pierce-desk/`, `packages/*`, `templates/*`, `@pierce/*`). Those paths are **not present in this repository**. When in doubt, prefer the actual layout under `src/` and the scripts in `package.json`.
 
+## How CLAUDE.md Is Loaded (Agent SDK)
+
+This file is only loaded by the Agent SDK when the caller explicitly enables settings sources.
+
+- **Project-level**: CLAUDE.md in repo root (this file)
+- **User-level**: ~/.claude/CLAUDE.md
+- **Required SDK option**: `settingSources: ["project"]` (TypeScript) or `setting_sources=["project"]` (Python)
+- **Important**: The `claude_code` preset does **not** load CLAUDE.md unless settings sources are enabled.
+
+Reference: [Claude Agent SDK - Modifying system prompts](https://platform.claude.com/docs/en/agent-sdk/modifying-system-prompts#methods-of-modification)
+
 ## Build & Development Commands
 
 ### App Commands (from repo root)
@@ -49,6 +60,20 @@ This repository uses a standard single-app layout:
 Imports in this repo are currently local/relative (not `@pierce/*` workspace packages).
 
 ## Critical Development Workflows
+
+### Execution Strategy (TL;DR)
+
+Follow the documentation framework end-to-end. This is the minimal required flow:
+
+1. **Initiate** → Create GitHub issue + feature branch
+2. **Plan** → Create INDEX + phase design docs
+3. **Execute** → Implement with phase execution doc updates
+4. **Verify** → Run lint/build/tests and capture evidence
+5. **Review** → Code review (agent + GitHub)
+6. **PR** → Create PR with links to INDEX/design and evidence
+7. **Merge** → Merge to main, generate as-built, update user docs
+
+For full details, see [docs/guides/DOCUMENTATION-GUIDE.md](docs/guides/DOCUMENTATION-GUIDE.md).
 
 ### Mandatory Execution Framework (ALWAYS REQUIRED)
 
@@ -306,6 +331,7 @@ Use the simplified documentation process when ALL of these criteria are met:
 - Features with multiple implementation options requiring decisions
 
 **Example abbreviated workflow:**
+
 ```bash
 # Small fix: Update button color in single component
 # Criteria met: 1 file, 3 lines, no architecture/DB/API changes

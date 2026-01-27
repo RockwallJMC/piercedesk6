@@ -1,8 +1,8 @@
 'use client';
 
-import { signOut, useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import {
   Box,
   Button,
@@ -14,20 +14,28 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { demoUser } from 'lib/next-auth/nextAuthOptions';
-import paths from 'routes/paths';
-// import { useAuth } from 'providers/AuthProvider';
-// import { demoUser } from 'providers/auth-provider/AuthJwtProvider';
+import paths, { authPaths } from 'routes/paths';
 import IconifyIcon from 'components/base/IconifyIcon';
 import StatusAvatar from 'components/base/StatusAvatar';
+import OrganizationSwitcher from 'components/sections/organization/OrganizationSwitcher';
 
 const ProfileMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
 
-  const { data } = useSession();
-  // Use demoUser as fallback if no session user
-  const user = useMemo(() => data?.user || demoUser, [data?.user]);
+  const { user: authUser, signOut: supabaseSignOut, loading } = useSupabaseAuth();
+
+  // Transform Supabase user to match expected format
+  const user = useMemo(() => {
+    if (!authUser) return null;
+
+    return {
+      name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
+      email: authUser.email,
+      image: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture,
+      designation: authUser.user_metadata?.designation,
+    };
+  }, [authUser]);
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -110,6 +118,13 @@ const ProfileMenu = () => {
         </Stack>
 
         <Divider />
+        <Box sx={{ py: 1, px: 2 }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
+            Organization
+          </Typography>
+          <OrganizationSwitcher compact />
+        </Box>
+        <Divider />
         <Box sx={{ py: 1 }}>
           <MenuItem onClick={handleClose}>Your account</MenuItem>
           <MenuItem onClick={handleClose}>Account settings</MenuItem>
@@ -131,20 +146,26 @@ const ProfileMenu = () => {
         </Box>
         <Divider />
         <Box sx={{ py: 1 }}>
-          <MenuItem
-            onClick={async () => {
-              const res = await signOut({
-                redirect: false,
-                callbackUrl: paths.defaultLoggedOut,
-              });
-
-              if (res.url) {
-                router.push(res.url);
-              }
-            }}
-          >
-            Log out
-          </MenuItem>
+          {user ? (
+            <MenuItem
+              onClick={async () => {
+                handleClose();
+                await supabaseSignOut();
+                router.push(authPaths.login);
+              }}
+            >
+              Log out
+            </MenuItem>
+          ) : (
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                router.push(authPaths.login);
+              }}
+            >
+              Sign In
+            </MenuItem>
+          )}
         </Box>
       </Menu>
     </>

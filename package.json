@@ -32,6 +32,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@iconify/react": "^6.0.2",
     "@iconify/utils": "^3.0.2",
+    "@mui/icons-material": "^7.3.7",
     "@mui/lab": "7.0.1-beta.18",
     "@mui/material": "^7.3.4",
     "@mui/material-nextjs": "^7.3.3",
@@ -46,8 +47,10 @@
     "@tiptap/core": "^3.7.2",
     "@tiptap/extension-image": "^3.7.2",
     "@tiptap/extension-placeholder": "^3.7.2",
+    "@tiptap/extension-table": "^3.17.1",
     "@tiptap/extension-text-align": "^3.7.2",
     "@tiptap/extension-underline": "^3.7.2",
+    "@tiptap/react": "^3.17.1",
     "@tiptap/starter-kit": "^3.7.2",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
@@ -69,7 +72,6 @@
     "mapbox-gl": "^3.15.0",
     "mui-tiptap": "^1.28.1",
     "next": "15.5.6",
-    "next-auth": "^4.24.11",
     "notistack": "^3.0.2",
     "re-resizable": "^6.11.2",
     "react": "19.2.0",
@@ -112,7 +114,8 @@
     "globals": "^16.4.0",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3"
   },
   "overrides": {
     "@emoji-mart/react": {

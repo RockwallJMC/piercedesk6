@@ -3,6 +3,7 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from 'lib/supabase/client';
+import { setOrganizationContext } from 'lib/supabase/rls-helper';
 
 export const SupabaseAuthContext = createContext(undefined);
 
@@ -52,16 +53,24 @@ export function SupabaseAuthProvider({ children, initialSession = null }) {
         // User has no organizations
         if (error.code === 'PGRST116') {
           setOrganizationId(null);
+          // Clear RLS session variable
+          await setOrganizationContext(supabase, null);
           return null;
         }
         throw error;
       }
 
+      // Set organization context for RLS
+      await setOrganizationContext(supabase, data.organization_id);
       setOrganizationId(data.organization_id);
       return data.organization_id;
     } catch (error) {
       console.error('Error fetching user organization:', error);
       setOrganizationId(null);
+      // Clear RLS session variable on error
+      await setOrganizationContext(supabase, null).catch(() => {
+        // Ignore RLS helper errors in error handler
+      });
       return null;
     }
   }, [supabase]);
@@ -87,6 +96,10 @@ export function SupabaseAuthProvider({ children, initialSession = null }) {
       }
     } else {
       setOrganizationId(null);
+      // Clear RLS session variable on sign out
+      await setOrganizationContext(supabase, null).catch(() => {
+        // Ignore RLS helper errors during sign out
+      });
     }
 
     setLoading(false);
@@ -199,6 +212,8 @@ export function SupabaseAuthProvider({ children, initialSession = null }) {
         throw new Error('User is not a member of this organization');
       }
 
+      // Set organization context for RLS
+      await setOrganizationContext(supabase, orgId);
       setOrganizationId(orgId);
 
       // Persist to localStorage as fallback

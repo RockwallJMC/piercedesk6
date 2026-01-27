@@ -1,8 +1,8 @@
 'use client';
 
-import { signOut, useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import {
   Box,
   Button,
@@ -21,12 +21,12 @@ import {
 } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import { useThemeMode } from 'hooks/useThemeMode';
-import { demoUser } from 'lib/next-auth/nextAuthOptions';
 import { useBreakpoints } from 'providers/BreakpointsProvider';
 import { useSettingsContext } from 'providers/SettingsProvider';
 import paths, { authPaths } from 'routes/paths';
 import IconifyIcon from 'components/base/IconifyIcon';
 import StatusAvatar from 'components/base/StatusAvatar';
+import OrganizationSwitcher from 'components/sections/organization/OrganizationSwitcher';
 
 const ProfileMenu = ({ type = 'default' }) => {
   const router = useRouter();
@@ -39,9 +39,19 @@ const ProfileMenu = ({ type = 'default' }) => {
 
   const { isDark, setThemeMode } = useThemeMode();
 
-  const { data } = useSession();
-  // Use demoUser as fallback if no session user
-  const user = useMemo(() => data?.user || demoUser, [data?.user]);
+  const { user: authUser, signOut: supabaseSignOut, loading } = useSupabaseAuth();
+
+  // Transform Supabase user to match expected format
+  const user = useMemo(() => {
+    if (!authUser) return null;
+
+    return {
+      name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
+      email: authUser.email,
+      image: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture,
+      designation: authUser.user_metadata?.designation,
+    };
+  }, [authUser]);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -154,6 +164,13 @@ const ProfileMenu = ({ type = 'default' }) => {
           </Box>
         </Stack>
         <Divider />
+        <Box sx={{ py: 1, px: 3 }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
+            Organization
+          </Typography>
+          <OrganizationSwitcher compact />
+        </Box>
+        <Divider />
         <Box sx={{ py: 1 }}>
           <ProfileMenuItem icon="material-symbols:accessible-forward-rounded" onClick={handleClose}>
             Accessibility
@@ -190,17 +207,12 @@ const ProfileMenu = ({ type = 'default' }) => {
         </Box>
         <Divider />
         <Box sx={{ py: 1 }}>
-          {data?.user ? (
+          {user ? (
             <ProfileMenuItem
               onClick={async () => {
-                const res = await signOut({
-                  redirect: false,
-                  callbackUrl: paths.defaultLoggedOut,
-                });
-
-                if (res.url) {
-                  router.push(res.url);
-                }
+                handleClose();
+                await supabaseSignOut();
+                router.push(authPaths.login);
               }}
               icon="material-symbols:logout-rounded"
             >
