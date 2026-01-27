@@ -10,6 +10,14 @@ feature_id: "FEAT-CHAT-001"
 
 # Backend Engineering Plan: Real-Time Chat Application
 
+## CRITICAL: Development Server Constraints
+
+**NEVER run `npm run dev` in the background:**
+- If you need to start the dev server, inform the user and let them start it manually
+- NEVER use `run_in_background: true` with Bash tool for `npm run dev`
+- Dev servers must run in the terminal for proper log visibility and clean restarts
+- This is a strict requirement across all agents
+
 ## 1. Architecture Overview
 
 ### 1.1 Backend Stack

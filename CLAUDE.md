@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Install dependencies
 npm install --legacy-peer-deps
 
-# Start all apps in dev mode
+# Start all apps in dev mode (TERMINAL ONLY - NEVER use run_in_background)
 npm run dev
 
 # Build all apps and packages
@@ -28,7 +28,7 @@ npm run clean
 
 ### Pierce Desk App (from apps/pierce-desk)
 ```bash
-# Dev server on port 4000
+# Dev server on port 4000 (TERMINAL ONLY - NEVER use run_in_background)
 npm run dev
 
 # Production build with increased memory
@@ -43,6 +43,12 @@ npm run lint
 # Clean Next.js build
 npm run clean
 ```
+
+**IMPORTANT: Development Server Constraints**
+- `npm run dev` must ONLY be run in the terminal directly
+- NEVER use `run_in_background: true` parameter with Bash tool for dev servers
+- This ensures proper visibility of logs, errors, and the ability to stop/restart cleanly
+- If dev server needs to be started, inform the user and let them start it manually
 
 ## Monorepo Architecture
 

@@ -5,10 +5,11 @@ import GoogleProvider from 'next-auth/providers/google';
 import { users } from 'data/users';
 import paths, { apiEndpoints } from 'routes/paths';
 import axiosInstance from 'services/axios/axiosInstance';
-import {
-  firebaseLoginProviderConfig,
-  firebaseSignupProviderConfig,
-} from 'services/firebase/firebase-provider';
+// Firebase authentication removed - using Supabase instead
+// import {
+//   firebaseLoginProviderConfig,
+//   firebaseSignupProviderConfig,
+// } from 'services/firebase/firebase-provider';
 
 export const demoUser = {
   id: '01',
@@ -70,8 +71,9 @@ export const authOptions = {
       },
     }),
 
-    CredentialsProvider(firebaseLoginProviderConfig),
-    CredentialsProvider(firebaseSignupProviderConfig),
+    // Firebase providers removed - using Supabase instead
+    // CredentialsProvider(firebaseLoginProviderConfig),
+    // CredentialsProvider(firebaseSignupProviderConfig),
 
     Auth0Provider({
       clientId: process.env.AUTH0_CLIENT_ID,
