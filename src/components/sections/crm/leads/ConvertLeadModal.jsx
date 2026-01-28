@@ -31,6 +31,7 @@ import * as yup from 'yup';
 import dayjs from 'dayjs';
 import { useConvertLeadToOpportunity } from 'services/swr/api-hooks/useLeadApi';
 import IconifyIcon from 'components/base/IconifyIcon';
+import PropTypes from 'prop-types';
 
 const convertLeadSchema = yup.object({
   opportunityName: yup.string().required('Opportunity name is required'),
@@ -47,7 +48,12 @@ const convertLeadSchema = yup.object({
     .date()
     .required('Expected close date is required')
     .test('is-future', 'Close date must be in the future', (value) => {
-      return !value || new Date(value) > new Date();
+      if (!value) return true;
+      const inputDate = new Date(value);
+      const today = new Date();
+      inputDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+      return inputDate.getTime() > today.getTime();
     }),
   probability: yup
     .number()
@@ -424,6 +430,18 @@ const ConvertLeadModal = ({ open, onClose, lead, onSuccess }) => {
       </DialogActions>
     </Dialog>
   );
+};
+
+ConvertLeadModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  lead: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    company: PropTypes.string,
+    source: PropTypes.string,
+  }),
+  onSuccess: PropTypes.func,
 };
 
 export default ConvertLeadModal;

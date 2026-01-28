@@ -9,6 +9,7 @@ import paths from 'routes/paths';
 import DashboardMenu from 'components/common/DashboardMenu';
 import DataGridPagination from 'components/pagination/DataGridPagination';
 import ConvertLeadModal from 'components/sections/crm/leads/ConvertLeadModal';
+import PropTypes from 'prop-types';
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -220,7 +221,6 @@ const LeadsTable = ({ apiRef, filterButtonEl, selectedStatus, onStatusChange }) 
                 label: 'Edit',
                 onClick: (e) => {
                   e.stopPropagation();
-                  console.log('Edit lead:', params.row.id);
                   // TODO: Navigate to edit page or open modal
                 },
               },
@@ -228,7 +228,6 @@ const LeadsTable = ({ apiRef, filterButtonEl, selectedStatus, onStatusChange }) 
                 label: 'Delete',
                 onClick: (e) => {
                   e.stopPropagation();
-                  console.log('Delete lead:', params.row.id);
                   // TODO: Show confirmation dialog
                 },
                 sx: { color: 'error.main' },
@@ -320,6 +319,13 @@ const LeadsTable = ({ apiRef, filterButtonEl, selectedStatus, onStatusChange }) 
       />
     </>
   );
+};
+
+LeadsTable.propTypes = {
+  apiRef: PropTypes.object.isRequired,
+  filterButtonEl: PropTypes.object,
+  selectedStatus: PropTypes.string,
+  onStatusChange: PropTypes.func,
 };
 
 export default LeadsTable;

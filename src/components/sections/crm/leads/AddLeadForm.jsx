@@ -8,6 +8,7 @@ import { useSnackbar } from 'notistack';
 import * as yup from 'yup';
 import { useCreateLead } from 'services/swr/api-hooks/useLeadApi';
 import ControlledSelect from 'components/sections/crm/add-contact/ControlledSelect';
+import PropTypes from 'prop-types';
 
 // Validation schema
 const addLeadSchema = yup.object({
@@ -217,6 +218,11 @@ const AddLeadForm = ({ onSuccess, onCancel }) => {
       </Stack>
     </Box>
   );
+};
+
+AddLeadForm.propTypes = {
+  onSuccess: PropTypes.func,
+  onCancel: PropTypes.func,
 };
 
 export default AddLeadForm;
