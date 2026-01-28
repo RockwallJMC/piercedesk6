@@ -49,14 +49,29 @@ const TEST_USERS = {
  * Authentication Helper
  * Logs in a user via the login page
  */
-async function loginUser(page, email, password) {
+async function loginUser(page, email, password, context) {
+  // Clear any existing session first
+  if (context) {
+    await context.clearCookies();
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+  }
+
   await page.goto('/authentication/default/jwt/login');
+
+  // Verify we're on login page (not redirected due to existing session)
+  await page.waitForSelector('input[type="email"]', { timeout: 5000 });
+
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
 
   // Wait for navigation to complete (login successful)
-  await page.waitForURL(/^((?!\/authentication).)*$/);
+  // User may go to dashboard OR organization-setup page
+  await page.waitForURL(/^((?!\/authentication).)*$/, { timeout: 10000 });
 }
 
 /**
@@ -89,8 +104,8 @@ function getOrganizationSwitcher(page) {
  * - Selecting the same organization does nothing (no unnecessary API calls)
  */
 test.describe('Organization Switching - Single Organization User', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginUser(page, TEST_USERS.singleOrg.email, TEST_USERS.singleOrg.password);
+  test.beforeEach(async ({ page, context }) => {
+    await loginUser(page, TEST_USERS.singleOrg.email, TEST_USERS.singleOrg.password, context);
   });
 
   test('displays current organization in ProfileMenu', async ({ page }) => {
@@ -165,8 +180,8 @@ test.describe('Organization Switching - Single Organization User', () => {
  * - UI updates to reflect new organization context
  */
 test.describe('Organization Switching - Multiple Organizations User', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginUser(page, TEST_USERS.multiOrg.email, TEST_USERS.multiOrg.password);
+  test.beforeEach(async ({ page, context }) => {
+    await loginUser(page, TEST_USERS.multiOrg.email, TEST_USERS.multiOrg.password, context);
   });
 
   test('displays current active organization', async ({ page }) => {

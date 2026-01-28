@@ -10,9 +10,20 @@ const { test, expect } = require('@playwright/test');
  */
 
 test.describe('Supabase Authentication - Login', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    // Clear all cookies and storage to ensure clean state (no existing session)
+    await context.clearCookies();
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+
     // Navigate to login page
     await page.goto('/authentication/default/jwt/login');
+
+    // Verify we're actually on the login page (not redirected to dashboard)
+    await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();
   });
 
   test('login page renders with email and password fields', async ({ page }) => {
@@ -23,10 +34,14 @@ test.describe('Supabase Authentication - Login', () => {
   });
 
   test('shows validation error for empty email', async ({ page }) => {
+    // Clear the email field (it may have default credentials)
+    await page.getByLabel('Email').clear();
     await page.getByLabel('Password').fill('password123');
     await page.getByRole('button', { name: 'Log in' }).click();
 
-    await expect(page.getByText('This field is required')).toBeVisible();
+    // Material-UI TextField displays validation errors in helper text below the field
+    // Look for the required field error message
+    await expect(page.getByText('This field is required').first()).toBeVisible({ timeout: 3000 });
   });
 
   test('shows validation error for invalid email format', async ({ page }) => {
@@ -39,9 +54,12 @@ test.describe('Supabase Authentication - Login', () => {
 
   test('shows validation error for empty password', async ({ page }) => {
     await page.getByLabel('Email').fill('user@example.com');
+    // Clear password field (may have default credentials)
+    await page.getByLabel('Password').clear();
     await page.getByRole('button', { name: 'Log in' }).click();
 
-    await expect(page.getByText('This field is required')).toBeVisible();
+    // Look for validation error message
+    await expect(page.getByText('This field is required').first()).toBeVisible({ timeout: 3000 });
   });
 
   test('shows loading state during authentication', async ({ page }) => {
@@ -75,8 +93,20 @@ test.describe('Supabase Authentication - Login', () => {
 });
 
 test.describe('Supabase Authentication - SignUp', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/authentication/default/jwt/signup');
+  test.beforeEach(async ({ page, context }) => {
+    // Clear all cookies and storage to ensure clean state
+    await context.clearCookies();
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+
+    // Correct route is /authentication/default/jwt/sign-up (not /signup)
+    await page.goto('/authentication/default/jwt/sign-up');
+
+    // Verify we're on the signup page
+    await expect(page.getByRole('heading', { name: 'Sign up' })).toBeVisible();
   });
 
   test('signup page renders with name, email and password fields', async ({ page }) => {
@@ -88,11 +118,13 @@ test.describe('Supabase Authentication - SignUp', () => {
   });
 
   test('shows validation error for empty name', async ({ page }) => {
+    // Leave name empty
     await page.getByLabel('Email').fill('user@example.com');
     await page.getByLabel('Password').fill('password123');
     await page.getByRole('button', { name: 'Create Account' }).click();
 
-    await expect(page.getByText('This field is required')).toBeVisible();
+    // Check validation error appears
+    await expect(page.getByText('This field is required').first()).toBeVisible({ timeout: 3000 });
   });
 
   test('shows validation error for invalid email', async ({ page }) => {
@@ -101,15 +133,18 @@ test.describe('Supabase Authentication - SignUp', () => {
     await page.getByLabel('Password').fill('password123');
     await page.getByRole('button', { name: 'Create Account' }).click();
 
-    await expect(page.getByText('Please provide a valid email address.')).toBeVisible();
+    // Email validation error should appear
+    await expect(page.getByText('Please provide a valid email address.')).toBeVisible({ timeout: 3000 });
   });
 
   test('shows validation error for empty password', async ({ page }) => {
     await page.getByLabel('Name').fill('Test User');
     await page.getByLabel('Email').fill('user@example.com');
+    // Leave password empty
     await page.getByRole('button', { name: 'Create Account' }).click();
 
-    await expect(page.getByText('This field is required')).toBeVisible();
+    // Password validation error should appear
+    await expect(page.getByText('This field is required').first()).toBeVisible({ timeout: 3000 });
   });
 
   test('shows loading state during signup', async ({ page }) => {
@@ -137,8 +172,17 @@ test.describe('Supabase Authentication - SignUp', () => {
 });
 
 test.describe('Supabase Authentication - Social Auth (OAuth)', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    // Clear session
+    await context.clearCookies();
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+
     await page.goto('/authentication/default/jwt/login');
+    await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();
   });
 
   test('google oauth button triggers authentication flow', async ({ page }) => {
@@ -176,11 +220,24 @@ test.describe('Supabase Authentication - Social Auth (OAuth)', () => {
 });
 
 test.describe('Supabase Authentication - Error Handling', () => {
-  test('handles network errors gracefully', async ({ page }) => {
-    // Simulate offline mode
-    await page.context().setOffline(true);
+  test.beforeEach(async ({ page, context }) => {
+    // Clear session for error handling tests too
+    await context.clearCookies();
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+  });
 
+  test('handles network errors gracefully', async ({ page, context }) => {
+    // Load page FIRST, then set offline mode
     await page.goto('/authentication/default/jwt/login');
+    await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();
+
+    // Now simulate offline mode
+    await context.setOffline(true);
+
     await page.getByLabel('Email').fill('test@example.com');
     await page.getByLabel('Password').fill('password123');
     await page.getByRole('button', { name: 'Log in' }).click();
@@ -188,11 +245,20 @@ test.describe('Supabase Authentication - Error Handling', () => {
     // Should show network error or similar
     await expect(page.getByText(/network|error|failed/i)).toBeVisible({ timeout: 5000 });
 
-    await page.context().setOffline(false);
+    await context.setOffline(false);
   });
 
-  test('displays specific error messages from Supabase', async ({ page }) => {
+  test('displays specific error messages from Supabase', async ({ page, context }) => {
+    // Clear session first
+    await context.clearCookies();
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+
     await page.goto('/authentication/default/jwt/login');
+    await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();
 
     // Test with invalid credentials
     await page.getByLabel('Email').fill('test@example.com');
@@ -201,12 +267,23 @@ test.describe('Supabase Authentication - Error Handling', () => {
 
     // Supabase should return a specific error message
     // The error should be displayed in an Alert component
-    const errorAlert = page.locator('[role="alert"]');
+    // Filter to get the error alert specifically (not the demo credentials alert or route announcer)
+    const errorAlert = page.getByRole('alert').filter({ hasText: /invalid|error|wrong/i }).first();
     await expect(errorAlert).toBeVisible({ timeout: 5000 });
   });
 });
 
 test.describe('Supabase Authentication - Integration Points', () => {
+  test.beforeEach(async ({ page, context }) => {
+    // Clear session
+    await context.clearCookies();
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+  });
+
   test('useSupabaseAuth hook is available', async ({ page }) => {
     // This test verifies the hook is properly imported and used
     // We'll check this by verifying the component renders without console errors
