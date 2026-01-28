@@ -138,10 +138,13 @@ Implement the complete CRM Desk as the MVP for PierceDesk - managing customer re
 
 - **Doc**: `_sys_documents/execution/phase1.5-opportunity-pipeline.md`
 - **Type**: Execution
-- **Status**: ⏳ Planned
-- **Assigned**: react-mui-frontend-engineer agent
-- **Progress**: 0%
+- **Status**: 🚧 In Progress
+- **GitHub Issue**: #9
+- **Feature Branch**: `feature/desk-opportunities-phase1.5`
+- **Assigned**: react-mui-frontend-engineer agent + wiring-agent + playwright-tester
+- **Progress**: 27% (Steps 1-4 complete: Core renaming done)
 - **Target**: Week 5 (2026-02-24 - 2026-02-28)
+- **Started**: 2026-01-28
 
 **Features:**
 
