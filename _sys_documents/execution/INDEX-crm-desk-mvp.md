@@ -325,13 +325,14 @@ Next Phase: Phase 1.2 - Authentication & Multi-Tenancy (Required to enable 23 te
 - **Rationale**: Declarative React syntax, good documentation, active maintenance
 - **Impact**: Phase 1.6 adds React-PDF dependency
 
-### Decision 4: Abbreviated Documentation Workflow for Phases 1.3-1.5
+### Decision 4: Modified Documentation Approach for Phases 1.3-1.5
 
 - **Date**: 2026-01-29
 - **Context**: Phases 1.3-1.5 completed without implementation plans in `docs/plans/`
-- **Decision**: Accept abbreviated workflow for these phases; no retrospective plans
+- **Decision**: Accept modified documentation approach for these phases; no retrospective plans
 - **Rationale**:
   - Phases implemented with mock data (shallow impact at time of execution)
+  - No backend integration at time of execution (mock data only, Supabase TODOs deferred to Phase 1.2)
   - Comprehensive execution documents exist with implementation logs
   - Design documents exist for Phases 1.4 and 1.5
   - Creating retrospective plans offers minimal value vs. cost
@@ -477,7 +478,7 @@ To be captured in Phase 1.8
 This feature follows the [Documentation Guide](../../docs/guides/DOCUMENTATION-GUIDE.md) framework with the following documented deviations:
 
 **Phases 1.1-1.2**: ✅ Full workflow (plan, design, execution, as-built)
-**Phases 1.3-1.5**: ⚠️ Abbreviated workflow (design + execution only, see Decision 4)
+**Phases 1.3-1.5**: ⚠️ Modified approach (design + execution only, see Decision 4)
 **Phases 1.6-1.8**: ✅ Full workflow
 
 ### Compliance Status
