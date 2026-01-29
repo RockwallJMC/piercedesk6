@@ -1,25 +1,15 @@
 'use client';
 
+import createClient from 'lib/supabase/client';
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
-import {
-  mockProposals,
-  getProposalById,
-  getProposalsByOpportunityId,
-  getProposalsByStatus,
-  getProposalWithLineItems,
-} from 'data/crm/proposals';
 import { generateProposalNumber } from 'utils/crm/proposalNumberGenerator';
 import { recalculateProposalTotals } from 'utils/crm/proposalCalculations';
-
-// TODO: Replace with Supabase after Phase 1.2 complete
-// import createClient from 'lib/supabase/client';
 
 /**
  * Fetcher function for all proposals with optional filters
  * Filters: status, opportunity_id, search
  *
- * TODO: Replace mock data with Supabase fetcher after Phase 1.2 complete
  * @param {Object} filters - Filter options
  * @param {string} filters.status - Optional status filter ('draft', 'sent', 'accepted', 'rejected', 'expired')
  * @param {string} filters.opportunity_id - Optional opportunity ID filter
@@ -27,67 +17,53 @@ import { recalculateProposalTotals } from 'utils/crm/proposalCalculations';
  * @returns {Promise<Array>} Array of proposal objects filtered by organization_id (via RLS)
  */
 const proposalsFetcher = async (filters = {}) => {
-  // TODO: Replace with Supabase implementation after Phase 1.2 complete
-  // const supabase = createClient();
-  // const { data: { user }, error: authError } = await supabase.auth.getUser();
-  //
-  // if (authError || !user) {
-  //   throw new Error(authError?.message || 'Not authenticated');
-  // }
-  //
-  // let query = supabase
-  //   .from('proposals')
-  //   .select('*, opportunity:opportunities(*), account:accounts(*)')
-  //   .order('created_at', { ascending: false });
-  //
-  // if (filters.status) {
-  //   query = query.eq('status', filters.status);
-  // }
-  //
-  // if (filters.opportunity_id) {
-  //   query = query.eq('opportunity_id', filters.opportunity_id);
-  // }
-  //
-  // if (filters.search) {
-  //   query = query.or(`proposal_number.ilike.%${filters.search}%,title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
-  // }
-  //
-  // const { data, error } = await query;
-  //
-  // if (error) {
-  //   throw new Error(error.message);
-  // }
-  //
-  // return data || [];
+  const supabase = createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  // MOCK DATA - Remove after Phase 1.2 complete
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      let filteredProposals = [...mockProposals];
+  if (authError || !user) {
+    throw new Error(authError?.message || 'Not authenticated');
+  }
 
-      if (filters.status) {
-        filteredProposals = getProposalsByStatus(filters.status);
-      }
+  let query = supabase
+    .from('proposals')
+    .select(
+      `
+      *,
+      opportunity:opportunities(
+        *,
+        account:accounts(*)
+      )
+    `
+    )
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false });
 
-      if (filters.opportunity_id) {
-        filteredProposals = filteredProposals.filter(
-          (p) => p.opportunity_id === filters.opportunity_id
-        );
-      }
+  if (filters.status) {
+    query = query.eq('status', filters.status);
+  }
 
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        filteredProposals = filteredProposals.filter(
-          (p) =>
-            p.proposal_number.toLowerCase().includes(searchLower) ||
-            p.title.toLowerCase().includes(searchLower) ||
-            (p.description && p.description.toLowerCase().includes(searchLower))
-        );
-      }
+  if (filters.opportunity_id) {
+    query = query.eq('opportunity_id', filters.opportunity_id);
+  }
 
-      resolve(filteredProposals);
-    }, 100); // Simulate network delay
-  });
+  if (filters.search) {
+    // Sanitize search input to prevent SQL injection
+    const sanitizedSearch = filters.search.replace(/[%_]/g, '\\$&');
+    query = query.or(
+      `proposal_number.ilike.%${sanitizedSearch}%,title.ilike.%${sanitizedSearch}%`
+    );
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data || [];
 };
 
 /**
@@ -126,47 +102,41 @@ export const useProposals = (filters = {}, config) => {
  * Fetcher function for a single proposal by ID with joins
  * Returns proposal + line_items + opportunity + account
  *
- * TODO: Replace mock data with Supabase fetcher after Phase 1.2 complete
  * @param {string} id - Proposal ID
  * @returns {Promise<Object>} Proposal object with joined data
  */
 const proposalFetcher = async (id) => {
-  // TODO: Replace with Supabase implementation after Phase 1.2 complete
-  // const supabase = createClient();
-  // const { data: { user }, error: authError } = await supabase.auth.getUser();
-  //
-  // if (authError || !user) {
-  //   throw new Error(authError?.message || 'Not authenticated');
-  // }
-  //
-  // const { data, error } = await supabase
-  //   .from('proposals')
-  //   .select(`
-  //     *,
-  //     line_items:proposal_line_items(*),
-  //     opportunity:opportunities(*),
-  //     account:accounts(*)
-  //   `)
-  //   .eq('id', id)
-  //   .single();
-  //
-  // if (error) {
-  //   throw new Error(error.message);
-  // }
-  //
-  // return data;
+  const supabase = createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  // MOCK DATA - Remove after Phase 1.2 complete
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const proposal = getProposalWithLineItems(id);
-      if (proposal) {
-        resolve(proposal);
-      } else {
-        reject(new Error(`Proposal with id ${id} not found`));
-      }
-    }, 100); // Simulate network delay
-  });
+  if (authError || !user) {
+    throw new Error(authError?.message || 'Not authenticated');
+  }
+
+  const { data, error } = await supabase
+    .from('proposals')
+    .select(
+      `
+      *,
+      line_items:proposal_line_items(*),
+      opportunity:opportunities(
+        *,
+        account:accounts(*)
+      )
+    `
+    )
+    .is('deleted_at', null)
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch proposal ${id}: ${error.message}`);
+  }
+
+  return data;
 };
 
 /**
@@ -197,76 +167,59 @@ export const useProposal = (id, config) => {
 /**
  * Mutation function to create a new proposal
  *
- * TODO: Replace console.log with Supabase mutation after Phase 1.2 complete
  * @param {string} url - Mutation key (unused in implementation)
  * @param {Object} options - Mutation options
  * @param {Object} options.arg - Proposal data to create
  * @returns {Promise<Object>} Created proposal object
  */
 const createProposalMutation = async (url, { arg }) => {
-  // TODO: Replace with Supabase implementation after Phase 1.2 complete
-  // const supabase = createClient();
-  // const { data: { user }, error: authError } = await supabase.auth.getUser();
-  //
-  // if (authError || !user) {
-  //   throw new Error(authError?.message || 'Not authenticated');
-  // }
-  //
-  // // Generate proposal number (query database for max number in current year)
-  // const year = new Date().getFullYear();
-  // const { data: lastProposal } = await supabase
-  //   .from('proposals')
-  //   .select('proposal_number')
-  //   .like('proposal_number', `PROP-${year}-%`)
-  //   .order('created_at', { ascending: false })
-  //   .limit(1);
-  //
-  // const lastNumber = lastProposal?.[0]?.proposal_number || `PROP-${year}-000`;
-  // const counter = parseInt(lastNumber.split('-')[2]) + 1;
-  // const proposalNumber = `PROP-${year}-${String(counter).padStart(3, '0')}`;
-  //
-  // const { data, error } = await supabase
-  //   .from('proposals')
-  //   .insert([{
-  //     ...arg,
-  //     proposal_number: proposalNumber,
-  //     status: 'draft',
-  //     subtotal: 0,
-  //     tax_amount: 0,
-  //     total_amount: 0,
-  //   }])
-  //   .select()
-  //   .single();
-  //
-  // if (error) {
-  //   throw new Error(error.message);
-  // }
-  //
-  // return data;
+  const supabase = createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  // MOCK IMPLEMENTATION - Remove after Phase 1.2 complete
-  console.log('useCreateProposal mutation called with:', arg);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const newProposal = {
-        id: `prop_${Date.now()}`,
-        organization_id: 'org_001', // Would come from RLS/auth context
-        proposal_number: generateProposalNumber(),
-        status: 'draft',
-        subtotal: 0,
-        tax_rate: arg.tax_rate || 0,
-        tax_amount: 0,
-        total_amount: 0,
+  if (authError || !user) {
+    throw new Error(authError?.message || 'Not authenticated');
+  }
+
+  // Validate required fields
+  if (!arg.opportunity_id) {
+    throw new Error('opportunity_id is required');
+  }
+
+  if (!arg.title) {
+    throw new Error('title is required');
+  }
+
+  // Generate proposal number using database-backed generator
+  const proposalNumber = await generateProposalNumber();
+
+  const { data, error } = await supabase
+    .from('proposals')
+    .insert([
+      {
         ...arg,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        sent_at: null,
-        accepted_at: null,
-        rejected_at: null,
-      };
-      resolve(newProposal);
-    }, 100);
-  });
+        proposal_number: proposalNumber,
+        status: 'draft',
+      },
+    ])
+    .select(
+      `
+      *,
+      opportunity:opportunities(
+        *,
+        account:accounts(*)
+      )
+    `
+    )
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 };
 
 /**
@@ -299,9 +252,146 @@ export const useCreateProposal = () => {
 };
 
 /**
+ * Mutation function to create a new proposal with line items atomically
+ *
+ * @param {string} url - Mutation key (unused in implementation)
+ * @param {Object} options - Mutation options
+ * @param {Object} options.arg.proposalData - Proposal data to create
+ * @param {Array} options.arg.lineItems - Line items to create with the proposal
+ * @returns {Promise<Object>} Created proposal object with line items
+ */
+const createProposalWithLineItemsMutation = async (url, { arg }) => {
+  const { proposalData, lineItems } = arg;
+  const supabase = createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error(authError?.message || 'Not authenticated');
+  }
+
+  // Validate required fields
+  if (!proposalData.opportunity_id) {
+    throw new Error('opportunity_id is required');
+  }
+
+  if (!proposalData.title) {
+    throw new Error('title is required');
+  }
+
+  // Generate proposal number
+  const proposalNumber = await generateProposalNumber();
+
+  // Create proposal
+  const { data: newProposal, error: proposalError } = await supabase
+    .from('proposals')
+    .insert([
+      {
+        ...proposalData,
+        proposal_number: proposalNumber,
+        status: 'draft',
+      },
+    ])
+    .select(
+      `
+      *,
+      opportunity:opportunities(
+        *,
+        account:accounts(*)
+      )
+    `
+    )
+    .single();
+
+  if (proposalError) {
+    throw new Error(`Failed to create proposal: ${proposalError.message}`);
+  }
+
+  // Create line items if provided
+  if (lineItems?.length > 0) {
+    const { error: lineItemsError } = await supabase
+      .from('proposal_line_items')
+      .insert(lineItems.map((item) => ({ ...item, proposal_id: newProposal.id })));
+
+    if (lineItemsError) {
+      throw new Error(`Failed to create line items for proposal ${newProposal.id}: ${lineItemsError.message}`);
+    }
+
+    // Recalculate totals
+    const totals = recalculateProposalTotals(lineItems, proposalData.tax_rate || 0);
+
+    // Update proposal with calculated totals
+    const { error: updateError } = await supabase
+      .from('proposals')
+      .update({
+        subtotal: totals.subtotal,
+        tax_amount: totals.taxAmount,
+        total_amount: totals.total,
+      })
+      .eq('id', newProposal.id);
+
+    if (updateError) {
+      throw new Error(`Failed to update proposal totals: ${updateError.message}`);
+    }
+  }
+
+  return newProposal;
+};
+
+/**
+ * Hook to create a new proposal with line items atomically
+ * Automatically generates proposal number, creates line items, and calculates totals
+ *
+ * @returns {Object} SWR mutation response
+ *
+ * @example
+ * const { trigger, isMutating } = useCreateProposalWithLineItems();
+ * const newProposal = await trigger({
+ *   proposalData: {
+ *     opportunity_id: 'opp_001',
+ *     title: 'Website Redesign Proposal',
+ *     description: 'Complete website redesign with modern UX',
+ *     valid_until: '2026-03-31',
+ *     tax_rate: 8.25,
+ *     terms_and_conditions: 'Payment due within 30 days...',
+ *   },
+ *   lineItems: [
+ *     {
+ *       item_type: 'service',
+ *       description: 'Web Design',
+ *       quantity: 1,
+ *       unit_price: 5000.00,
+ *       total_price: 5000.00,
+ *       sort_order: 0,
+ *     },
+ *     {
+ *       item_type: 'service',
+ *       description: 'Development',
+ *       quantity: 80,
+ *       unit_price: 150.00,
+ *       total_price: 12000.00,
+ *       sort_order: 1,
+ *     },
+ *   ],
+ * });
+ */
+export const useCreateProposalWithLineItems = () => {
+  const mutation = useSWRMutation('create-proposal-with-items', createProposalWithLineItemsMutation, {
+    onSuccess: (data, key, config) => {
+      if (config?.onSuccess) {
+        config.onSuccess(data, key, config);
+      }
+    },
+  });
+
+  return mutation;
+};
+
+/**
  * Mutation function to update an existing proposal
  *
- * TODO: Replace console.log with Supabase mutation after Phase 1.2 complete
  * @param {string} url - Mutation key (unused in implementation)
  * @param {Object} options - Mutation options
  * @param {string} options.arg.id - Proposal ID to update
@@ -310,40 +400,40 @@ export const useCreateProposal = () => {
  */
 const updateProposalMutation = async (url, { arg }) => {
   const { id, updates } = arg;
+  const supabase = createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  // TODO: Replace with Supabase implementation after Phase 1.2 complete
-  // const supabase = createClient();
-  // const { data: { user }, error: authError } = await supabase.auth.getUser();
-  //
-  // if (authError || !user) {
-  //   throw new Error(authError?.message || 'Not authenticated');
-  // }
-  //
-  // const { data, error } = await supabase
-  //   .from('proposals')
-  //   .update({ ...updates, updated_at: new Date().toISOString() })
-  //   .eq('id', id)
-  //   .select()
-  //   .single();
-  //
-  // if (error) {
-  //   throw new Error(error.message);
-  // }
-  //
-  // return data;
+  if (authError || !user) {
+    throw new Error(authError?.message || 'Not authenticated');
+  }
 
-  // MOCK IMPLEMENTATION - Remove after Phase 1.2 complete
-  console.log('useUpdateProposal mutation called with:', { id, updates });
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const updatedProposal = {
-        id,
-        ...updates,
-        updated_at: new Date().toISOString(),
-      };
-      resolve(updatedProposal);
-    }, 100);
-  });
+  if (!id) {
+    throw new Error('Proposal ID is required');
+  }
+
+  const { data, error } = await supabase
+    .from('proposals')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select(
+      `
+      *,
+      opportunity:opportunities(
+        *,
+        account:accounts(*)
+      )
+    `
+    )
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update proposal ${id}: ${error.message}`);
+  }
+
+  return data;
 };
 
 /**
@@ -379,7 +469,6 @@ export const useUpdateProposal = () => {
  * Mutation function to update proposal line items
  * Replaces all line items and recalculates totals
  *
- * TODO: Replace console.log with Supabase transaction after Phase 1.2 complete
  * @param {string} url - Mutation key (unused in implementation)
  * @param {Object} options - Mutation options
  * @param {string} options.arg.proposal_id - Proposal ID
@@ -389,69 +478,70 @@ export const useUpdateProposal = () => {
  */
 const updateLineItemsMutation = async (url, { arg }) => {
   const { proposal_id, line_items, tax_rate } = arg;
+  const supabase = createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  // TODO: Replace with Supabase transaction after Phase 1.2 complete
-  // const supabase = createClient();
-  // const { data: { user }, error: authError } = await supabase.auth.getUser();
-  //
-  // if (authError || !user) {
-  //   throw new Error(authError?.message || 'Not authenticated');
-  // }
-  //
-  // // Transaction: Delete old line items, insert new ones, update proposal totals
-  // const { error: deleteError } = await supabase
-  //   .from('proposal_line_items')
-  //   .delete()
-  //   .eq('proposal_id', proposal_id);
-  //
-  // if (deleteError) throw new Error(deleteError.message);
-  //
-  // if (line_items.length > 0) {
-  //   const { error: insertError } = await supabase
-  //     .from('proposal_line_items')
-  //     .insert(line_items.map(item => ({ ...item, proposal_id })));
-  //
-  //   if (insertError) throw new Error(insertError.message);
-  // }
-  //
-  // // Recalculate totals
-  // const { subtotal, taxAmount, total } = recalculateProposalTotals(line_items, tax_rate);
-  //
-  // const { data, error } = await supabase
-  //   .from('proposals')
-  //   .update({
-  //     subtotal: parseFloat(subtotal),
-  //     tax_rate,
-  //     tax_amount: parseFloat(taxAmount),
-  //     total_amount: parseFloat(total),
-  //     updated_at: new Date().toISOString(),
-  //   })
-  //   .eq('id', proposal_id)
-  //   .select()
-  //   .single();
-  //
-  // if (error) throw new Error(error.message);
-  //
-  // return data;
+  if (authError || !user) {
+    throw new Error(authError?.message || 'Not authenticated');
+  }
 
-  // MOCK IMPLEMENTATION - Remove after Phase 1.2 complete
-  console.log('useUpdateLineItems mutation called with:', { proposal_id, line_items, tax_rate });
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Recalculate totals
-      const { subtotal, taxAmount, total } = recalculateProposalTotals(line_items, tax_rate);
+  if (!proposal_id) {
+    throw new Error('Proposal ID is required');
+  }
 
-      const updatedProposal = {
-        id: proposal_id,
-        subtotal,
-        tax_rate,
-        tax_amount: taxAmount,
-        total_amount: total,
-        updated_at: new Date().toISOString(),
-      };
-      resolve(updatedProposal);
-    }, 100);
-  });
+  // Transaction: Delete old line items, insert new ones, update proposal totals
+  const { error: deleteError } = await supabase
+    .from('proposal_line_items')
+    .delete()
+    .eq('proposal_id', proposal_id);
+
+  if (deleteError) {
+    throw new Error(`Failed to delete line items for proposal ${proposal_id}: ${deleteError.message}`);
+  }
+
+  if (line_items && line_items.length > 0) {
+    const { error: insertError } = await supabase
+      .from('proposal_line_items')
+      .insert(line_items.map((item) => ({ ...item, proposal_id })));
+
+    if (insertError) {
+      throw new Error(`Failed to insert line items for proposal ${proposal_id}: ${insertError.message}`);
+    }
+  }
+
+  // Recalculate totals
+  const { subtotal, taxAmount, total } = recalculateProposalTotals(
+    line_items || [],
+    tax_rate || 0
+  );
+
+  const { data, error } = await supabase
+    .from('proposals')
+    .update({
+      total_amount: parseFloat(total),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', proposal_id)
+    .select(
+      `
+      *,
+      line_items:proposal_line_items(*),
+      opportunity:opportunities(
+        *,
+        account:accounts(*)
+      )
+    `
+    )
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update proposal ${proposal_id}: ${error.message}`);
+  }
+
+  return data;
 };
 
 /**
@@ -495,7 +585,6 @@ export const useUpdateLineItems = () => {
  * Mutation function to update proposal status
  * Sets appropriate timestamps based on status
  *
- * TODO: Replace console.log with Supabase mutation after Phase 1.2 complete
  * @param {string} url - Mutation key (unused in implementation)
  * @param {Object} options - Mutation options
  * @param {string} options.arg.id - Proposal ID
@@ -504,62 +593,58 @@ export const useUpdateLineItems = () => {
  */
 const updateProposalStatusMutation = async (url, { arg }) => {
   const { id, status } = arg;
+  const supabase = createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  // TODO: Replace with Supabase implementation after Phase 1.2 complete
-  // const supabase = createClient();
-  // const { data: { user }, error: authError } = await supabase.auth.getUser();
-  //
-  // if (authError || !user) {
-  //   throw new Error(authError?.message || 'Not authenticated');
-  // }
-  //
-  // const updates = {
-  //   status,
-  //   updated_at: new Date().toISOString(),
-  // };
-  //
-  // // Set timestamps based on status
-  // if (status === 'sent') {
-  //   updates.sent_at = new Date().toISOString();
-  // } else if (status === 'accepted') {
-  //   updates.accepted_at = new Date().toISOString();
-  // } else if (status === 'rejected') {
-  //   updates.rejected_at = new Date().toISOString();
-  // }
-  //
-  // const { data, error } = await supabase
-  //   .from('proposals')
-  //   .update(updates)
-  //   .eq('id', id)
-  //   .select()
-  //   .single();
-  //
-  // if (error) throw new Error(error.message);
-  //
-  // return data;
+  if (authError || !user) {
+    throw new Error(authError?.message || 'Not authenticated');
+  }
 
-  // MOCK IMPLEMENTATION - Remove after Phase 1.2 complete
-  console.log('useUpdateProposalStatus mutation called with:', { id, status });
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const updates = {
-        id,
-        status,
-        updated_at: new Date().toISOString(),
-      };
+  if (!id) {
+    throw new Error('Proposal ID is required');
+  }
 
-      // Set timestamps based on status
-      if (status === 'sent') {
-        updates.sent_at = new Date().toISOString();
-      } else if (status === 'accepted') {
-        updates.accepted_at = new Date().toISOString();
-      } else if (status === 'rejected') {
-        updates.rejected_at = new Date().toISOString();
-      }
+  if (!status) {
+    throw new Error('Status is required');
+  }
 
-      resolve(updates);
-    }, 100);
-  });
+  const updates = {
+    status,
+    updated_at: new Date().toISOString(),
+  };
+
+  // Set timestamps based on status
+  if (status === 'sent') {
+    updates.sent_at = new Date().toISOString();
+  } else if (status === 'accepted') {
+    updates.accepted_at = new Date().toISOString();
+  } else if (status === 'rejected') {
+    updates.rejected_at = new Date().toISOString();
+  }
+
+  const { data, error } = await supabase
+    .from('proposals')
+    .update(updates)
+    .eq('id', id)
+    .select(
+      `
+      *,
+      opportunity:opportunities(
+        *,
+        account:accounts(*)
+      )
+    `
+    )
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update proposal status ${id}: ${error.message}`);
+  }
+
+  return data;
 };
 
 /**
@@ -589,7 +674,7 @@ export const useUpdateProposalStatus = () => {
 /**
  * Mutation function to generate PDF for a proposal
  *
- * TODO: Replace with React-PDF + Supabase Storage after Phase 1.2 complete
+ * TODO: Replace with React-PDF + Supabase Storage in future phase
  * @param {string} url - Mutation key (unused in implementation)
  * @param {Object} options - Mutation options
  * @param {string} options.arg.proposal_id - Proposal ID
@@ -598,7 +683,7 @@ export const useUpdateProposalStatus = () => {
 const generateProposalPDFMutation = async (url, { arg }) => {
   const { proposal_id } = arg;
 
-  // TODO: Replace with React-PDF implementation after Phase 1.2 complete
+  // TODO: Replace with React-PDF implementation in future phase
   // import { pdf } from '@react-pdf/renderer';
   // import { ProposalPDF } from 'components/sections/crm/proposal-detail/ProposalPDF';
   //

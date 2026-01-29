@@ -1,126 +1,178 @@
-export const dealsData = [
-  {
-    icon: 'material-symbols:handshake-outline-rounded',
-    count: 310,
-    label: 'Deals created',
-    percentage: 4.3,
-    trend: 'up',
-  },
-  {
-    icon: 'material-symbols:payments-outline-rounded',
-    count: 26,
-    label: 'Deals closed',
-    percentage: 1.9,
-    trend: 'down',
-  },
-];
+/**
+ * CRM Dashboard Mock Data
+ * Data for the main CRM dashboard page (different from dashboard-metrics.js)
+ */
 
+// KPIs Data for CRM Dashboard
 export const kpisData = [
   {
-    title: 'Active Users',
-    value: 3050,
-    subtitle: 'Avg. daily logins',
-    icon: {
-      name: 'material-symbols-light:location-away-outline-rounded',
-      color: 'primary.main',
-    },
+    id: 1,
+    title: 'Total Revenue',
+    value: '$24.5M',
+    change: 12.5,
+    changeLabel: 'vs last month',
+    icon: 'material-symbols:attach-money-rounded',
+    color: 'success',
   },
   {
-    title: 'New Contacts',
-    value: 105,
-    subtitle: 'Accounts opened',
-    icon: {
-      name: 'material-symbols-light:verified-outline-rounded',
-      color: 'warning.main',
-    },
+    id: 2,
+    title: 'Active Deals',
+    value: '147',
+    change: 8.2,
+    changeLabel: 'vs last month',
+    icon: 'material-symbols:handshake-outline',
+    color: 'primary',
   },
   {
-    title: 'Renewal Rate',
-    value: '37%',
-    subtitle: 'Premium accounts',
-    icon: {
-      name: 'material-symbols-light:published-with-changes-rounded',
-      color: 'success.main',
-    },
+    id: 3,
+    title: 'Conversion Rate',
+    value: '34.2%',
+    change: -2.1,
+    changeLabel: 'vs last month',
+    icon: 'material-symbols:conversion-path',
+    color: 'warning',
   },
   {
-    title: 'Inventory',
-    value: 13200,
-    subtitle: 'Units in stock',
-    icon: {
-      name: 'material-symbols-light:warehouse-outline-rounded',
-      color: 'secondary.main',
-    },
-  },
-  {
-    title: 'Delivered',
-    value: 1920,
-    subtitle: 'Unit products',
-    icon: {
-      name: 'material-symbols-light:local-shipping-outline-rounded',
-      color: 'info.main',
-    },
+    id: 4,
+    title: 'New Leads',
+    value: '892',
+    change: 15.7,
+    changeLabel: 'vs last month',
+    icon: 'material-symbols:person-add-outline',
+    color: 'info',
   },
 ];
 
+// Deals Data for Greeting Component
+export const dealsData = {
+  total: 147,
+  inProgress: 89,
+  closed: 58,
+  totalValue: 24500000,
+  avgDealSize: 166667,
+};
+
+// Generated Revenue Chart Data
 export const crmGeneratedRevenueData = {
-  '25th': [250000, 180000, 270000, 220000, 120000, 150000, 200000],
-  '50th': [350000, 280000, 370000, 320000, 200000, 250000, 300000],
-  '75th': [450000, 380000, 470000, 420000, 300000, 350000, 400000],
+  currentYear: [
+    1800000, 1950000, 2100000, 2050000, 2200000, 2150000, 2300000, 2250000, 2400000, 2350000,
+    2500000, 2450000,
+  ],
+  lastYear: [
+    1600000, 1700000, 1850000, 1900000, 2000000, 1950000, 2050000, 2100000, 2150000, 2200000,
+    2250000, 2300000,
+  ],
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 };
 
+// Customer Feedback Data
+export const customerFeedbackData = {
+  nps: 72,
+  satisfaction: 4.6,
+  responses: 1247,
+  breakdown: [
+    { label: 'Promoters', value: 68, count: 848 },
+    { label: 'Passives', value: 22, count: 274 },
+    { label: 'Detractors', value: 10, count: 125 },
+  ],
+};
+
+// Lead Sources Data
 export const leadSoursesData = [
-  { value: 1048, name: 'Organic' },
-  { value: 735, name: 'Marketing' },
-  { value: 580, name: 'Social media' },
-  { value: 484, name: 'Blog posts' },
+  { name: 'Website', value: 35, count: 312, color: '#1976d2' },
+  { name: 'Referrals', value: 28, count: 250, color: '#2e7d32' },
+  { name: 'Social Media', value: 18, count: 161, color: '#d32f2f' },
+  { name: 'Email Marketing', value: 12, count: 107, color: '#ed6c02' },
+  { name: 'Events', value: 7, count: 62, color: '#9c27b0' },
 ];
 
+// Acquisition Cost Data
 export const acquisitionCostData = {
-  allotted: [350000, 280000, 370000, 320000, 400000, 250000, 300000],
-  used: [250000, 180000, 100000, 220000, 120000, 150000, 200000],
+  current: 1250,
+  previous: 1380,
+  trend: [
+    { month: 'Jan', cost: 1450 },
+    { month: 'Feb', cost: 1420 },
+    { month: 'Mar', cost: 1380 },
+    { month: 'Apr', cost: 1350 },
+    { month: 'May', cost: 1320 },
+    { month: 'Jun', cost: 1280 },
+    { month: 'Jul', cost: 1250 },
+  ],
 };
 
-export const saleFunnelData = {
-  awareness: 100,
-  research: 80,
-  intent: 65,
-  evaluation: 48,
-  negotiation: 37,
-  aquisition: 30,
+// Average Lifetime Value Data
+export const avgLifetimeValueData = {
+  current: 48500,
+  previous: 44200,
+  trend: [
+    { month: 'Jan', value: 42000 },
+    { month: 'Feb', value: 43200 },
+    { month: 'Mar', value: 44200 },
+    { month: 'Apr', value: 45100 },
+    { month: 'May', value: 46300 },
+    { month: 'Jun', value: 47400 },
+    { month: 'Jul', value: 48500 },
+  ],
 };
+
+// Active Users Data (Customer Engagement)
+export const activeUsersData = {
+  daily: 4567,
+  weekly: 12890,
+  monthly: 28450,
+  trend: [
+    { date: '2026-01-01', users: 3200 },
+    { date: '2026-01-08', users: 3450 },
+    { date: '2026-01-15', users: 3800 },
+    { date: '2026-01-22', users: 4100 },
+    { date: '2026-01-29', users: 4567 },
+  ],
+};
+
+// Sale Funnel Data
+export const saleFunnelData = [
+  { stage: 'Leads', value: 1200, color: '#1976d2' },
+  { stage: 'Qualified', value: 840, color: '#2e7d32' },
+  { stage: 'Proposal', value: 420, color: '#ed6c02' },
+  { stage: 'Negotiation', value: 210, color: '#9c27b0' },
+  { stage: 'Closed Won', value: 147, color: '#2e7d32' },
+];
 
 export const saleFunnelTableData = [
-  { stageIndicator: 'chBlue.100', stage: 'Awareness', lostLead: 32.2, thisMonth: 6.01 },
-  { stageIndicator: 'chBlue.200', stage: 'Research', lostLead: 30.1, thisMonth: 4.12 },
-  { stageIndicator: 'chBlue.300', stage: 'Intent', lostLead: 22.1, thisMonth: 3.91 },
-  { stageIndicator: 'chBlue.400', stage: 'Evaluation', lostLead: 15.6, thisMonth: 0.01 },
-  { stageIndicator: 'chBlue.500', stage: 'Negotiation', lostLead: 30.1, thisMonth: 4.12 },
-  { stageIndicator: 'chGreen.500', stage: 'Acquisition', lostLead: 30.1, thisMonth: 4.12 },
+  {
+    stage: 'Leads',
+    count: 1200,
+    value: 18000000,
+    conversionRate: 70.0,
+    avgDays: 0,
+  },
+  {
+    stage: 'Qualified',
+    count: 840,
+    value: 16800000,
+    conversionRate: 50.0,
+    avgDays: 7,
+  },
+  {
+    stage: 'Proposal',
+    count: 420,
+    value: 14700000,
+    conversionRate: 50.0,
+    avgDays: 14,
+  },
+  {
+    stage: 'Negotiation',
+    count: 210,
+    value: 12600000,
+    conversionRate: 70.0,
+    avgDays: 21,
+  },
+  {
+    stage: 'Closed Won',
+    count: 147,
+    value: 24500000,
+    conversionRate: 100,
+    avgDays: 28,
+  },
 ];
-
-export const customerFeedbackData = {
-  positive: [13000, 15000, 8000, 8000, 8000, 16500, 18000, 16500, 4000, 12000, 4000, 8000, 13000],
-  negative: [
-    -5000, -5000, -4000, -7000, -4500, -6500, -9500, -6500, -5000, -1500, -1500, -6000, -6200,
-  ],
-  '75thPercentile': [6000, 8000, 5000, 2000, 5000, 8000, 7000, 8000, -1500, 10000, 3000, 200, 7000],
-};
-
-export const avgLifetimeValueData = {
-  cac: [
-    2000, 2500, 2600, 2800, 3200, 3700, 4200, 4800, 4400, 5100, 5400, 5800, 6200, 7000, 6500, 6900,
-    6600, 7400, 7700, 7300, 7800, 7900, 7700, 8000, 7500, 8100, 8300, 8250, 8400, 7800,
-  ],
-  ltv: [
-    1000, 1100, 1300, 1500, 1700, 1800, 1900, 1700, 2000, 1900, 2100, 2000, 2300, 2200, 2400, 2000,
-    1950, 2050, 2200, 2300, 2100, 2150, 2000, 2200, 2600, 2350, 2300, 2600, 2550, 2350,
-  ],
-};
-
-export const activeUsersData = {
-  placeholder: [
-    1000, 3800, 5000, 5400, 4200, 1700, 1700, 2600, 3600, 4600, 4900, 6600, 3700, 3700, 4900,
-  ],
-  users: [3800, 5000, 5400, 6900, 5400, 4100, 2600, 3600, 4500, 4900, 7400, 7400, 6500, 4800, 6900],
-};

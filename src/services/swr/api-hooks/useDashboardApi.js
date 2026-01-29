@@ -1,192 +1,409 @@
-import useSWR from 'swr';
-import {
-  dashboardKPIs,
-  pipelineByStage,
-  opportunityTrend,
-  leadSourcePerformance,
-  recentActivities,
-  proposalStatusBreakdown,
-  topOpportunities,
-  conversionFunnel,
-  dashboardLeadMetrics,
-  dashboardTopAccounts,
-} from 'data/crm/dashboard-metrics';
+'use client';
 
-// Mock delay to simulate API call
-const mockDelay = () => new Promise((resolve) => setTimeout(resolve, 100));
+import createClient from 'lib/supabase/client';
+import useSWR from 'swr';
 
 /**
- * Fetch dashboard KPI metrics
- * @param {Object} dateRange - { start: Date, end: Date, preset: string }
+ * Fetch dashboard KPI metrics (last 30 days)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with KPI data
  */
-export const useDashboardKPIs = (dateRange) => {
-  return useSWR(dateRange ? ['dashboard/kpis', dateRange] : null, async () => {
-    // TODO: [SUPABASE] Replace with Supabase aggregate query:
-    // SELECT
-    //   SUM(value) as total_pipeline,
-    //   COUNT(*) FILTER (WHERE stage = 'Closed Won') * 100.0 / COUNT(*) as win_rate,
-    //   AVG(value) FILTER (WHERE stage = 'Closed Won') as avg_deal_size,
-    //   AVG(EXTRACT(EPOCH FROM (closed_date - created_date))/86400) as avg_sales_cycle,
-    //   COUNT(*) FILTER (WHERE status = 'active') as active_opportunities,
-    //   (SELECT COUNT(*) FROM proposals WHERE created_date >= $1) as proposals_sent,
-    //   COUNT(DISTINCT opportunity_id) * 100.0 / COUNT(DISTINCT lead_id) as lead_conversion
-    // FROM opportunities
-    // WHERE created_date >= $1 AND created_date <= $2
-    // GROUP BY tenant_id
-    // HAVING tenant_id = $3;
+export const useDashboardKPIs = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    await mockDelay();
-    return dashboardKPIs;
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch opportunities (last 30 days)
+    const { data: opportunities, error: oppsError } = await supabase
+      .from('opportunities')
+      .select('value, stage, created_at, close_date')
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (oppsError) throw new Error(oppsError.message);
+
+    // Fetch proposals count (last 30 days)
+    const { count: proposalsCount, error: proposalsError } = await supabase
+      .from('proposals')
+      .select('*', { count: 'exact', head: true })
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (proposalsError) throw new Error(proposalsError.message);
+
+    // Fetch leads for conversion rate
+    const { count: totalLeads, error: leadsError } = await supabase
+      .from('leads')
+      .select('*', { count: 'exact', head: true })
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (leadsError) throw new Error(leadsError.message);
+
+    // Calculate metrics client-side
+    const totalPipeline = opportunities.reduce((sum, opp) => sum + (opp.value || 0), 0);
+
+    const closedWon = opportunities.filter((opp) => opp.stage === 'Closed Won');
+    const winRate =
+      opportunities.length > 0 ? (closedWon.length / opportunities.length) * 100 : 0;
+
+    const avgDealSize =
+      closedWon.length > 0
+        ? closedWon.reduce((sum, opp) => sum + (opp.value || 0), 0) / closedWon.length
+        : 0;
+
+    // Calculate average sales cycle (days from created to closed)
+    const salesCycles = closedWon
+      .filter((opp) => opp.close_date && opp.created_at)
+      .map((opp) => {
+        const created = new Date(opp.created_at);
+        const closed = new Date(opp.close_date);
+        return (closed - created) / (1000 * 60 * 60 * 24); // Convert to days
+      });
+    const avgSalesCycle =
+      salesCycles.length > 0
+        ? salesCycles.reduce((sum, days) => sum + days, 0) / salesCycles.length
+        : 0;
+
+    const activeOpportunities = opportunities.filter(
+      (opp) => !['Closed Won', 'Closed Lost'].includes(opp.stage)
+    ).length;
+
+    const leadConversionRate = totalLeads > 0 ? (opportunities.length / totalLeads) * 100 : 0;
+
+    return {
+      total_pipeline: totalPipeline,
+      win_rate: winRate.toFixed(1),
+      avg_deal_size: avgDealSize.toFixed(0),
+      avg_sales_cycle: avgSalesCycle.toFixed(0),
+      active_opportunities: activeOpportunities,
+      proposals_sent: proposalsCount || 0,
+      lead_conversion_rate: leadConversionRate.toFixed(1),
+    };
+  };
+
+  return useSWR('dashboard/kpis', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000, // Refresh every minute
+    ...config,
   });
 };
 
 /**
- * Fetch pipeline breakdown by stage
- * @param {Object} dateRange - { start: Date, end: Date, preset: string }
+ * Fetch pipeline breakdown by stage (last 30 days)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with pipeline stage data
  */
-export const usePipelineBreakdown = (dateRange) => {
-  return useSWR(dateRange ? ['dashboard/pipeline', dateRange] : null, async () => {
-    // TODO: [SUPABASE] Replace with Supabase aggregate query:
-    // SELECT
-    //   stage,
-    //   SUM(value) as value,
-    //   COUNT(*) as count
-    // FROM opportunities
-    // WHERE status = 'active'
-    //   AND created_date >= $1
-    //   AND created_date <= $2
-    //   AND tenant_id = $3
-    // GROUP BY stage
-    // ORDER BY
-    //   CASE stage
-    //     WHEN 'Qualification' THEN 1
-    //     WHEN 'Needs Analysis' THEN 2
-    //     WHEN 'Proposal' THEN 3
-    //     WHEN 'Negotiation' THEN 4
-    //     WHEN 'Verbal Commit' THEN 5
-    //     WHEN 'Contracting' THEN 6
-    //     WHEN 'Closed Won' THEN 7
-    //   END;
+export const usePipelineBreakdown = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    await mockDelay();
-    return pipelineByStage;
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch active opportunities (last 30 days)
+    const { data, error } = await supabase
+      .from('opportunities')
+      .select('stage, value')
+      .is('deleted_at', null)
+      .not('stage', 'in', '("Closed Won","Closed Lost")')
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (error) throw new Error(error.message);
+
+    // Group by stage and aggregate
+    const stageBreakdown = data.reduce((acc, opp) => {
+      const stage = opp.stage;
+      if (!acc[stage]) {
+        acc[stage] = { stage, value: 0, count: 0 };
+      }
+      acc[stage].value += opp.value || 0;
+      acc[stage].count += 1;
+      return acc;
+    }, {});
+
+    // Convert to array and sort by predefined stage order
+    const stageOrder = {
+      Qualification: 1,
+      'Needs Analysis': 2,
+      Proposal: 3,
+      Negotiation: 4,
+      'Verbal Commit': 5,
+      Contracting: 6,
+    };
+
+    return Object.values(stageBreakdown).sort(
+      (a, b) => (stageOrder[a.stage] || 999) - (stageOrder[b.stage] || 999)
+    );
+  };
+
+  return useSWR('dashboard/pipeline', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
   });
 };
 
 /**
- * Fetch opportunity trend over time
- * @param {Object} dateRange - { start: Date, end: Date, preset: string }
+ * Fetch opportunity trend over time (last 30 days)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with time series data
  */
-export const useOpportunityTrend = (dateRange) => {
-  return useSWR(dateRange ? ['dashboard/opportunity-trend', dateRange] : null, async () => {
-    // TODO: [SUPABASE] Replace with Supabase time-series aggregate query:
-    // SELECT
-    //   DATE_TRUNC('day', created_date) as date,
-    //   COUNT(*) FILTER (WHERE event_type = 'created') as created,
-    //   COUNT(*) FILTER (WHERE event_type = 'won') as won,
-    //   COUNT(*) FILTER (WHERE event_type = 'lost') as lost,
-    //   SUM(value) as value
-    // FROM opportunity_events
-    // WHERE created_date >= $1
-    //   AND created_date <= $2
-    //   AND tenant_id = $3
-    // GROUP BY DATE_TRUNC('day', created_date)
-    // ORDER BY date ASC;
+export const useOpportunityTrend = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    await mockDelay();
-    return opportunityTrend;
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch all opportunities (last 30 days) with stage info
+    const { data, error } = await supabase
+      .from('opportunities')
+      .select('created_at, stage, value')
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString())
+      .order('created_at', { ascending: true });
+
+    if (error) throw new Error(error.message);
+
+    // Group by date and calculate daily metrics
+    const trendData = {};
+    data.forEach((opp) => {
+      const date = opp.created_at.split('T')[0]; // YYYY-MM-DD
+      if (!trendData[date]) {
+        trendData[date] = { date, created: 0, won: 0, lost: 0, value: 0 };
+      }
+      trendData[date].created += 1;
+      if (opp.stage === 'Closed Won') trendData[date].won += 1;
+      if (opp.stage === 'Closed Lost') trendData[date].lost += 1;
+      trendData[date].value += opp.value || 0;
+    });
+
+    return Object.values(trendData);
+  };
+
+  return useSWR('dashboard/opportunity-trend', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
   });
 };
 
 /**
- * Fetch lead source performance metrics
- * @param {Object} dateRange - { start: Date, end: Date, preset: string }
+ * Fetch lead source performance metrics (last 30 days)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with lead source data
  */
-export const useLeadSourcePerformance = (dateRange) => {
-  return useSWR(
-    dateRange ? ['dashboard/lead-source-performance', dateRange] : null,
-    async () => {
-      // TODO: [SUPABASE] Replace with Supabase aggregate query with JOIN:
-      // SELECT
-      //   l.source,
-      //   COUNT(DISTINCT l.id) as leads,
-      //   COUNT(DISTINCT o.id) as opportunities,
-      //   COUNT(DISTINCT o.id) FILTER (WHERE o.stage = 'Closed Won') as won,
-      //   SUM(o.value) FILTER (WHERE o.stage = 'Closed Won') as revenue,
-      //   COUNT(DISTINCT o.id) * 100.0 / COUNT(DISTINCT l.id) as conversion_rate,
-      //   AVG(o.value) FILTER (WHERE o.stage = 'Closed Won') as avg_deal_size
-      // FROM leads l
-      // LEFT JOIN opportunities o ON l.id = o.lead_id
-      // WHERE l.created_date >= $1
-      //   AND l.created_date <= $2
-      //   AND l.tenant_id = $3
-      // GROUP BY l.source
-      // ORDER BY revenue DESC;
+export const useLeadSourcePerformance = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-      await mockDelay();
-      return leadSourcePerformance;
-    },
-  );
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch leads (last 30 days)
+    const { data: leads, error: leadsError } = await supabase
+      .from('leads')
+      .select('id, source')
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (leadsError) throw new Error(leadsError.message);
+
+    // Fetch opportunities with lead_id
+    const { data: opportunities, error: oppsError } = await supabase
+      .from('opportunities')
+      .select('lead_id, stage, value')
+      .is('deleted_at', null)
+      .not('lead_id', 'is', null);
+
+    if (oppsError) throw new Error(oppsError.message);
+
+    // Build lead_id to source mapping
+    const leadSourceMap = {};
+    leads.forEach((lead) => {
+      leadSourceMap[lead.id] = lead.source || 'Unknown';
+    });
+
+    // Group by source and calculate metrics
+    const sourcePerformance = {};
+    leads.forEach((lead) => {
+      const source = lead.source || 'Unknown';
+      if (!sourcePerformance[source]) {
+        sourcePerformance[source] = {
+          source,
+          leads: 0,
+          opportunities: 0,
+          won: 0,
+          revenue: 0,
+        };
+      }
+      sourcePerformance[source].leads += 1;
+    });
+
+    // Add opportunity metrics
+    opportunities.forEach((opp) => {
+      const source = leadSourceMap[opp.lead_id] || 'Unknown';
+      if (sourcePerformance[source]) {
+        sourcePerformance[source].opportunities += 1;
+        if (opp.stage === 'Closed Won') {
+          sourcePerformance[source].won += 1;
+          sourcePerformance[source].revenue += opp.value || 0;
+        }
+      }
+    });
+
+    // Calculate conversion rate and avg deal size
+    const result = Object.values(sourcePerformance).map((source) => ({
+      ...source,
+      conversion_rate: source.leads > 0 ? (source.opportunities / source.leads) * 100 : 0,
+      avg_deal_size: source.won > 0 ? source.revenue / source.won : 0,
+    }));
+
+    // Sort by revenue descending
+    return result.sort((a, b) => b.revenue - a.revenue);
+  };
+
+  return useSWR('dashboard/lead-source-performance', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
+  });
 };
 
 /**
  * Fetch recent activity timeline
  * @param {number} limit - Number of activities to return (default: 10)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with recent activities
  */
-export const useRecentActivities = (limit = 10) => {
-  return useSWR(['dashboard/recent-activities', limit], async () => {
-    // TODO: [SUPABASE] Replace with Supabase query with RLS:
-    // SELECT
-    //   a.id,
-    //   a.type,
-    //   a.title,
-    //   a.value,
-    //   u.name as user,
-    //   a.created_at as timestamp
-    // FROM activities a
-    // JOIN users u ON a.user_id = u.id
-    // WHERE a.tenant_id = $1
-    // ORDER BY a.created_at DESC
-    // LIMIT $2;
-    // Note: RLS policy will automatically filter by tenant_id based on JWT
+export const useRecentActivities = (limit = 10, config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    await mockDelay();
-    return recentActivities.slice(0, limit);
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // NOTE: Activities table doesn't exist yet - return empty array placeholder
+    // Future implementation will query activities table with user joins
+    return [];
+  };
+
+  return useSWR(['dashboard/recent-activities', limit], fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
   });
 };
 
 /**
- * Fetch proposal status breakdown
- * @param {Object} dateRange - { start: Date, end: Date, preset: string }
+ * Fetch proposal status breakdown (last 30 days)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with proposal status data
  */
-export const useProposalStatusBreakdown = (dateRange) => {
-  return useSWR(dateRange ? ['dashboard/proposal-status', dateRange] : null, async () => {
-    // TODO: [SUPABASE] Replace with Supabase aggregate query:
-    // SELECT
-    //   status,
-    //   COUNT(*) as count,
-    //   SUM(value) as value
-    // FROM proposals
-    // WHERE created_date >= $1
-    //   AND created_date <= $2
-    //   AND tenant_id = $3
-    // GROUP BY status
-    // ORDER BY
-    //   CASE status
-    //     WHEN 'Draft' THEN 1
-    //     WHEN 'Sent' THEN 2
-    //     WHEN 'Accepted' THEN 3
-    //     WHEN 'Declined' THEN 4
-    //   END;
+export const useProposalStatusBreakdown = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    await mockDelay();
-    return proposalStatusBreakdown;
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch proposals (last 30 days)
+    const { data, error } = await supabase
+      .from('proposals')
+      .select('status, total_amount')
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (error) throw new Error(error.message);
+
+    // Group by status and aggregate
+    const statusBreakdown = data.reduce((acc, proposal) => {
+      const status = proposal.status;
+      if (!acc[status]) {
+        acc[status] = { status, count: 0, value: 0 };
+      }
+      acc[status].count += 1;
+      acc[status].value += proposal.total_amount || 0;
+      return acc;
+    }, {});
+
+    // Convert to array and sort by predefined status order
+    const statusOrder = { draft: 1, sent: 2, accepted: 3, rejected: 4, expired: 5 };
+
+    return Object.values(statusBreakdown).sort(
+      (a, b) => (statusOrder[a.status] || 999) - (statusOrder[b.status] || 999)
+    );
+  };
+
+  return useSWR('dashboard/proposal-status', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
   });
 };
 
@@ -194,112 +411,545 @@ export const useProposalStatusBreakdown = (dateRange) => {
  * Fetch top opportunities by value
  * @param {number} limit - Number of opportunities to return (default: 5)
  * @param {string} orderBy - Order field (default: 'value')
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with top opportunities
  */
-export const useTopOpportunities = (limit = 5, orderBy = 'value') => {
-  return useSWR(['dashboard/top-opportunities', limit, orderBy], async () => {
-    // TODO: [SUPABASE] Replace with Supabase query with JOIN:
-    // SELECT
-    //   o.id,
-    //   o.name,
-    //   a.name as account,
-    //   o.value,
-    //   o.stage,
-    //   o.probability,
-    //   o.expected_close_date,
-    //   u.name as owner,
-    //   MAX(act.created_at) as last_activity
-    // FROM opportunities o
-    // JOIN accounts a ON o.account_id = a.id
-    // JOIN users u ON o.owner_id = u.id
-    // LEFT JOIN activities act ON o.id = act.opportunity_id
-    // WHERE o.status = 'active'
-    //   AND o.tenant_id = $1
-    // GROUP BY o.id, a.name, u.name
-    // ORDER BY o.value DESC
-    // LIMIT $2;
-    // Note: orderBy parameter should be validated and used in ORDER BY clause
+export const useTopOpportunities = (limit = 5, orderBy = 'value', config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    await mockDelay();
-    return topOpportunities.slice(0, limit);
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Validate orderBy to prevent SQL injection
+    const validOrderFields = ['value', 'probability', 'expected_close_date'];
+    const safeOrderBy = validOrderFields.includes(orderBy) ? orderBy : 'value';
+
+    // Fetch top opportunities with account and owner joins
+    const { data, error } = await supabase
+      .from('opportunities')
+      .select(
+        `
+        id,
+        name,
+        value,
+        stage,
+        probability,
+        expected_close_date,
+        account:accounts(name),
+        owner:user_profiles(full_name)
+      `
+      )
+      .is('deleted_at', null)
+      .not('stage', 'in', '("Closed Won","Closed Lost")')
+      .order(safeOrderBy, { ascending: false })
+      .limit(limit);
+
+    if (error) throw new Error(error.message);
+
+    // Format response (flatten nested objects)
+    return data.map((opp) => ({
+      id: opp.id,
+      name: opp.name,
+      account: opp.account?.name || 'Unknown',
+      value: opp.value,
+      stage: opp.stage,
+      probability: opp.probability,
+      expected_close_date: opp.expected_close_date,
+      owner: opp.owner?.full_name || 'Unassigned',
+    }));
+  };
+
+  return useSWR(['dashboard/top-opportunities', limit, orderBy], fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
   });
 };
 
 /**
- * Fetch conversion funnel metrics
- * @param {Object} dateRange - { start: Date, end: Date, preset: string }
+ * Fetch conversion funnel metrics (last 30 days)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with funnel data
  */
-export const useConversionFunnel = (dateRange) => {
-  return useSWR(dateRange ? ['dashboard/conversion-funnel', dateRange] : null, async () => {
-    // TODO: [SUPABASE] Replace with Supabase CTE query for funnel analysis:
-    // WITH funnel_data AS (
-    //   SELECT
-    //     COUNT(DISTINCT l.id) as leads,
-    //     COUNT(DISTINCT l.id) FILTER (WHERE l.status = 'Qualified') as qualified_leads,
-    //     COUNT(DISTINCT o.id) as opportunities,
-    //     COUNT(DISTINCT p.id) as proposals,
-    //     COUNT(DISTINCT o.id) FILTER (WHERE o.stage = 'Closed Won') as won
-    //   FROM leads l
-    //   LEFT JOIN opportunities o ON l.id = o.lead_id
-    //   LEFT JOIN proposals p ON o.id = p.opportunity_id
-    //   WHERE l.created_date >= $1
-    //     AND l.created_date <= $2
-    //     AND l.tenant_id = $3
-    // )
-    // SELECT
-    //   'Leads' as stage, leads as count, 100.0 as percentage FROM funnel_data
-    // UNION ALL
-    // SELECT 'Qualified Leads', qualified_leads, (qualified_leads * 100.0 / leads) FROM funnel_data
-    // UNION ALL
-    // SELECT 'Opportunities', opportunities, (opportunities * 100.0 / leads) FROM funnel_data
-    // UNION ALL
-    // SELECT 'Proposals', proposals, (proposals * 100.0 / leads) FROM funnel_data
-    // UNION ALL
-    // SELECT 'Won', won, (won * 100.0 / leads) FROM funnel_data;
+export const useConversionFunnel = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    await mockDelay();
-    return conversionFunnel;
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch all leads (last 30 days)
+    const { data: leads, error: leadsError } = await supabase
+      .from('leads')
+      .select('id, status')
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (leadsError) throw new Error(leadsError.message);
+
+    // Fetch all opportunities with lead_id
+    const { data: opportunities, error: oppsError } = await supabase
+      .from('opportunities')
+      .select('id, lead_id, stage')
+      .is('deleted_at', null)
+      .not('lead_id', 'is', null);
+
+    if (oppsError) throw new Error(oppsError.message);
+
+    // Fetch all proposals with opportunity_id
+    const { data: proposals, error: proposalsError } = await supabase
+      .from('proposals')
+      .select('id, opportunity_id')
+      .is('deleted_at', null)
+      .not('opportunity_id', 'is', null);
+
+    if (proposalsError) throw new Error(proposalsError.message);
+
+    // Calculate funnel metrics
+    const totalLeads = leads.length;
+    const qualifiedLeads = leads.filter((l) =>
+      ['qualified', 'converted'].includes(l.status)
+    ).length;
+    const totalOpportunities = opportunities.length;
+    const totalProposals = proposals.length;
+    const won = opportunities.filter((o) => o.stage === 'Closed Won').length;
+
+    // Build funnel stages with percentages
+    return [
+      {
+        stage: 'Leads',
+        count: totalLeads,
+        percentage: 100.0,
+      },
+      {
+        stage: 'Qualified Leads',
+        count: qualifiedLeads,
+        percentage: totalLeads > 0 ? (qualifiedLeads / totalLeads) * 100 : 0,
+      },
+      {
+        stage: 'Opportunities',
+        count: totalOpportunities,
+        percentage: totalLeads > 0 ? (totalOpportunities / totalLeads) * 100 : 0,
+      },
+      {
+        stage: 'Proposals',
+        count: totalProposals,
+        percentage: totalLeads > 0 ? (totalProposals / totalLeads) * 100 : 0,
+      },
+      {
+        stage: 'Won',
+        count: won,
+        percentage: totalLeads > 0 ? (won / totalLeads) * 100 : 0,
+      },
+    ];
+  };
+
+  return useSWR('dashboard/conversion-funnel', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
   });
 };
 
 /**
- * Fetch lead analytics metrics (Phase 1.7.4)
- * @param {Object} dateRange - { start: Date, end: Date, preset: string }
+ * Fetch lead analytics metrics (last 30 days)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with lead metrics data
  */
-export const useLeadMetrics = (dateRange) => {
-  return useSWR(dateRange ? ['dashboard/lead-metrics', dateRange] : null, async () => {
-    // TODO: [SUPABASE] Replace with Supabase aggregate queries for lead analytics
-    await mockDelay();
-    return dashboardLeadMetrics;
+export const useLeadMetrics = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch all leads (last 30 days)
+    const { data, error } = await supabase
+      .from('leads')
+      .select('status')
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (error) throw new Error(error.message);
+
+    // Calculate metrics
+    const totalLeads = data.length;
+    const newLeads = data.filter((l) => l.status === 'new').length;
+    const contacted = data.filter((l) => l.status === 'contacted').length;
+    const qualified = data.filter((l) => l.status === 'qualified').length;
+    const converted = data.filter((l) => l.status === 'converted').length;
+    const unqualified = data.filter((l) => l.status === 'unqualified').length;
+
+    const conversionRate = totalLeads > 0 ? (converted / totalLeads) * 100 : 0;
+
+    return {
+      total_leads: totalLeads,
+      new: newLeads,
+      contacted,
+      qualified,
+      converted,
+      unqualified,
+      conversion_rate: conversionRate.toFixed(1),
+    };
+  };
+
+  return useSWR('dashboard/lead-metrics', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
   });
 };
 
 /**
- * Fetch top performing accounts by opportunity value (Phase 1.7.4)
+ * Fetch top performing accounts by opportunity value
  * @param {number} limit - Number of accounts to return (default: 5)
+ * @param {Object} config - SWR configuration options
  * @returns {Object} SWR response with top accounts data
  */
-export const useTopAccounts = (limit = 5) => {
-  return useSWR(['dashboard/top-accounts', limit], async () => {
-    // TODO: [SUPABASE] Replace with Supabase aggregate query:
-    // SELECT
-    //   a.id,
-    //   a.name,
-    //   COUNT(DISTINCT o.id) as opportunity_count,
-    //   SUM(o.value) as total_value,
-    //   MAX(act.created_at) as latest_activity
-    // FROM accounts a
-    // JOIN opportunities o ON a.id = o.account_id
-    // LEFT JOIN activities act ON a.id = act.account_id
-    // WHERE o.status = 'active'
-    //   AND a.tenant_id = $1
-    // GROUP BY a.id, a.name
-    // ORDER BY total_value DESC
-    // LIMIT $2;
+export const useTopAccounts = (limit = 5, config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    await mockDelay();
-    return dashboardTopAccounts.slice(0, limit);
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Fetch all accounts with active opportunities
+    const { data: accounts, error: accountsError } = await supabase
+      .from('accounts')
+      .select('id, name')
+      .is('deleted_at', null);
+
+    if (accountsError) throw new Error(accountsError.message);
+
+    // Fetch all opportunities
+    const { data: opportunities, error: oppsError } = await supabase
+      .from('opportunities')
+      .select('account_id, value')
+      .is('deleted_at', null)
+      .not('stage', 'in', '("Closed Won","Closed Lost")');
+
+    if (oppsError) throw new Error(oppsError.message);
+
+    // Group opportunities by account and calculate metrics
+    const accountMetrics = {};
+    opportunities.forEach((opp) => {
+      if (!accountMetrics[opp.account_id]) {
+        accountMetrics[opp.account_id] = {
+          opportunity_count: 0,
+          total_value: 0,
+        };
+      }
+      accountMetrics[opp.account_id].opportunity_count += 1;
+      accountMetrics[opp.account_id].total_value += opp.value || 0;
+    });
+
+    // Build result with account names
+    const result = accounts
+      .filter((account) => accountMetrics[account.id])
+      .map((account) => ({
+        id: account.id,
+        name: account.name,
+        opportunity_count: accountMetrics[account.id].opportunity_count,
+        total_value: accountMetrics[account.id].total_value,
+      }))
+      .sort((a, b) => b.total_value - a.total_value)
+      .slice(0, limit);
+
+    return result;
+  };
+
+  return useSWR(['dashboard/top-accounts', limit], fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
+  });
+};
+
+/**
+ * Fetch sales velocity metrics - average time in each stage (last 30 days)
+ * @param {Object} config - SWR configuration options
+ * @returns {Object} SWR response with stage velocity data
+ */
+export const useDashboardSalesVelocity = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch all opportunities (last 30 days) with stage timestamps
+    const { data, error } = await supabase
+      .from('opportunities')
+      .select('stage, created_at, updated_at, close_date')
+      .is('deleted_at', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (error) throw new Error(error.message);
+
+    // Group by stage and calculate average time
+    // Note: Without stage_changed_at timestamps, we estimate using created_at and updated_at
+    const stageMetrics = {};
+    data.forEach((opp) => {
+      const stage = opp.stage;
+      if (!stageMetrics[stage]) {
+        stageMetrics[stage] = { stage, total_days: 0, count: 0 };
+      }
+
+      // Estimate time in stage based on available timestamps
+      let daysInStage = 0;
+      if (opp.close_date) {
+        // Closed opportunity: use close_date as end time
+        const created = new Date(opp.created_at);
+        const closed = new Date(opp.close_date);
+        daysInStage = (closed - created) / (1000 * 60 * 60 * 24);
+      } else {
+        // Active opportunity: use updated_at as proxy for time in current stage
+        const created = new Date(opp.created_at);
+        const updated = new Date(opp.updated_at);
+        daysInStage = (updated - created) / (1000 * 60 * 60 * 24);
+      }
+
+      stageMetrics[stage].total_days += daysInStage;
+      stageMetrics[stage].count += 1;
+    });
+
+    // Calculate averages and format response
+    const result = Object.values(stageMetrics).map((metric) => ({
+      stage: metric.stage,
+      avg_days: metric.count > 0 ? (metric.total_days / metric.count).toFixed(1) : 0,
+      count: metric.count,
+    }));
+
+    // Sort by predefined stage order
+    const stageOrder = {
+      Qualification: 1,
+      'Needs Analysis': 2,
+      Proposal: 3,
+      Negotiation: 4,
+      'Verbal Commit': 5,
+      Contracting: 6,
+      'Closed Won': 7,
+      'Closed Lost': 8,
+    };
+
+    return result.sort((a, b) => (stageOrder[a.stage] || 999) - (stageOrder[b.stage] || 999));
+  };
+
+  return useSWR('dashboard/sales-velocity', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
+  });
+};
+
+/**
+ * Fetch win/loss analysis metrics (last 30 days)
+ * @param {Object} config - SWR configuration options
+ * @returns {Object} SWR response with win/loss data
+ */
+export const useDashboardWinLossAnalysis = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch closed opportunities (last 30 days)
+    const { data, error } = await supabase
+      .from('opportunities')
+      .select('stage, value, close_reason')
+      .is('deleted_at', null)
+      .in('stage', ['Closed Won', 'Closed Lost'])
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (error) throw new Error(error.message);
+
+    // Calculate win/loss metrics
+    const won = data.filter((opp) => opp.stage === 'Closed Won');
+    const lost = data.filter((opp) => opp.stage === 'Closed Lost');
+
+    const wonCount = won.length;
+    const lostCount = lost.length;
+    const totalClosed = wonCount + lostCount;
+
+    const wonValue = won.reduce((sum, opp) => sum + (opp.value || 0), 0);
+    const lostValue = lost.reduce((sum, opp) => sum + (opp.value || 0), 0);
+
+    const winRate = totalClosed > 0 ? (wonCount / totalClosed) * 100 : 0;
+
+    // Group lost opportunities by close_reason (if field exists)
+    const lostReasons = {};
+    lost.forEach((opp) => {
+      const reason = opp.close_reason || 'Not Specified';
+      if (!lostReasons[reason]) {
+        lostReasons[reason] = { reason, count: 0, value: 0 };
+      }
+      lostReasons[reason].count += 1;
+      lostReasons[reason].value += opp.value || 0;
+    });
+
+    return {
+      won_count: wonCount,
+      lost_count: lostCount,
+      win_rate: winRate.toFixed(1),
+      won_value: wonValue,
+      lost_value: lostValue,
+      total_closed: totalClosed,
+      lost_reasons: Object.values(lostReasons).sort((a, b) => b.count - a.count),
+    };
+  };
+
+  return useSWR('dashboard/win-loss-analysis', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
+  });
+};
+
+/**
+ * Fetch forecast accuracy metrics - compare forecasted vs actual close dates (last 30 days)
+ * @param {Object} config - SWR configuration options
+ * @returns {Object} SWR response with forecast accuracy data
+ */
+export const useDashboardForecastAccuracy = (config) => {
+  const fetcher = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error(authError?.message || 'Not authenticated');
+    }
+
+    // Calculate date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Fetch closed opportunities with expected and actual close dates
+    const { data, error } = await supabase
+      .from('opportunities')
+      .select('expected_close_date, close_date, value')
+      .is('deleted_at', null)
+      .eq('stage', 'Closed Won')
+      .not('expected_close_date', 'is', null)
+      .not('close_date', 'is', null)
+      .gte('created_at', thirtyDaysAgo.toISOString());
+
+    if (error) throw new Error(error.message);
+
+    // Calculate variance for each opportunity
+    const variances = data.map((opp) => {
+      const expected = new Date(opp.expected_close_date);
+      const actual = new Date(opp.close_date);
+      const variance = (actual - expected) / (1000 * 60 * 60 * 24); // Days difference
+      return {
+        variance,
+        value: opp.value || 0,
+        early: variance < 0,
+        on_time: Math.abs(variance) <= 7, // Within 1 week = on time
+      };
+    });
+
+    const totalOpportunities = variances.length;
+
+    if (totalOpportunities === 0) {
+      return {
+        total_opportunities: 0,
+        avg_variance_days: 0,
+        accuracy_percentage: 0,
+        early_count: 0,
+        late_count: 0,
+        on_time_count: 0,
+      };
+    }
+
+    // Calculate metrics
+    const avgVariance =
+      variances.reduce((sum, v) => sum + v.variance, 0) / totalOpportunities;
+
+    const earlyCount = variances.filter((v) => v.early).length;
+    const onTimeCount = variances.filter((v) => v.on_time).length;
+    const lateCount = variances.filter((v) => !v.early && !v.on_time).length;
+
+    // Accuracy = opportunities closed within 1 week of forecast
+    const accuracyPercentage = (onTimeCount / totalOpportunities) * 100;
+
+    return {
+      total_opportunities: totalOpportunities,
+      avg_variance_days: avgVariance.toFixed(1),
+      accuracy_percentage: accuracyPercentage.toFixed(1),
+      early_count: earlyCount,
+      late_count: lateCount,
+      on_time_count: onTimeCount,
+    };
+  };
+
+  return useSWR('dashboard/forecast-accuracy', fetcher, {
+    suspense: false,
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    refreshInterval: 60000,
+    ...config,
   });
 };
