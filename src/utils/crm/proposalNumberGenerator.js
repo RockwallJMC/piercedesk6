@@ -24,25 +24,25 @@ export async function generateProposalNumber() {
   const supabase = createClient();
   const currentYear = new Date().getFullYear();
 
-  // Get last proposal number for current year
-  const { data, error } = await supabase
-    .from('proposals')
-    .select('proposal_number')
-    .gte('created_at', `${currentYear}-01-01T00:00:00Z`)
-    .order('proposal_number', { ascending: false })
-    .limit(1);
+  // Get next sequence number for the current year atomically from the database
+  const { data, error } = await supabase.rpc('next_proposal_sequence', {
+    year: currentYear,
+  });
 
   if (error) {
     throw new Error('Failed to generate proposal number: ' + error.message);
   }
 
-  let sequence = 1;
-  if (data && data.length > 0) {
-    // Extract sequence from PROP-YYYY-NNNN format
-    const match = data[0].proposal_number.match(/PROP-\d{4}-(\d{4})/);
-    if (match) {
-      sequence = parseInt(match[1], 10) + 1;
-    }
+  // Depending on how the RPC is defined, `data` may be the number itself or an object.
+  const sequence =
+    typeof data === 'number'
+      ? data
+      : data && typeof data.sequence === 'number'
+      ? data.sequence
+      : null;
+
+  if (sequence == null || Number.isNaN(sequence)) {
+    throw new Error('Failed to generate proposal number: invalid sequence from database');
   }
 
   return `PROP-${currentYear}-${sequence.toString().padStart(4, '0')}`;
