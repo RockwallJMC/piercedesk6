@@ -45,14 +45,14 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = now();
 
 -- OPPORTUNITIES (Org 1)
-INSERT INTO opportunities (id, organization_id, account_id, primary_contact_id, name, description, value, currency, probability, stage, expected_close_date, owner_id, created_by, created_at, updated_at)
+INSERT INTO opportunities (id, organization_id, account_id, primary_contact_id, name, description, deal_value, currency, probability, stage, expected_close_date, owner_id, created_by, created_at, updated_at)
 VALUES
   ('33000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', '31000000-0000-0000-0000-000000000001', 'Global Bank HQ Security Upgrade', 'Complete security system overhaul for headquarters building', 250000.00, 'USD', 75, 'Proposal', '2026-03-15', 'a2222222-2222-2222-2222-222222222222', 'a2222222-2222-2222-2222-222222222222', now(), now()),
   ('33000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000002', '31000000-0000-0000-0000-000000000003', 'MegaRetail Store Expansion', 'Security systems for 5 new retail locations', 180000.00, 'USD', 60, 'Qualification', '2026-04-20', 'a2222222-2222-2222-2222-222222222222', 'a2222222-2222-2222-2222-222222222222', now(), now()),
   ('33000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000003', '31000000-0000-0000-0000-000000000004', 'TechVentures Data Center', 'Physical security for new data center facility', 320000.00, 'USD', 85, 'Negotiation', '2026-02-28', 'a3333333-3333-3333-3333-333333333333', 'a3333333-3333-3333-3333-333333333333', now(), now())
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
-  value = EXCLUDED.value,
+  deal_value = EXCLUDED.deal_value,
   probability = EXCLUDED.probability,
   stage = EXCLUDED.stage,
   updated_at = now();
