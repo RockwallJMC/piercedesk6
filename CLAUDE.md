@@ -483,6 +483,71 @@ Before merging ANY feature:
 - [ ] User-facing docs updated
 - [ ] All YAML frontmatter valid
 
+#### Plan Documents (MANDATORY)
+
+**All implementation work MUST have a plan document:**
+
+```bash
+# Create plan before starting any phase implementation
+cp .claude/templates/INDEX-template.md \
+   docs/plans/YYYY-MM-DD-phase-X.Y-topic.md
+```
+
+**Plan Requirements:**
+- Bite-sized tasks (2-5 minutes each)
+- Exact file paths for all changes
+- Verification commands
+- Test-first approach (TDD)
+- Commit strategy
+
+**Location**: `docs/plans/YYYY-MM-DD-description.md`
+
+**When to Use Abbreviated Workflow:**
+- Single file or ≤ 3 files modified
+- < 50 lines of code total
+- No architectural decisions
+- No database schema changes
+- No API contract changes
+
+**If abbreviated**: Document decision in INDEX with rationale.
+
+#### As-Built Documents (MANDATORY AFTER MERGE)
+
+**After merging ANY feature, create as-built documentation:**
+
+```bash
+cp .claude/templates/as-built-template.md \
+   _sys_documents/as-builts/feature-name-as-built.md
+```
+
+**As-Built Purpose:**
+- Single source of truth for deployed state
+- Living document (updated with changes)
+- Includes verification commands
+- Version incremented on updates
+
+**Required As-Builts:**
+- Feature-level (e.g., `crm-desk-mvp-as-built.md`)
+- Component-level (e.g., `authentication-as-built.md`)
+- Database schema (`database-schema-as-built.md`)
+
+**Update Frequency**: With every significant change or quarterly verification.
+
+#### User-Facing Documentation Checklist
+
+**Before marking feature complete:**
+
+- [ ] Feature guide created in `docs/features/`
+- [ ] API endpoints documented in `docs/api/`
+- [ ] Architecture docs updated if needed
+- [ ] User journey documents updated
+- [ ] Screenshots captured and embedded
+- [ ] Getting started guide written
+
+**Documentation Compliance:**
+
+See [Documentation Compliance Audit Template](docs/plans/2026-01-29-documentation-compliance-remediation.md) for assessment process.
+
 **For detailed workflow**, see [Documentation Guide](docs/guides/DOCUMENTATION-GUIDE.md)
 
 ---
