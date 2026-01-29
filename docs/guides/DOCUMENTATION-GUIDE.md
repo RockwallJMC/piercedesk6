@@ -370,8 +370,10 @@ Step-by-step screenshot upload process:
 
 2. **Get GitHub raw URLs** for each screenshot:
    ```
-   https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{filename}.png?raw=true
+   https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{filename}.png
    ```
+
+   **Note:** Use `raw.githubusercontent.com` (not `github.com/blob`) for direct image access without GitHub's HTML wrapper. This is the standard format for embedding repository images.
 
 3. **Post update with embedded images**:
    ```bash
@@ -391,10 +393,10 @@ Step-by-step screenshot upload process:
    ## Screenshots
 
    ### {Scenario 1}
-   ![{description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot1}.png?raw=true)
+   ![{description}](https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{screenshot1}.png)
 
    ### {Scenario 2}
-   ![{description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot2}.png?raw=true)
+   ![{description}](https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{screenshot2}.png)
 
    ## Verification Evidence
    - Build: exit 0 ✅
@@ -403,7 +405,11 @@ Step-by-step screenshot upload process:
    See full test report: _sys_documents/execution/phase{X.Y}-{topic}.md"
    ```
 
-**Why GitHub URLs?** External collaborators viewing GitHub issues CANNOT see local file paths. Always use full GitHub URLs with `?raw=true` suffix for proper image rendering.
+**Why GitHub raw URLs?**
+- External collaborators viewing GitHub issues CANNOT see local file paths
+- GitHub CLI and REST API do NOT support direct image uploads (as of 2026)
+- Repository-based approach with raw URLs is the ONLY way to automate screenshot posting via CLI
+- Use `raw.githubusercontent.com` format for direct image access
 
 **Phase Completion**:
 ```bash
