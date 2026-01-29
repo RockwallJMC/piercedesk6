@@ -39,7 +39,14 @@ const opportunitiesFetcher = async (filters = null) => {
   }
 
   if (filters?.search) {
-    query = query.or(`name.ilike.%${filters.search}%,account.name.ilike.%${filters.search}%`);
+    const escapedSearch = filters.search.replace(/[(),]/g, (char) => {
+      if (char === ',') return '%2C';
+      if (char === '(') return '%28';
+      if (char === ')') return '%29';
+      return char;
+    });
+
+    query = query.or(`name.ilike.%${escapedSearch}%,accounts.name.ilike.%${escapedSearch}%`);
   }
 
   if (filters?.assigned_to) {
