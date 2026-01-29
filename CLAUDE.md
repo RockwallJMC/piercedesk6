@@ -77,7 +77,7 @@ Follow the documentation framework end-to-end. This is the minimal required flow
 **Critical Change:** PRs are now created **after EVERY task completion**, not just phase completion. This enables continuous integration and smaller, focused code reviews.
 
 For full details, see [docs/guides/DOCUMENTATION-GUIDE.md](docs/guides/DOCUMENTATION-GUIDE.md).
-
+### Execution Strategy (TL;DR)
 ### Mandatory Execution Framework (ALWAYS REQUIRED)
 
 **This is the foundation of ALL work in this repository. No exceptions.**
@@ -91,7 +91,7 @@ If there is even a 1% chance a skill applies, you MUST invoke it. This is non-ne
 </EXTREMELY_IMPORTANT>
 
 **When to invoke skills:**
-
+### Mandatory Execution Framework (ALWAYS REQUIRED)
 - Starting ANY conversation → `/using-superpowers` skill
 - Before ANY implementation → `/TDD` skill
 - Before ANY architectural decision → `/software-architecture` skill
@@ -113,6 +113,7 @@ Skill tool with skill: "software-architecture"
 **Red flags that mean you're rationalizing (STOP):**
 
 - "This is just a simple task" → Check for skills anyway
+
 - "I need context first" → Skills tell you HOW to gather context
 - "Let me explore first" → Skills tell you HOW to explore
 - "I remember this skill" → Skills evolve, invoke current version
@@ -127,6 +128,8 @@ TodoWrite is for TRACKING tasks, but Task tool is for EXECUTING them.
 </EXTREMELY_IMPORTANT>
 
 **Use Task tool for ALL:**
+
+**No claims without fresh command output** - see complete verification patterns below.
 
 - Feature implementation → `react-mui-frontend-engineer`, `wiring-agent`, `supabase-database-architect`
 - Test creation → `playwright-tester`
@@ -463,7 +466,6 @@ updated: "YYYY-MM-DD"
 3. Document investigation, root cause, fix
 4. Update INDEX with blocker if needed
 
-**When plans change:**
 
 1. Create realignment document: `_sys_documents/execution/realign-YYYY-MM-DD-topic.md`
 2. Document original vs. new approach, rationale
@@ -740,7 +742,7 @@ Task(playwright - tester, 'Create dashboard tests');
 // INCORRECT - Sequential when could be parallel
 // Task... wait for result... Task... wait for result...
 ```
-
+1. Invoke `Skill("using-superpowers")` FIRST
 ### Common Pitfalls
 
 1. **Skipping TDD** - "I'll write tests after" → Tests written after prove nothing
@@ -752,7 +754,7 @@ Task(playwright - tester, 'Create dashboard tests');
 7. **Generic naming** - Avoid `utils.js` with 50 functions → Use domain-specific names
 8. **Sequential execution of independent tasks** - Use parallel Task calls in single message
 
-**See Also:**
+5. Invoke `Skill("VERIFY-BEFORE-COMPLETE")` before any completion claim
 
 - `.claude/skills/TDD/testing-anti-patterns.md` - Testing antipatterns to avoid
 - `.claude/agents/` - Agent definitions that should invoke these skills
@@ -890,7 +892,7 @@ import { rootPaths } from '@pierce/routes';
 ```javascript
 import paths, { rootPaths } from '@pierce/routes';
 import sitemap from '@pierce/routes/sitemap';
-```
+4. **Claiming completion without verification** - Always invoke VERIFY-BEFORE-COMPLETE and show command output
 
 **Services (API calls, SWR):**
 
@@ -910,7 +912,6 @@ import { passwordStrength } from '@pierce/utils';
 
 ```javascript
 import { calendarData } from '@pierce/data';
-import { countries } from '@pierce/data';
 ```
 
 **Locales:**
