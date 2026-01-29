@@ -12,7 +12,7 @@ User-facing documentation for PierceDesk features.
 - [Proposals](PROPOSALS.md) - Proposal generation and PDF export *(Coming Soon)*
 
 ### Authentication
-- [Authentication](../authentication/) - User authentication and organization setup
+- [Authentication](../authentication/README.md) - User authentication and organization setup
 
 ## Service Desk (Phase 2)
 
