@@ -27,7 +27,15 @@ export const exportToPDF = async (elementId, filename = 'CRM-Dashboard.pdf') => 
     pdf.save(filename);
   } catch (error) {
     console.error('PDF export failed:', error);
-    throw error;
+
+    let userMessage = 'Export failed. Please try again.';
+    if (error.message?.includes('not found')) {
+      userMessage = 'Dashboard content not found. Please refresh the page and try again.';
+    } else if (error.message?.includes('canvas')) {
+      userMessage = 'Chart rendering failed. Please try a different browser or disable browser extensions.';
+    }
+
+    throw new Error(userMessage);
   }
 };
 
@@ -56,7 +64,13 @@ export const exportToCSV = (data, filename = 'dashboard-data.csv') => {
     URL.revokeObjectURL(link.href);
   } catch (error) {
     console.error('CSV export failed:', error);
-    throw error;
+
+    let userMessage = 'CSV export failed. Please try again.';
+    if (error.message?.includes('No data')) {
+      userMessage = 'No data available to export. Please ensure the dashboard has loaded completely.';
+    }
+
+    throw new Error(userMessage);
   }
 };
 
@@ -79,6 +93,12 @@ export const exportToExcel = (sheets, filename = 'dashboard-data.xlsx') => {
     XLSX.writeFile(workbook, filename);
   } catch (error) {
     console.error('Excel export failed:', error);
-    throw error;
+
+    let userMessage = 'Excel export failed. Please try again.';
+    if (error.message?.includes('sheet')) {
+      userMessage = 'Invalid data format for Excel export. Please contact support if this persists.';
+    }
+
+    throw new Error(userMessage);
   }
 };
