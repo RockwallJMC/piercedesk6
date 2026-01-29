@@ -125,6 +125,12 @@ export async function cleanupTestData(table, filters) {
  * @returns {Promise<Array>} Inserted records
  */
 export async function createTestData(table, data) {
+  // Validate table name to prevent SQL injection
+  const allowedTables = ['leads', 'opportunities', 'proposals', 'organizations', 'organization_members', 'users'];
+  if (!allowedTables.includes(table)) {
+    throw new Error(`Invalid table name: ${table}. Allowed tables: ${allowedTables.join(', ')}`);
+  }
+
   const { supabase } = await getAuthenticatedSupabaseClient('singleOrg');
 
   const { data: inserted, error } = await supabase
