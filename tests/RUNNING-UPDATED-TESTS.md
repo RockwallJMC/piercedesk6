@@ -84,12 +84,12 @@ Tests use real Supabase data created in Task 1:
 - TechStart Industries (ID: 00000000-0000-0000-0000-000000000002)
 
 **Test Users:**
-- admin@acme-corp.com / TestPass123!
-- ceo@techstart.com / TestPass123!
+- admin@acme-corp.com / TestPassword123!
+- ceo@techstart.com / TestPassword123!
 
 **Test Data IDs:**
-- Acme Lead: l1000000-0000-0000-0000-000000000001 (Michael Johnson)
-- TechStart Lead: l2000000-0000-0000-0000-000000000001 (Emily Davis)
+- Acme Lead: 00000000-0000-0000-0000-000000000003 (Michael Johnson)
+- TechStart Lead: 00000000-0000-0000-0000-000000000004 (Emily Davis)
 
 See `tests/helpers/multi-tenant-setup.js` for complete test data reference.
 
