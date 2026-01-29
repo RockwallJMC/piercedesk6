@@ -325,6 +325,22 @@ Next Phase: Phase 1.2 - Authentication & Multi-Tenancy (Required to enable 23 te
 - **Rationale**: Declarative React syntax, good documentation, active maintenance
 - **Impact**: Phase 1.6 adds React-PDF dependency
 
+### Decision 4: Abbreviated Documentation Workflow for Phases 1.3-1.5
+
+- **Date**: 2026-01-29
+- **Context**: Phases 1.3-1.5 completed without implementation plans in `docs/plans/`
+- **Decision**: Accept abbreviated workflow for these phases; no retrospective plans
+- **Rationale**:
+  - Phases implemented with mock data (shallow impact at time of execution)
+  - Comprehensive execution documents exist with implementation logs
+  - Design documents exist for Phases 1.4 and 1.5
+  - Creating retrospective plans offers minimal value vs. cost
+  - Phases 1.6+ will follow full workflow (plan → design → execution → as-built)
+- **Impact**:
+  - Documentation framework remains valid going forward
+  - Past work documented in execution docs and git history
+  - Compliance audit documents rationale (see DOCUMENTATION-COMPLIANCE-AUDIT-2026-01-29.md)
+
 ## Risk Register
 
 | Risk                                  | Impact   | Probability | Phase   | Mitigation                                   | Owner          |
@@ -453,6 +469,27 @@ To be captured in Phase 1.8
 
 - Database Schema As-Built ✅ (will be updated after Phase 1.1)
 - CRM Desk As-Built (to be created after merge)
+
+## Documentation Compliance
+
+### Framework Adherence
+
+This feature follows the [Documentation Guide](../../docs/guides/DOCUMENTATION-GUIDE.md) framework with the following documented deviations:
+
+**Phases 1.1-1.2**: ✅ Full workflow (plan, design, execution, as-built)
+**Phases 1.3-1.5**: ⚠️ Abbreviated workflow (design + execution only, see Decision 4)
+**Phases 1.6-1.8**: ✅ Full workflow
+
+### Compliance Status
+
+See [Documentation Compliance Audit](DOCUMENTATION-COMPLIANCE-AUDIT-2026-01-29.md) for complete assessment.
+
+**Action Items**:
+- [ ] Create CRM Desk MVP as-built after Phase 1.2 merge
+- [ ] Create Auth & Multi-Tenancy as-built after Phase 1.2 merge
+- [ ] Create user-facing CRM Desk guide (`docs/features/CRM-DESK.md`)
+- [ ] Create REST API reference (`docs/api/REST-API.md`)
+- [ ] Create component as-builts (accounts, leads, opportunities, testing)
 
 ## Change Log
 
