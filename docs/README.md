@@ -31,6 +31,13 @@ Feature documentation for each operational desk:
 - **BUSINESS-DESK.md** - Invoicing, P&L, QuickBooks integration
 
 ### 📚 [Guides](guides/)
+
+### 🔍 [Quality Assurance](quality/)
+
+Quality assurance documentation:
+
+- [Quality Documentation](quality/) - Security, performance, and QA
+
 ### 👥 [User Journeys](user-journeys/)
 
 User journey documentation for key roles and workflows:
