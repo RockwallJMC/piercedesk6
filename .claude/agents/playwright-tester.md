@@ -236,47 +236,161 @@ test.describe('Feature Name', () => {
 });
 ```
 
-## Screenshot Management for GitHub Issues
+## GitHub Issue Updates (MANDATORY)
 
-After test execution, you MUST post screenshots to the GitHub issue for external coordination:
+After EVERY test execution milestone, you MUST post comprehensive updates to the GitHub issue. This is NOT optional.
 
-### Workflow
+### Critical Requirements
 
-1. **During test execution**: Capture screenshots using Playwright's screenshot API:
-   ```typescript
-   await page.screenshot({ path: `./test-results/screenshots/${feature}-${timestamp}.png` });
-   ```
+**ALWAYS UPLOAD ACTUAL SCREENSHOTS TO GITHUB, NOT JUST FILENAMES**
 
-2. **After tests pass**: Upload screenshots to repository:
-   ```bash
-   # Copy screenshots to project screenshots directory
-   mkdir -p screenshots/phase{X.Y}
-   cp ./test-results/screenshots/*.png screenshots/phase{X.Y}/
+- Use GitHub's image upload in comments
+- Upload images directly to the issue comment
+- Do NOT just reference local file paths
+- Users on GitHub CANNOT see local file paths
 
-   # Commit screenshots
-   git add screenshots/phase{X.Y}/
-   git commit -m "Add E2E test screenshots for phase {X.Y}
+### Workflow - Step by Step
 
-   Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
-   git push
-   ```
+#### Step 1: Capture Screenshots During Tests
 
-3. **Post to GitHub issue** with image links:
-   ```bash
-   gh issue comment {issue-number} --body "✅ **E2E Tests Passed - Phase {X.Y}**
+```typescript
+// In your test file
+await page.screenshot({
+  path: `./test-results/screenshots/${feature}-${scenario}.png`,
+  fullPage: true
+});
+```
 
-   Test Results:
-   - All {N} tests passing
-   - Test file: tests/{test-file}.spec.js
-   - Duration: {duration}
+#### Step 2: Upload Screenshots to Repository
 
-   Screenshots:
-   ![{Feature 1}](./screenshots/phase{X.Y}/{screenshot1}.png)
-   ![{Feature 2}](./screenshots/phase{X.Y}/{screenshot2}.png)
-   ![{Feature 3}](./screenshots/phase{X.Y}/{screenshot3}.png)
+```bash
+# Create phase-specific screenshot directory
+mkdir -p screenshots/phase-{X.Y}
 
-   See full test report: _sys_documents/execution/phase{X.Y}-{topic}.md"
-   ```
+# Copy all test screenshots
+cp ./test-results/screenshots/*.png screenshots/phase-{X.Y}/
+
+# Commit and push screenshots FIRST (so GitHub URLs are available)
+git add screenshots/phase-{X.Y}/
+git commit -m "test: add E2E screenshots for Phase {X.Y}
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+git push
+```
+
+#### Step 3: Get GitHub URLs for Screenshots
+
+After pushing, get the GitHub raw URLs:
+```bash
+# Format: https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{filename}.png
+# Example: https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/lead-creation-success.png
+```
+
+#### Step 4: Post Progress Update with Embedded Screenshots
+
+```bash
+gh issue comment {issue-number} --body "✅ **Task {N} Complete - {Task Name}**
+
+## Test Results
+- ✅ All {N} tests passing
+- Test file: \`tests/{test-file}.spec.js\`
+- Duration: {MM}s
+- Coverage: {list scenarios}
+
+## Test Execution Output
+\`\`\`
+{paste actual test output showing pass counts}
+\`\`\`
+
+## Screenshots
+
+### {Scenario 1 Name}
+![{scenario-1-description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot1}.png?raw=true)
+
+### {Scenario 2 Name}
+![{scenario-2-description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot2}.png?raw=true)
+
+### {Scenario 3 Name}
+![{scenario-3-description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot3}.png?raw=true)
+
+## Verification Evidence
+- Build: \`npm run build\` - exit 0 ✅
+- Lint: \`npm run lint\` - 0 errors ✅
+- Tests: \`npx playwright test\` - {N}/{N} passed ✅
+
+## Documentation
+- Test code: [tests/{test-file}.spec.js](link)
+- Execution log: [_sys_documents/execution/phase{X.Y}-{topic}.md](link)
+
+---
+🤖 Posted by playwright-tester agent"
+```
+
+#### Step 5: Update Phase Progress Regularly
+
+Post updates at these checkpoints:
+- **Task start**: Announce beginning of task
+- **After TDD RED**: Show failing test output
+- **After TDD GREEN**: Show passing test output + screenshot
+- **Task complete**: Full results with all screenshots
+- **Phase milestone**: Every 30-40% progress
+
+### Example: Complete Update Flow
+
+```bash
+# 1. Commit and push screenshots
+git add screenshots/phase-1.8/ && \
+git commit -m "test: add lead-to-proposal flow screenshots" && \
+git push
+
+# 2. Post comprehensive update with GitHub URLs
+gh issue comment 28 --body "✅ **Task 1 Complete - Lead-to-Proposal E2E Flow**
+
+## Test Results
+- ✅ 1 comprehensive flow test passing
+- Test file: \`tests/crm-lead-to-proposal-flow.spec.js\`
+- Duration: 45s
+- Coverage: Lead creation, qualification, opportunity conversion, proposal creation, proposal acceptance
+
+## Test Execution Output
+\`\`\`
+Running 1 test using 1 worker
+
+  ✓  [chromium] › crm-lead-to-proposal-flow.spec.js:5:3 › Lead-to-Proposal Complete Flow › should complete full journey from lead to accepted proposal (45s)
+
+  1 passed (45s)
+\`\`\`
+
+## Screenshots
+
+### Lead Created Successfully
+![Lead creation with contact details](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/01-lead-created.png?raw=true)
+
+### Lead Qualified to Opportunity
+![Lead status changed to qualified](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/02-lead-qualified.png?raw=true)
+
+### Opportunity Created
+![Opportunity created from qualified lead](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/03-opportunity-created.png?raw=true)
+
+### Proposal Generated
+![Proposal created with line items](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/04-proposal-created.png?raw=true)
+
+### Proposal Accepted - Flow Complete
+![Final state - proposal accepted](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/05-proposal-accepted.png?raw=true)
+
+## Verification Evidence
+- Build: \`npm run build\` - exit 0 ✅
+- Tests: \`npx playwright test tests/crm-lead-to-proposal-flow.spec.js\` - 1/1 passed ✅
+
+## Documentation
+- Test code: [tests/crm-lead-to-proposal-flow.spec.js](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/tests/crm-lead-to-proposal-flow.spec.js)
+- Implementation plan: [docs/plans/2026-01-29-phase1.8-testing-polish.md](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/docs/plans/2026-01-29-phase1.8-testing-polish.md)
+
+Progress: Task 1 of 7 complete (14%)
+
+---
+🤖 Posted by playwright-tester agent"
+```
 
 ### Screenshot Naming Convention
 

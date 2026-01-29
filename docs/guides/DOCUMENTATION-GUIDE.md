@@ -310,13 +310,40 @@ Assigned to: {agent-name}
 Progress: 0%"
 ```
 
-**Progress Milestones** (every 30-40%):
+**Progress Milestones** (every 30-40% OR after completing each major task):
 ```bash
-gh issue comment {issue-number} --body "📊 **Phase {X.Y} Update**:
-- ✅ {Completed task}
-- 🚧 {In-progress task}
+gh issue comment {issue-number} --body "📊 **Phase {X.Y} Progress Update**
 
-Progress: {percentage}%"
+## Completed Tasks
+- ✅ Task {N}: {Task name}
+  - Implementation: {brief description}
+  - Tests: {N} tests created/passing
+  - Files: {list key files created/modified}
+  - Verification: Build ✅, Tests ✅
+
+## In Progress
+- 🚧 Task {N+1}: {Task name}
+  - Status: {specific status}
+  - Blockers: {none or list}
+
+## Next Steps
+- ⏭️ Task {N+2}: {Task name}
+
+## Test Summary
+- Total tests: {N} ({X} active, {Y} pending Phase 1.2)
+- All passing: ✅ {N}/{N}
+- Coverage: {key scenarios}
+
+## Verification Evidence
+\`\`\`bash
+# Most recent test run
+$ npx playwright test
+{paste actual output}
+\`\`\`
+
+Progress: {percentage}% ({N} of {M} tasks complete)
+
+See detailed log: _sys_documents/execution/phase{X.Y}-{topic}.md"
 ```
 
 **After TDD Skill Invocation**:
@@ -327,21 +354,56 @@ gh issue comment {issue-number} --body "🧪 **TDD Phase {X.Y}**:
 ```
 
 **After Playwright Tests** (MUST include screenshots):
-```bash
-gh issue comment {issue-number} --body "✅ **E2E Tests Passed - Phase {X.Y}**
 
-Test Results:
-- All {N} tests passing
-- Coverage: {scenarios}
+**CRITICAL: UPLOAD ACTUAL IMAGES TO GITHUB, NOT JUST FILENAMES**
 
-Screenshots attached:
-![{Feature 1}](./screenshots/{feature1}.png)
-![{Feature 2}](./screenshots/{feature2}.png)
+Step-by-step screenshot upload process:
 
-See full test report in phase execution doc."
-```
+1. **Commit screenshots to repository**:
+   ```bash
+   mkdir -p screenshots/phase-{X.Y}
+   cp ./test-results/screenshots/*.png screenshots/phase-{X.Y}/
+   git add screenshots/phase-{X.Y}/
+   git commit -m "test: add E2E screenshots for Phase {X.Y}"
+   git push
+   ```
 
-Note: Upload screenshots to repository first, then reference in comment.
+2. **Get GitHub raw URLs** for each screenshot:
+   ```
+   https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{filename}.png?raw=true
+   ```
+
+3. **Post update with embedded images**:
+   ```bash
+   gh issue comment {issue-number} --body "✅ **E2E Tests Passed - Phase {X.Y}**
+
+   ## Test Results
+   - ✅ All {N} tests passing
+   - Test file: \`tests/{test-file}.spec.js\`
+   - Duration: {duration}
+   - Coverage: {scenarios}
+
+   ## Test Execution Output
+   \`\`\`
+   {paste actual npx playwright test output}
+   \`\`\`
+
+   ## Screenshots
+
+   ### {Scenario 1}
+   ![{description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot1}.png?raw=true)
+
+   ### {Scenario 2}
+   ![{description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot2}.png?raw=true)
+
+   ## Verification Evidence
+   - Build: exit 0 ✅
+   - Tests: {N}/{N} passed ✅
+
+   See full test report: _sys_documents/execution/phase{X.Y}-{topic}.md"
+   ```
+
+**Why GitHub URLs?** External collaborators viewing GitHub issues CANNOT see local file paths. Always use full GitHub URLs with `?raw=true` suffix for proper image rendering.
 
 **Phase Completion**:
 ```bash
