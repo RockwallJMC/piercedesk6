@@ -252,6 +252,144 @@ export const useCreateProposal = () => {
 };
 
 /**
+ * Mutation function to create a new proposal with line items atomically
+ *
+ * @param {string} url - Mutation key (unused in implementation)
+ * @param {Object} options - Mutation options
+ * @param {Object} options.arg.proposalData - Proposal data to create
+ * @param {Array} options.arg.lineItems - Line items to create with the proposal
+ * @returns {Promise<Object>} Created proposal object with line items
+ */
+const createProposalWithLineItemsMutation = async (url, { arg }) => {
+  const { proposalData, lineItems } = arg;
+  const supabase = createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error(authError?.message || 'Not authenticated');
+  }
+
+  // Validate required fields
+  if (!proposalData.opportunity_id) {
+    throw new Error('opportunity_id is required');
+  }
+
+  if (!proposalData.title) {
+    throw new Error('title is required');
+  }
+
+  // Generate proposal number
+  const proposalNumber = await generateProposalNumber();
+
+  // Create proposal
+  const { data: newProposal, error: proposalError } = await supabase
+    .from('proposals')
+    .insert([
+      {
+        ...proposalData,
+        proposal_number: proposalNumber,
+        status: 'draft',
+      },
+    ])
+    .select(
+      `
+      *,
+      opportunity:opportunities(
+        *,
+        account:accounts(*)
+      )
+    `
+    )
+    .single();
+
+  if (proposalError) {
+    throw new Error(`Failed to create proposal: ${proposalError.message}`);
+  }
+
+  // Create line items if provided
+  if (lineItems?.length > 0) {
+    const { error: lineItemsError } = await supabase
+      .from('proposal_line_items')
+      .insert(lineItems.map((item) => ({ ...item, proposal_id: newProposal.id })));
+
+    if (lineItemsError) {
+      throw new Error(`Failed to create line items for proposal ${newProposal.id}: ${lineItemsError.message}`);
+    }
+
+    // Recalculate totals
+    const totals = recalculateProposalTotals(lineItems, proposalData.tax_rate || 0);
+
+    // Update proposal with calculated totals
+    const { error: updateError } = await supabase
+      .from('proposals')
+      .update({
+        subtotal: totals.subtotal,
+        tax_amount: totals.taxAmount,
+        total_amount: totals.total,
+      })
+      .eq('id', newProposal.id);
+
+    if (updateError) {
+      throw new Error(`Failed to update proposal totals: ${updateError.message}`);
+    }
+  }
+
+  return newProposal;
+};
+
+/**
+ * Hook to create a new proposal with line items atomically
+ * Automatically generates proposal number, creates line items, and calculates totals
+ *
+ * @returns {Object} SWR mutation response
+ *
+ * @example
+ * const { trigger, isMutating } = useCreateProposalWithLineItems();
+ * const newProposal = await trigger({
+ *   proposalData: {
+ *     opportunity_id: 'opp_001',
+ *     title: 'Website Redesign Proposal',
+ *     description: 'Complete website redesign with modern UX',
+ *     valid_until: '2026-03-31',
+ *     tax_rate: 8.25,
+ *     terms_and_conditions: 'Payment due within 30 days...',
+ *   },
+ *   lineItems: [
+ *     {
+ *       item_type: 'service',
+ *       description: 'Web Design',
+ *       quantity: 1,
+ *       unit_price: 5000.00,
+ *       total_price: 5000.00,
+ *       sort_order: 0,
+ *     },
+ *     {
+ *       item_type: 'service',
+ *       description: 'Development',
+ *       quantity: 80,
+ *       unit_price: 150.00,
+ *       total_price: 12000.00,
+ *       sort_order: 1,
+ *     },
+ *   ],
+ * });
+ */
+export const useCreateProposalWithLineItems = () => {
+  const mutation = useSWRMutation('create-proposal-with-items', createProposalWithLineItemsMutation, {
+    onSuccess: (data, key, config) => {
+      if (config?.onSuccess) {
+        config.onSuccess(data, key, config);
+      }
+    },
+  });
+
+  return mutation;
+};
+
+/**
  * Mutation function to update an existing proposal
  *
  * @param {string} url - Mutation key (unused in implementation)

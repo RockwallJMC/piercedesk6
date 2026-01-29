@@ -1,7 +1,7 @@
 /**
  * Proposal number generator utility
  *
- * Generates unique proposal numbers in PROP-YYYY-NNN format using database-backed sequence.
+ * Generates unique proposal numbers in PROP-YYYY-NNNN format using database-backed sequence.
  */
 
 import createClient from 'lib/supabase/client';
@@ -9,16 +9,16 @@ import createClient from 'lib/supabase/client';
 /**
  * Generate a unique proposal number using database
  *
- * Format: PROP-YYYY-NNN
+ * Format: PROP-YYYY-NNNN
  * - PROP: Prefix
  * - YYYY: Current year
- * - NNN: Sequential number padded to 3 digits (001, 002, ..., 100, ...)
+ * - NNNN: Sequential number padded to 4 digits (0001, 0002, ..., 9999)
  *
- * @returns {Promise<string>} Generated proposal number (e.g., "PROP-2026-001")
+ * @returns {Promise<string>} Generated proposal number (e.g., "PROP-2026-0001")
  *
  * @example
- * const number = await generateProposalNumber(); // "PROP-2026-001"
- * const number2 = await generateProposalNumber(); // "PROP-2026-002"
+ * const number = await generateProposalNumber(); // "PROP-2026-0001"
+ * const number2 = await generateProposalNumber(); // "PROP-2026-0002"
  */
 export async function generateProposalNumber() {
   const supabase = createClient();
@@ -38,12 +38,12 @@ export async function generateProposalNumber() {
 
   let sequence = 1;
   if (data && data.length > 0) {
-    // Extract sequence from PROP-YYYY-XXX format
-    const match = data[0].proposal_number.match(/PROP-\d{4}-(\d+)/);
+    // Extract sequence from PROP-YYYY-NNNN format
+    const match = data[0].proposal_number.match(/PROP-\d{4}-(\d{4})/);
     if (match) {
       sequence = parseInt(match[1], 10) + 1;
     }
   }
 
-  return `PROP-${currentYear}-${sequence.toString().padStart(3, '0')}`;
+  return `PROP-${currentYear}-${sequence.toString().padStart(4, '0')}`;
 }
