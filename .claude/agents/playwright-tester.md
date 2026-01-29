@@ -278,12 +278,15 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 git push
 ```
 
-#### Step 3: Get GitHub URLs for Screenshots
+#### Step 3: Get GitHub Raw URLs for Screenshots
 
-After pushing, get the GitHub raw URLs:
+After pushing, construct GitHub raw URLs using this format:
 ```bash
-# Format: https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{filename}.png
-# Example: https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/lead-creation-success.png
+# Format: https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{filename}.png
+# Example: https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/lead-creation-success.png
+
+# Note: Use raw.githubusercontent.com (NOT github.com/blob) for direct image access
+# This ensures images render correctly in all contexts
 ```
 
 #### Step 4: Post Progress Update with Embedded Screenshots
@@ -305,13 +308,13 @@ gh issue comment {issue-number} --body "✅ **Task {N} Complete - {Task Name}**
 ## Screenshots
 
 ### {Scenario 1 Name}
-![{scenario-1-description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot1}.png?raw=true)
+![{scenario-1-description}](https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{screenshot1}.png)
 
 ### {Scenario 2 Name}
-![{scenario-2-description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot2}.png?raw=true)
+![{scenario-2-description}](https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{screenshot2}.png)
 
 ### {Scenario 3 Name}
-![{scenario-3-description}](https://github.com/{owner}/{repo}/blob/{branch}/screenshots/phase-{X.Y}/{screenshot3}.png?raw=true)
+![{scenario-3-description}](https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{screenshot3}.png)
 
 ## Verification Evidence
 - Build: \`npm run build\` - exit 0 ✅
@@ -364,19 +367,19 @@ Running 1 test using 1 worker
 ## Screenshots
 
 ### Lead Created Successfully
-![Lead creation with contact details](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/01-lead-created.png?raw=true)
+![Lead creation with contact details](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/01-lead-created.png)
 
 ### Lead Qualified to Opportunity
-![Lead status changed to qualified](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/02-lead-qualified.png?raw=true)
+![Lead status changed to qualified](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/02-lead-qualified.png)
 
 ### Opportunity Created
-![Opportunity created from qualified lead](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/03-opportunity-created.png?raw=true)
+![Opportunity created from qualified lead](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/03-opportunity-created.png)
 
 ### Proposal Generated
-![Proposal created with line items](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/04-proposal-created.png?raw=true)
+![Proposal created with line items](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/04-proposal-created.png)
 
 ### Proposal Accepted - Flow Complete
-![Final state - proposal accepted](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/05-proposal-accepted.png?raw=true)
+![Final state - proposal accepted](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/05-proposal-accepted.png)
 
 ## Verification Evidence
 - Build: \`npm run build\` - exit 0 ✅
