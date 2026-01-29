@@ -142,7 +142,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- PROPOSALS (Org 2)
 INSERT INTO proposals (id, organization_id, opportunity_id, proposal_number, title, status, total_amount, currency, valid_until, created_by, created_at, updated_at)
 VALUES
-  ('44000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', '43000000-0000-0000-0000-000000000001', 'PROP-TS-2026-001', 'SecureBuildings Office Tower - Security Proposal', 'sent', 450000.00, 'USD', '2026-03-15', 'b2222222-2222-2222-2222-222222222222', now(), now())
+  ('44000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', '43000000-0000-0000-0000-000000000001', 'PROP-2026-0001', 'SecureBuildings Office Tower - Security Proposal', 'sent', 450000.00, 'USD', '2026-03-15', 'b2222222-2222-2222-2222-222222222222', now(), now())
 ON CONFLICT (id) DO UPDATE SET
   title = EXCLUDED.title,
   status = EXCLUDED.status,
