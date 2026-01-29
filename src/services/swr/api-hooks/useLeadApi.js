@@ -25,6 +25,7 @@ const leadsFetcher = async (status = null) => {
   let query = supabase
     .from('leads')
     .select('*')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false });
 
   if (status) {
@@ -88,6 +89,7 @@ const leadFetcher = async (id) => {
   const { data, error } = await supabase
     .from('leads')
     .select('*')
+    .is('deleted_at', null)
     .eq('id', id)
     .single();
 
@@ -370,7 +372,7 @@ const convertLeadToOpportunityMutation = async (url, { arg }) => {
         .single();
 
       if (accountError) {
-        throw new Error(`Failed to create account: ${accountError.message}`);
+        throw new Error(`Failed to create account for lead ${leadId}: ${accountError.message}`);
       }
 
       accountId = newAccount.id;
@@ -378,12 +380,13 @@ const convertLeadToOpportunityMutation = async (url, { arg }) => {
   }
 
   // Step 3: Create contact from lead
+  const nameParts = (lead.name || '').split(' ');
   const { data: contact, error: contactError } = await supabase
     .from('contacts')
     .insert([
       {
-        first_name: lead.name.split(' ')[0] || lead.name,
-        last_name: lead.name.split(' ').slice(1).join(' ') || '',
+        first_name: nameParts[0] || 'Unknown',
+        last_name: nameParts.slice(1).join(' ') || '',
         email: lead.email,
         phone: lead.phone,
         account_id: accountId,
@@ -393,7 +396,7 @@ const convertLeadToOpportunityMutation = async (url, { arg }) => {
     .single();
 
   if (contactError) {
-    throw new Error(`Failed to create contact: ${contactError.message}`);
+    throw new Error(`Failed to create contact for lead ${leadId}: ${contactError.message}`);
   }
 
   // Step 4: Create opportunity with lead data
@@ -416,7 +419,7 @@ const convertLeadToOpportunityMutation = async (url, { arg }) => {
     .single();
 
   if (opportunityError) {
-    throw new Error(`Failed to create opportunity: ${opportunityError.message}`);
+    throw new Error(`Failed to create opportunity for lead ${leadId}: ${opportunityError.message}`);
   }
 
   // Step 5: Update lead status to 'converted'
