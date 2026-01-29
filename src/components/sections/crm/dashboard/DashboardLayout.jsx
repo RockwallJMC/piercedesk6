@@ -5,9 +5,19 @@ import { Typography, Box } from '@mui/material';
 import DashboardHeader from './DashboardHeader';
 import DashboardWidgetContainer from './DashboardWidgetContainer';
 
+// KPI Widgets
+import TotalPipelineValueWidget from './widgets/kpis/TotalPipelineValueWidget';
+import WeightedForecastWidget from './widgets/kpis/WeightedForecastWidget';
+import LeadConversionRateWidget from './widgets/kpis/LeadConversionRateWidget';
+import OpportunityWinRateWidget from './widgets/kpis/OpportunityWinRateWidget';
+import AverageDealSizeWidget from './widgets/kpis/AverageDealSizeWidget';
+import AverageSalesCycleWidget from './widgets/kpis/AverageSalesCycleWidget';
+import ProposalsAcceptanceRateWidget from './widgets/kpis/ProposalsAcceptanceRateWidget';
+import TotalActiveAccountsWidget from './widgets/kpis/TotalActiveAccountsWidget';
+
 /**
  * Main CRM Dashboard layout with responsive Grid
- * Phase 1.7.1: Infrastructure only - widgets will be added in Phases 1.7.2-1.7.5
+ * Phase 1.7.2: KPI Metrics widgets integrated
  */
 const DashboardLayout = () => {
   return (
@@ -15,37 +25,38 @@ const DashboardLayout = () => {
       <DashboardHeader />
 
       <Grid container spacing={3}>
-        {/* Row 1: KPI Metrics - 4 columns on desktop, stack on mobile */}
+        {/* Row 1: KPI Metrics - 4 columns on desktop, 2 on tablet, stack on mobile */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <DashboardWidgetContainer title="Total Pipeline" minHeight={180}>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-              Widgets will be added in Phases 1.7.2-1.7.5
-            </Typography>
-          </DashboardWidgetContainer>
+          <TotalPipelineValueWidget />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <DashboardWidgetContainer title="Win Rate" minHeight={180}>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-              Widgets will be added in Phases 1.7.2-1.7.5
-            </Typography>
-          </DashboardWidgetContainer>
+          <WeightedForecastWidget />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <DashboardWidgetContainer title="Avg Deal Size" minHeight={180}>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-              Widgets will be added in Phases 1.7.2-1.7.5
-            </Typography>
-          </DashboardWidgetContainer>
+          <LeadConversionRateWidget />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <DashboardWidgetContainer title="Sales Cycle" minHeight={180}>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-              Widgets will be added in Phases 1.7.2-1.7.5
-            </Typography>
-          </DashboardWidgetContainer>
+          <OpportunityWinRateWidget />
+        </Grid>
+
+        {/* Row 2: Additional KPI Metrics */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <AverageDealSizeWidget />
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <AverageSalesCycleWidget />
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <ProposalsAcceptanceRateWidget />
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <TotalActiveAccountsWidget />
         </Grid>
 
         {/* Row 2: Main Charts - 2 columns */}

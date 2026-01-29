@@ -2,79 +2,18 @@
 // This data simulates pre-calculated aggregations that would come from Supabase
 // All values are internally consistent and demonstrate realistic patterns
 
-// KPI Metrics (7 key performance indicators)
-export const dashboardKPIs = [
-  {
-    title: 'Total Pipeline Value',
-    value: 8420000, // Sum of all pipeline stages
-    subtitle: 'All active opportunities',
-    icon: {
-      name: 'material-symbols:trending-up',
-      color: 'primary.main',
-    },
-    trend: { value: 12.5, direction: 'up' },
-  },
-  {
-    title: 'Win Rate',
-    value: '32%',
-    subtitle: 'Last 90 days',
-    icon: {
-      name: 'material-symbols:check-circle-outline',
-      color: 'success.main',
-    },
-    trend: { value: 5.2, direction: 'up' },
-  },
-  {
-    title: 'Avg Deal Size',
-    value: 145000,
-    subtitle: 'Won opportunities',
-    icon: {
-      name: 'material-symbols:payments-outline',
-      color: 'info.main',
-    },
-    trend: { value: 3.1, direction: 'down' },
-  },
-  {
-    title: 'Sales Cycle',
-    value: '42 days',
-    subtitle: 'Average time to close',
-    icon: {
-      name: 'material-symbols:schedule',
-      color: 'warning.main',
-    },
-    trend: { value: 8.0, direction: 'down' }, // Shorter is better
-  },
-  {
-    title: 'Active Opportunities',
-    value: 127,
-    subtitle: 'In pipeline',
-    icon: {
-      name: 'material-symbols:work-outline',
-      color: 'secondary.main',
-    },
-    trend: { value: 15.3, direction: 'up' },
-  },
-  {
-    title: 'Proposals Sent',
-    value: 34,
-    subtitle: 'Last 30 days',
-    icon: {
-      name: 'material-symbols:description-outline',
-      color: 'primary.main',
-    },
-    trend: { value: 21.4, direction: 'up' },
-  },
-  {
-    title: 'Lead Conversion',
-    value: '18%',
-    subtitle: 'Lead to opportunity',
-    icon: {
-      name: 'material-symbols:conversion-path',
-      color: 'success.main',
-    },
-    trend: { value: 2.3, direction: 'up' },
-  },
-];
+// KPI Metrics (8 key performance indicators as object)
+// Matches Phase 1.7.1 design doc structure
+export const dashboardKPIs = {
+  totalPipelineValue: 8420000, // Sum of all active opportunities
+  weightedForecast: 4210000, // Sum of (value × probability/100)
+  leadConversionRate: 18.5, // Percentage (leads → opportunities)
+  opportunityWinRate: 32.0, // Percentage (opportunities → closed won)
+  averageDealSize: 145000, // Average value of won opportunities
+  averageSalesCycle: 42, // Average days from created to closed won
+  proposalsAcceptanceRate: 23.5, // Percentage of accepted proposals
+  totalActiveAccounts: 85, // Accounts with activity in last 90 days
+};
 
 // Pipeline Breakdown by Stage (values sum to total pipeline)
 export const pipelineByStage = [
