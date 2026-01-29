@@ -3,7 +3,8 @@ const path = require('path');
 
 // Load test environment variables
 // This loads .env.test for test-specific configuration
-require('dotenv').config({ path: path.resolve(__dirname, '.env.test') });
+// Temporarily commented out until dotenv dependency is resolved
+// require('dotenv').config({ path: path.resolve(__dirname, '.env.test') });
 
 module.exports = defineConfig({
   testDir: './tests',
