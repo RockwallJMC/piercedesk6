@@ -372,7 +372,7 @@ const opportunityForecastFetcher = async () => {
   // Get all open opportunities (not Closed Won or Closed Lost)
   const { data: opportunities, error } = await supabase
     .from('opportunities')
-    .select('deal_value, probability, stage, expected_close_date')
+    .select('value, probability, stage, expected_close_date')
     .is('deleted_at', null)
     .not('stage', 'in', '("Closed Won","Closed Lost")');
 
@@ -381,13 +381,14 @@ const opportunityForecastFetcher = async () => {
   }
 
   // Calculate weighted forecast in application
+  // Support both 'value' (schema) and 'deal_value' (legacy) during migration
   const weightedForecast = opportunities.reduce((sum, opp) => {
-    const value = opp.deal_value || 0;
+    const value = opp.value || opp.deal_value || 0;
     const prob = opp.probability || 0;
     return sum + (value * (prob / 100));
   }, 0);
 
-  const totalPipeline = opportunities.reduce((sum, opp) => sum + (opp.deal_value || 0), 0);
+  const totalPipeline = opportunities.reduce((sum, opp) => sum + (opp.value || opp.deal_value || 0), 0);
 
   // Calculate stage breakdown
   const stageBreakdown = {};
@@ -396,7 +397,8 @@ const opportunityForecastFetcher = async () => {
       stageBreakdown[opp.stage] = { count: 0, value: 0 };
     }
     stageBreakdown[opp.stage].count++;
-    stageBreakdown[opp.stage].value += opp.deal_value || 0;
+    // Support both 'value' (schema) and 'deal_value' (legacy) during migration
+    stageBreakdown[opp.stage].value += opp.value || opp.deal_value || 0;
   });
 
   // Calculate expected wins in next 30 days
