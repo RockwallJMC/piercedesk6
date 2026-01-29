@@ -319,7 +319,7 @@ export const useDeleteLead = () => {
  * @param {string} url - Mutation key (unused in implementation)
  * @param {Object} options - Mutation options
  * @param {string} options.arg.leadId - Lead ID to convert
- * @param {Object} options.arg.opportunityData - Additional opportunity data (deal_value, stage, etc.)
+ * @param {Object} options.arg.opportunityData - Additional opportunity data (value, stage, etc.)
  * @returns {Promise<Object>} Created opportunity object with lead reference
  */
 const convertLeadToOpportunityMutation = async (url, { arg }) => {
@@ -407,7 +407,7 @@ const convertLeadToOpportunityMutation = async (url, { arg }) => {
         name: opportunityData.name || lead.company || lead.name,
         account_id: accountId,
         primary_contact_id: contact.id,
-        deal_value: opportunityData.deal_value || opportunityData.value,
+        value: opportunityData.value,
         stage: opportunityData.stage,
         probability: opportunityData.probability,
         expected_close_date: opportunityData.expected_close_date,
@@ -451,7 +451,7 @@ const convertLeadToOpportunityMutation = async (url, { arg }) => {
  * const result = await trigger({
  *   leadId: 'lead_001',
  *   opportunityData: {
- *     deal_value: 50000,
+ *     value: 50000,
  *     stage: 'qualification',
  *     expected_close_date: '2025-03-31',
  *   }

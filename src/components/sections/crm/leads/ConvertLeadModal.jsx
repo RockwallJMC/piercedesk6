@@ -113,7 +113,7 @@ const ConvertLeadModal = ({ open, onClose, lead, onSuccess }) => {
         leadId: lead.id,
         opportunityData: {
           name: data.opportunityName,
-          deal_value: data.value,
+          value: data.value,
           stage: data.stage,
           expected_close_date: dayjs(data.expectedCloseDate).format('YYYY-MM-DD'),
           probability: data.probability,
