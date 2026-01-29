@@ -96,6 +96,12 @@ export async function getTestData(table, filters = {}) {
  * @param {object} filters - Filters to identify records to delete
  */
 export async function cleanupTestData(table, filters) {
+  // Validate table name to prevent SQL injection
+  const allowedTables = ['leads', 'opportunities', 'proposals', 'organizations', 'organization_members', 'users'];
+  if (!allowedTables.includes(table)) {
+    throw new Error(`Invalid table name: ${table}. Allowed tables: ${allowedTables.join(', ')}`);
+  }
+
   const { supabase } = await getAuthenticatedSupabaseClient('singleOrg');
 
   let query = supabase.from(table).delete();
