@@ -19,16 +19,9 @@ Technical architecture and system design documentation:
 
 ### 🎯 [Features](features/)
 
-Feature documentation for each operational desk:
+User-facing feature guides and documentation:
 
-- **CRM-DESK.md** - Leads, Opportunities, Proposals, Accounts, Contacts
-- **HRM-DESK.md** - Employees, Teams, Skills, Time & Attendance
-- **PROJECTS-DESK.md** - Project management, Gantt, Kanban, AIA Billing
-- **SERVICE-DESK.md** - Service tickets, SLA management, Warranties
-- **DISPATCH-DESK.md** - Scheduling, routing, field operations
-- **ASSETS-DESK.md** - Vehicles, tools, GPS tracking
-- **INVENTORY-DESK.md** - Warehouse management, materials tracking
-- **BUSINESS-DESK.md** - Invoicing, P&L, QuickBooks integration
+- [Feature Documentation](features/) - User-facing feature guides
 
 ### 📚 [Guides](guides/)
 
@@ -58,14 +51,11 @@ How-to guides and best practices:
 - **CONTRIBUTING.md** - How to contribute to PierceDesk
 - **TROUBLESHOOTING.md** - Common issues and solutions
 
-### 🔌 [API](api/)
+### 🔌 [API Reference](api/)
 
-API and integration documentation:
+REST API reference and integration documentation:
 
-- **REST-API.md** - Complete REST API reference
-- **SUPABASE-SCHEMA.md** - Database schema documentation
-- **SWR-HOOKS.md** - Data fetching patterns and hooks
-- **WEBSOCKET-EVENTS.md** - Real-time events (future)
+- [API Documentation](api/) - REST API reference
 
 ## Quick Links
 
