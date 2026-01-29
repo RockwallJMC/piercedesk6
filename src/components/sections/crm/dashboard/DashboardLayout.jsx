@@ -106,17 +106,7 @@ const DashboardLayout = () => {
 
         {/* Row 3: Lead Sources and Recent Activities */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <DashboardWidgetContainer
-            title="Lead Source Performance"
-            subtitle="ROI by channel"
-            minHeight={300}
-          >
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 6 }}>
-              Table widget placeholder
-              <br />
-              Phase 1.7.4 will add data table
-            </Typography>
-          </DashboardWidgetContainer>
+          <LeadsBySourceWidget />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>
@@ -125,31 +115,11 @@ const DashboardLayout = () => {
 
         {/* Row 4: Proposals and Top Opportunities */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <DashboardWidgetContainer
-            title="Proposal Status"
-            subtitle="Draft, Sent, Accepted, Declined"
-            minHeight={280}
-          >
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 6 }}>
-              Chart widget placeholder
-              <br />
-              Phase 1.7.3 will add ECharts visualization
-            </Typography>
-          </DashboardWidgetContainer>
+          <RecentProposalsWidget />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>
-          <DashboardWidgetContainer
-            title="Top Opportunities"
-            subtitle="Highest value deals"
-            minHeight={280}
-          >
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 6 }}>
-              Table widget placeholder
-              <br />
-              Phase 1.7.4 will add data table
-            </Typography>
-          </DashboardWidgetContainer>
+          <TopPerformingAccountsWidget />
         </Grid>
 
         {/* Row 5: Lead Analytics (Phase 1.7.4) */}
