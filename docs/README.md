@@ -60,23 +60,23 @@ REST API reference and integration documentation:
 ## Quick Links
 
 ### For New Developers
-1. Start with [Getting Started Guide](guides/GETTING-STARTED.md)
-2. Set up your [Development Environment](guides/DEVELOPMENT-SETUP.md)
+1. Start with [Getting Started Guide](guides/GETTING-STARTED.md) *(Coming Soon)*
+2. Set up your [Development Environment](guides/DEVELOPMENT-SETUP.md) *(Coming Soon)*
 3. Read [DESK-ARCHITECTURE](architecture/DESK-ARCHITECTURE.md) to understand the system
 4. Review [Documentation Guide](guides/DOCUMENTATION-GUIDE.md) for contribution workflow
 
 ### For Feature Development
 1. Review [Documentation Guide](guides/DOCUMENTATION-GUIDE.md) for the complete workflow
 2. Check relevant [Feature Documentation](features/) for the desk you're working on
-1. Review relevant [User Journeys](user-journeys/) to understand user workflows
-3. Reference [API Documentation](api/) for integration patterns
-4. Follow [Testing Guide](guides/TESTING-GUIDE.md) for test requirements
+3. Review relevant [User Journeys](user-journeys/) to understand user workflows
+4. Reference [API Documentation](api/) for integration patterns
+5. Follow [Testing Guide](guides/TESTING-GUIDE.md) *(Coming Soon)* for test requirements
 
 ### For Architecture Decisions
 1. Review existing [Architecture Documentation](architecture/)
 2. Reference the transformation plan in `_sys_documents/roadmap/`
-3. Check [DATABASE-ARCHITECTURE](architecture/DATABASE-ARCHITECTURE.md) for data model
-4. Follow [API-DESIGN](architecture/API-DESIGN.md) patterns
+3. Check [DATABASE-ARCHITECTURE](architecture/DATABASE-ARCHITECTURE.md) *(Coming Soon)* for data model
+4. Follow [API-DESIGN](architecture/API-DESIGN.md) *(Coming Soon)* patterns
 
 ## Documentation Principles
 
@@ -99,7 +99,7 @@ Documentation follows the codebase version:
 
 ## Contributing to Documentation
 
-See [CONTRIBUTING.md](guides/CONTRIBUTING.md) and [DOCUMENTATION-GUIDE.md](guides/DOCUMENTATION-GUIDE.md) for:
+See [CONTRIBUTING.md](guides/CONTRIBUTING.md) *(Coming Soon)* and [DOCUMENTATION-GUIDE.md](guides/DOCUMENTATION-GUIDE.md) for:
 - How to add new documentation
 - Documentation standards and style guide
 - Review process
@@ -125,7 +125,7 @@ See [CONTRIBUTING.md](guides/CONTRIBUTING.md) and [DOCUMENTATION-GUIDE.md](guide
 
 - **Documentation issues**: Open an issue on GitHub with label `documentation`
 - **Feature questions**: Check relevant [Feature Documentation](features/)
-- **Technical problems**: See [TROUBLESHOOTING.md](guides/TROUBLESHOOTING.md)
+- **Technical problems**: See [TROUBLESHOOTING.md](guides/TROUBLESHOOTING.md) *(Coming Soon)*
 - **Architecture questions**: Review [Architecture](architecture/) docs or ask the team
 
 ## External Resources
