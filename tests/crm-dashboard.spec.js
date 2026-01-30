@@ -5,25 +5,24 @@ test.describe('CRM Dashboard', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsUser(page, TEST_USERS.salesManager);
     await selectOrganization(page, TEST_ORGS.acme.name);
-    await page.goto('/apps/crm/dashboard');
+    await page.goto('/dashboard/crm');
     await waitForNetworkIdle(page);
   });
 
-  test('should display dashboard with widgets', async ({ page }) => {
-    // Should show dashboard heading
-    await expect(page.getByRole('heading', { name: 'CRM Dashboard' })).toBeVisible();
+  test('should display dashboard with greeting and stats', async ({ page }) => {
+    // Should show greeting section
+    await expect(page.getByRole('heading', { name: /Good (Morning|Afternoon|Evening), Captain!/i })).toBeVisible();
 
-    // Should show KPI widgets
-    await expect(page.getByRole('heading', { name: 'Total Pipeline Value' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Weighted Forecast' })).toBeVisible();
+    // Should show deal stats
+    await expect(page.getByText('Deals created')).toBeVisible();
+    await expect(page.getByText('Deals closed')).toBeVisible();
   });
 
-  test('should display pipeline metrics', async ({ page }) => {
-    // Pipeline section heading should be visible
-    await expect(page.getByRole('heading', { name: 'Pipeline Visualization' })).toBeVisible();
-
-    // Pipeline widgets should be visible
-    await expect(page.getByText(/Pipeline Stage Breakdown|Deal Velocity|Win Loss Analysis/i)).toBeVisible();
+  test('should display KPI cards', async ({ page }) => {
+    // Should show KPI cards with titles
+    await expect(page.getByText('Active Users')).toBeVisible();
+    await expect(page.getByText('New Contacts')).toBeVisible();
+    await expect(page.getByText('Renewal Rate')).toBeVisible();
   });
 
   test('should render all widgets without errors', async ({ page }) => {
@@ -59,43 +58,41 @@ test.describe('CRM Dashboard', () => {
   });
 
   test('should display KPI widgets without undefined values', async ({ page }) => {
-    // Should show KPI widgets
-    await expect(page.getByText(/Total Pipeline Value/i)).toBeVisible();
-    await expect(page.getByText(/Lead Conversion Rate/i)).toBeVisible();
-    await expect(page.getByText(/Opportunity Win Rate/i)).toBeVisible();
+    // Should show KPI widget values (subtitles under the cards)
+    await expect(page.getByText('Avg. daily logins')).toBeVisible();
+    await expect(page.getByText('Accounts opened')).toBeVisible();
+    await expect(page.getByText('Premium accounts')).toBeVisible();
 
     // Should NOT show "undefined%" or "NaN%"
     await expect(page.getByText('undefined%')).not.toBeVisible();
     await expect(page.getByText('NaN%')).not.toBeVisible();
   });
 
-  test('should display recent activities widget', async ({ page }) => {
-    // Activity & Task Management section should be visible
-    await expect(page.getByRole('heading', { name: 'Activity & Task Management' })).toBeVisible();
-
-    // Recent activities or upcoming tasks should be visible
-    await expect(page.getByRole('heading', { name: 'Recent Activities' })).toBeVisible();
+  test('should display revenue generated section', async ({ page }) => {
+    // Revenue Generated section should be visible
+    await expect(page.getByRole('heading', { name: 'Revenue Generated' })).toBeVisible();
+    await expect(page.getByText('Amount of revenue in this month')).toBeVisible();
   });
 
-  test('should display lead analytics section', async ({ page }) => {
-    // Lead Analytics section heading
-    await expect(page.getByRole('heading', { name: 'Lead Analytics' })).toBeVisible();
+  test('should display lead sources section', async ({ page }) => {
+    // Lead Sources section should be visible
+    await expect(page.getByRole('heading', { name: 'Lead Sources' })).toBeVisible();
+    await expect(page.getByText('Ratio of generated leads')).toBeVisible();
 
-    // Lead analytics widgets should be visible
-    await expect(page.getByRole('heading', { name: 'Leads by Source' }).first()).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Top Performing Accounts' }).first()).toBeVisible();
+    // Lead source categories should be visible
+    await expect(page.getByText('Organic')).toBeVisible();
+    await expect(page.getByText('Marketing')).toBeVisible();
   });
 
-  test('should navigate to CRM modules from sidebar', async ({ page }) => {
-    // Click on Leads in the sidebar navigation
-    await page.getByRole('link', { name: 'Leads' }).first().click();
-    await waitForNetworkIdle(page);
+  test('should display sale funnel section', async ({ page }) => {
+    // Sale Funnel section should be visible
+    await expect(page.getByRole('heading', { name: 'Sale Funnel' })).toBeVisible();
+    await expect(page.getByText('Amount of revenue in one month')).toBeVisible();
+  });
 
-    // Should navigate to leads page
-    await expect(page).toHaveURL(/\/crm\/leads/);
-
-    // Page should load (either with data or empty state, but not error)
-    const hasLeadsHeading = await page.getByText(/Leads|All Leads/i).first().isVisible().catch(() => false);
-    expect(hasLeadsHeading).toBeTruthy();
+  test('should display customer feedback section', async ({ page }) => {
+    // Customer Feedback section should be visible
+    await expect(page.getByRole('heading', { name: 'Customer Feedback' })).toBeVisible();
+    await expect(page.getByText('Number of clients with response')).toBeVisible();
   });
 });

@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
+  Alert,
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,41 +17,75 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
-
-const seedAccounts = [
-  { id: 'acc-1', name: 'Acme Corporation', industry: 'Manufacturing', website: 'https://acme.com', phone: '+1-555-1111' },
-  { id: 'acc-2', name: 'Globex Industries', industry: 'Energy', website: 'https://globex.com', phone: '+1-555-2222' },
-  { id: 'acc-3', name: 'Initech', industry: 'Technology', website: 'https://initech.com', phone: '+1-555-3333' },
-];
+import { useAccounts } from 'services/swr/api-hooks/useAccountsApi';
+import axiosInstance from 'services/axios/axiosInstance';
 
 const AccountsPage = () => {
-  const [rows, setRows] = useState(seedAccounts);
+  const { accounts, isLoading, isError, error, mutate } = useAccounts();
   const [filter, setFilter] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: '', industry: '', website: '', phone: '' });
-
-  useEffect(() => {
-    setRows(seedAccounts);
-  }, []);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   const filtered = useMemo(() => {
-    if (!filter) return rows;
-    return rows.filter((r) => r.name.toLowerCase().includes(filter.toLowerCase()));
-  }, [filter, rows]);
+    if (!filter) return accounts;
+    return accounts.filter((r) => r.name?.toLowerCase().includes(filter.toLowerCase()));
+  }, [filter, accounts]);
 
-  const handleSave = () => {
-    if (editing) {
-      setRows((prev) => prev.map((r) => (r.id === editing ? { ...r, ...form } : r)));
-    } else {
-      setRows((prev) => [...prev, { id: `acc-${prev.length + 1}`, ...form }]);
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      if (editing) {
+        // Update existing account
+        await axiosInstance.patch(`/api/crm/accounts/${editing}`, form);
+      } else {
+        // Create new account - need organization_id
+        // For MVP, get first org from an existing account or fail gracefully
+        let organizationId = accounts[0]?.organization_id;
+
+        if (!organizationId) {
+          // Fetch user's organizations if no accounts exist yet
+          const orgsResponse = await axiosInstance.get('/api/organizations');
+          organizationId = orgsResponse[0]?.id;
+        }
+
+        if (!organizationId) {
+          throw new Error('No organization found. Please contact support.');
+        }
+
+        await axiosInstance.post('/api/crm/accounts', {
+          ...form,
+          organization_id: organizationId,
+        });
+      }
+
+      // Refresh the accounts list
+      await mutate();
+      setDialogOpen(false);
+      setEditing(null);
+      setForm({ name: '', industry: '', website: '', phone: '' });
+    } catch (err) {
+      console.error('Save error:', err);
+      setSaveError(err.data?.error || err.message || 'Failed to save account');
+    } finally {
+      setSaving(false);
     }
-    setDialogOpen(false);
-    setEditing(null);
   };
 
-  const handleDelete = (id) => {
-    setRows((prev) => prev.filter((r) => r.id !== id));
+  const handleDelete = async (id) => {
+    if (!confirm('Are you sure you want to delete this account?')) return;
+
+    try {
+      await axiosInstance.delete(`/api/crm/accounts/${id}`);
+      await mutate();
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert(err.data?.error || 'Failed to delete account');
+    }
   };
 
   const columns = [
@@ -60,13 +96,19 @@ const AccountsPage = () => {
     {
       field: 'actions',
       headerName: 'Actions',
+      sortable: false,
       renderCell: (params) => (
         <Stack direction="row" spacing={1}>
           <Button
             size="small"
             onClick={() => {
               setEditing(params.row.id);
-              setForm(params.row);
+              setForm({
+                name: params.row.name || '',
+                industry: params.row.industry || '',
+                website: params.row.website || '',
+                phone: params.row.phone || '',
+              });
               setDialogOpen(true);
             }}
           >
@@ -76,7 +118,12 @@ const AccountsPage = () => {
             size="small"
             onClick={() => {
               setEditing(params.row.id);
-              setForm(params.row);
+              setForm({
+                name: params.row.name || '',
+                industry: params.row.industry || '',
+                website: params.row.website || '',
+                phone: params.row.phone || '',
+              });
               setDialogOpen(true);
             }}
           >
@@ -91,11 +138,37 @@ const AccountsPage = () => {
     },
   ];
 
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">
+          Failed to load accounts: {error?.data?.error || error?.message || 'Unknown error'}
+        </Alert>
+      </Box>
+    );
+  }
+
   return (
     <Stack spacing={3} sx={{ p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="h4">Accounts</Typography>
-        <Button variant="contained" onClick={() => { setEditing(null); setForm({ name: '', industry: '', website: '', phone: '' }); setDialogOpen(true); }}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setEditing(null);
+            setForm({ name: '', industry: '', website: '', phone: '' });
+            setSaveError(null);
+            setDialogOpen(true);
+          }}
+        >
           Add Account
         </Button>
       </Stack>
@@ -125,15 +198,41 @@ const AccountsPage = () => {
         </DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <Stack spacing={2}>
-            <TextField label="Account Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <TextField label="Industry" value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })} />
-            <TextField label="Website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} />
-            <TextField label="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            {saveError && (
+              <Alert severity="error" onClose={() => setSaveError(null)}>
+                {saveError}
+              </Alert>
+            )}
+            <TextField
+              label="Account Name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              required
+            />
+            <TextField
+              label="Industry"
+              value={form.industry}
+              onChange={(e) => setForm({ ...form, industry: e.target.value })}
+            />
+            <TextField
+              label="Website"
+              value={form.website}
+              onChange={(e) => setForm({ ...form, website: e.target.value })}
+            />
+            <TextField
+              label="Phone"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave}>Save</Button>
+          <Button onClick={() => setDialogOpen(false)} disabled={saving}>
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleSave} disabled={saving || !form.name}>
+            {saving ? <CircularProgress size={20} /> : 'Save'}
+          </Button>
         </DialogActions>
       </Dialog>
     </Stack>

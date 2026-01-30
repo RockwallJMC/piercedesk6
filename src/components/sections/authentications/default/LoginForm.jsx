@@ -60,7 +60,9 @@ const LoginForm = ({
     const res = await handleLogin(data);
     if (res?.ok) {
       router.refresh();
-      router.push(callbackUrl ? callbackUrl : rootPaths.root);
+      const target = res.redirectTo || callbackUrl || rootPaths.root;
+      router.push(target);
+      return;
     }
     if (res?.error) {
       setError('root.credential', { type: 'manual', message: res.error });

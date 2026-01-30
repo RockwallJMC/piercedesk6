@@ -5,3 +5,5 @@ const NotFound = () => {
 };
 
 export default NotFound;
+
+export const dynamic = 'force-dynamic';

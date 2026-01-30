@@ -1,7 +1,7 @@
-import ECommerce from 'components/sections/dashboards/e-commerce';
+import { redirect } from 'next/navigation';
 
 const page = () => {
-  return <ECommerce />;
+  redirect('/apps/crm/dashboard');
 };
 
 export default page;

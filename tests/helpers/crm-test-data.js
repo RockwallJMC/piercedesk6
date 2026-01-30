@@ -67,10 +67,12 @@ export async function loginAsUser(page, user) {
   await page.goto('http://localhost:4000/authentication/default/jwt/login');
   await page.getByLabel('Email').fill(user.email);
   await page.getByLabel('Password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
+  const button = page.getByRole('button', { name: 'Log in' });
+  await button.scrollIntoViewIfNeeded();
+  await button.click({ force: true });
 
   // Wait for redirect after login (could be /, /dashboard, or /organizations)
-  await page.waitForURL(/^http:\/\/localhost:4000\/(?!(authentication))/,  { timeout: 15000 });
+  await page.waitForURL(/\/(organizations|dashboard)/, { timeout: 15000 });
   await waitForNetworkIdle(page);
 }
 

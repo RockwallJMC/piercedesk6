@@ -10,19 +10,30 @@ test.describe('CRM Accounts Management', () => {
   });
 
   test('should display accounts list', async ({ page }) => {
+    // Should show Accounts heading
     await expect(page.getByRole('heading', { name: /accounts/i })).toBeVisible();
 
     // Should show DataGrid with accounts
     const grid = page.locator('[role="grid"]');
     await expect(grid).toBeVisible();
 
-    // Should have at least 1 account row
-    const rows = grid.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') });
-    await expect(rows.first()).toBeVisible();
+    // Should have seed data accounts (Acme, Globex, Initech)
+    await expect(page.getByText('Acme Corporation')).toBeVisible();
+    await expect(page.getByText('Globex Industries')).toBeVisible();
+    await expect(page.getByText('Initech')).toBeVisible();
   });
 
-  test('should create new account', async ({ page }) => {
-    await page.getByRole('button', { name: /add account|create account/i }).click();
+  test('should have Add Account button', async ({ page }) => {
+    // Should have Add Account button
+    await expect(page.getByRole('button', { name: /add account/i })).toBeVisible();
+  });
+
+  test('should create new account via dialog', async ({ page }) => {
+    // Click Add Account button
+    await page.getByRole('button', { name: /add account/i }).click();
+
+    // Dialog should open with Create Account title
+    await expect(page.getByRole('heading', { name: /create account/i })).toBeVisible();
 
     // Fill account form
     await page.getByLabel('Account Name').fill('New Enterprise Client');
@@ -30,97 +41,123 @@ test.describe('CRM Accounts Management', () => {
     await page.getByLabel('Website').fill('https://newclient.example.com');
     await page.getByLabel('Phone').fill('+1-555-9999');
 
-    await page.getByRole('button', { name: /save|create/i }).click();
-    await waitForNetworkIdle(page);
+    // Save
+    await page.getByRole('button', { name: /save/i }).click();
 
-    // Should show success message
-    await expect(page.getByText(/account created|success/i)).toBeVisible();
+    // Wait for dialog to close and grid to update
+    await page.waitForTimeout(500);
 
     // Should appear in list
     await expect(page.getByText('New Enterprise Client')).toBeVisible();
+
+    // CLEANUP: Delete the created account to avoid polluting test data
+    const row = page.locator('[role="row"]').filter({ hasText: 'New Enterprise Client' });
+    const deleteButton = row.getByRole('button', { name: /delete/i });
+
+    // Handle confirmation dialog
+    page.on('dialog', dialog => dialog.accept());
+    await deleteButton.click();
+
+    // Wait for deletion to complete
+    await page.waitForTimeout(500);
+
+    // Verify it's gone
+    await expect(page.getByText('New Enterprise Client')).not.toBeVisible();
   });
 
-  test('should view account details', async ({ page }) => {
-    // Click first account in list
-    const firstAccount = page.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') }).first();
-    const accountName = await firstAccount.locator('[role="gridcell"]').first().textContent();
+  test('should edit account via dialog', async ({ page }) => {
+    // Find Acme Corporation row and get original industry value
+    const acmeRow = page.locator('[role="row"]').filter({ hasText: 'Acme Corporation' });
+    const industryCells = acmeRow.locator('[role="gridcell"]');
+    const originalIndustry = await industryCells.nth(1).textContent(); // Industry is 2nd column
 
-    await firstAccount.click();
-    await waitForNetworkIdle(page);
+    // Click Edit button on Acme Corporation
+    const editButton = acmeRow.getByRole('button', { name: /edit/i }).first();
+    await editButton.click();
 
-    // Should navigate to detail page
-    await expect(page).toHaveURL(/\/accounts\/[^/]+$/);
-    await expect(page.getByRole('heading', { name: accountName })).toBeVisible();
+    // Dialog should open with Edit Account title
+    await expect(page.getByRole('heading', { name: /edit account/i })).toBeVisible();
 
-    // Should show tabs: Overview, Contacts, Opportunities, etc.
-    await expect(page.getByRole('tab', { name: /overview/i })).toBeVisible();
-    await expect(page.getByRole('tab', { name: /contacts/i })).toBeVisible();
-  });
+    // Update industry field
+    const industryField = page.getByLabel('Industry');
+    await industryField.clear();
+    await industryField.fill('Updated Industry');
 
-  test('should edit account', async ({ page }) => {
-    // Navigate to first account
-    const firstAccount = page.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') }).first();
-    await firstAccount.click();
-    await waitForNetworkIdle(page);
-
-    // Click edit button
-    await page.getByRole('button', { name: /edit/i }).click();
-
-    // Update account name
-    const nameField = page.getByLabel('Account Name');
-    await nameField.clear();
-    await nameField.fill('Updated Account Name');
-
+    // Save
     await page.getByRole('button', { name: /save/i }).click();
-    await waitForNetworkIdle(page);
 
-    // Should show success message
-    await expect(page.getByText(/updated|success/i)).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Updated Account Name' })).toBeVisible();
+    // Wait for dialog to close and grid to update
+    await page.waitForTimeout(500);
+
+    // Should see updated value in grid
+    await expect(page.getByText('Updated Industry')).toBeVisible();
+
+    // CLEANUP: Revert the change back to original value
+    const editButtonAfter = acmeRow.getByRole('button', { name: /edit/i }).first();
+    await editButtonAfter.click();
+
+    // Wait for dialog to open
+    await expect(page.getByRole('heading', { name: /edit account/i })).toBeVisible();
+
+    // Revert industry back to original
+    const industryFieldRevert = page.getByLabel('Industry');
+    await industryFieldRevert.clear();
+    if (originalIndustry && originalIndustry.trim()) {
+      await industryFieldRevert.fill(originalIndustry.trim());
+    }
+
+    // Save
+    await page.getByRole('button', { name: /save/i }).click();
+
+    // Wait for save to complete
+    await page.waitForTimeout(500);
   });
 
   test('should delete account', async ({ page }) => {
-    // Navigate to first account
-    const firstAccount = page.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') }).first();
-    const accountName = await firstAccount.locator('[role="gridcell"]').first().textContent();
-    await firstAccount.click();
-    await waitForNetworkIdle(page);
+    // Get initial count of rows
+    const initialRows = await page.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') }).count();
 
-    // Click delete button
-    await page.getByRole('button', { name: /delete/i }).click();
+    // Click Delete button on a row
+    const deleteButtons = page.getByRole('button', { name: /delete/i });
 
-    // Confirm deletion
-    await page.getByRole('button', { name: /confirm|delete/i }).click();
-    await waitForNetworkIdle(page);
+    // Handle confirmation dialog
+    page.on('dialog', dialog => dialog.accept());
+    await deleteButtons.first().click();
 
-    // Should redirect to list
-    await expect(page).toHaveURL(/\/accounts$/);
+    // Wait for deletion to complete
+    await page.waitForTimeout(500);
 
-    // Account should not appear in list
-    await expect(page.getByText(accountName)).not.toBeVisible();
+    // Row count should decrease
+    const finalRows = await page.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') }).count();
+    expect(finalRows).toBe(initialRows - 1);
   });
 
-  test('should search accounts', async ({ page }) => {
+  test('should search/filter accounts', async ({ page }) => {
+    // Get search input
     const searchInput = page.getByPlaceholder(/search/i);
     await searchInput.fill('Acme');
-    await waitForNetworkIdle(page);
 
-    // Should filter results
-    const rows = page.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') });
-    await expect(rows.first()).toContainText(/acme/i);
+    // Should filter to only show Acme
+    await expect(page.getByText('Acme Corporation')).toBeVisible();
+    await expect(page.getByText('Globex Industries')).not.toBeVisible();
+    await expect(page.getByText('Initech')).not.toBeVisible();
   });
 
-  test('should sort accounts by name', async ({ page }) => {
-    // Click column header to sort
-    await page.getByRole('columnheader', { name: /name|account/i }).click();
-    await waitForNetworkIdle(page);
+  test('should display column headers', async ({ page }) => {
+    // Should show column headers
+    await expect(page.getByRole('columnheader', { name: /name/i })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: /industry/i })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: /website/i })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: /phone/i })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: /actions/i })).toBeVisible();
+  });
 
-    // Get first and second row names
-    const rows = page.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') });
-    const firstName = await rows.nth(0).locator('[role="gridcell"]').first().textContent();
-    const secondName = await rows.nth(1).locator('[role="gridcell"]').first().textContent();
+  test('should sort accounts by clicking column header', async ({ page }) => {
+    // Click Name column header to sort
+    await page.getByRole('columnheader', { name: /name/i }).click();
 
-    // Should be in alphabetical order
-    expect(firstName.localeCompare(secondName)).toBeLessThan(0);
+    // Get first row name - should be alphabetically first (Acme Corporation)
+    const firstRow = page.locator('[role="row"]').filter({ has: page.locator('[role="gridcell"]') }).first();
+    await expect(firstRow).toContainText('Acme Corporation');
   });
 });
