@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Alert,
   Box,
@@ -15,10 +16,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
-import { useAccounts } from 'services/swr/api-hooks/useAccountsApi';
 import axiosInstance from 'services/axios/axiosInstance';
+import { useAccounts } from 'services/swr/api-hooks/useAccountsApi';
 
 const AccountsPage = () => {
   const { accounts, isLoading, isError, error, mutate } = useAccounts();
@@ -196,7 +196,10 @@ const AccountsPage = () => {
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>
           {viewMode ? 'View Account' : editing ? 'Edit Account' : 'Create Account'}
-          <IconButton onClick={() => setDialogOpen(false)} sx={{ position: 'absolute', right: 8, top: 8 }}>
+          <IconButton
+            onClick={() => setDialogOpen(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
