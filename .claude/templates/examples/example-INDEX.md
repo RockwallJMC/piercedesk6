@@ -10,6 +10,9 @@ team: ["claude", "developer-name"]
 impact_level: "shallow"
 ---
 
+> **GitHub Workflow Note:** For all GitHub issue/PR creation and updates, use the `/github-workflow` skill.
+> See `.claude/skills/github-workflow/SKILL.md` for complete templates and workflows with agent identification requirements.
+
 # INDEX: Example Feature
 
 **Purpose:** This is an example INDEX document showing proper structure and format. Use this as a reference when creating your own INDEX files.

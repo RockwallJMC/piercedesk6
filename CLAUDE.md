@@ -99,6 +99,7 @@ If there is even a 1% chance a skill applies, you MUST invoke it. This is non-ne
 - Multi-step features → `/writing-plans` skill
 - Any bug/failure → `/systematic-debugging` skill
 - File organization → `/file-organizer` skill
+- GitHub issues/PRs/updates → `/github-workflow` skill
 
 **Use the Skill tool:**
 
@@ -108,6 +109,7 @@ Skill tool with skill: "using-superpowers"
 Skill tool with skill: "TDD"
 Skill tool with skill: "VERIFY-BEFORE-COMPLETE"
 Skill tool with skill: "software-architecture"
+Skill tool with skill: "github-workflow"
 ```
 
 **Red flags that mean you're rationalizing (STOP):**
@@ -196,29 +198,29 @@ Task(playwright-tester, "Create auth test suite")
 - Complex exploration = use Explore agent (not direct Grep/Glob)
 - Skills + Sub-agents = mandatory combination, not either/or
 
-**GitHub Issue Updates During Execution:**
+**GitHub Workflow (Coordination Hub):**
 
-Sub-agents MUST post progress updates to the GitHub issue at these checkpoints:
+<EXTREMELY_IMPORTANT>
+All GitHub issue/PR creation and updates MUST follow the `/github-workflow` skill.
 
-1. **Phase start**: Announce phase beginning and agent assignment
-2. **Task completion**: Post task results with verification evidence
-3. **TDD checkpoint**: After invoking /TDD skill (RED → GREEN cycle)
-4. **Playwright completion**: Post test results WITH SCREENSHOTS
-5. **PR creation** (**MANDATORY AFTER EVERY TASK**): Link PR to issue
-6. **PR merge**: Post merge confirmation and next task announcement
-7. **Phase completion**: Post final verification evidence
+**Invoke this skill BEFORE:**
+- Creating GitHub issues
+- Creating PRs (after EVERY task)
+- Posting updates to issues
+- Linking PRs to issues
 
-**CRITICAL:** After completing EVERY task, agents MUST:
-1. Verify task (build, lint, tests)
-2. Create PR with `gh pr create`
-3. Link PR to issue with `gh issue comment`
-4. Wait for merge
-5. Post merge confirmation
-6. Continue to next task
+**Key Requirements:**
+- Every GitHub interaction MUST include agent name (`**Agent**: {agent-name}`)
+- Task-level PRs are MANDATORY (create PR after EVERY task completion)
+- Screenshots must be committed to repo and referenced via GitHub raw URLs
+- Use `gh issue comment {issue-number}` for all updates
+- Read issue number from INDEX frontmatter (`github_issue` field)
 
-Use `gh issue comment {issue-number}` for all updates. See templates in DOCUMENTATION-GUIDE.md.
-
-The GitHub issue number is available in the INDEX frontmatter field `github_issue`. Sub-agents should read the INDEX file to get this value before posting comments.
+**For complete templates and workflow**, see `.claude/skills/github-workflow/SKILL.md` or invoke:
+```
+Skill tool with skill: "github-workflow"
+```
+</EXTREMELY_IMPORTANT>
 
 #### 3. Verification Is Evidence-Based, Always
 
@@ -729,6 +731,29 @@ If there is even a 1% chance a skill applies to your current action, you MUST in
 - Intelligently organize files across the workspace
 - Reduce cognitive load
 - Maintain clean digital workspace
+
+#### 5. github-workflow
+
+**Location:** `.claude/skills/github-workflow/SKILL.md`
+**Command:** `/github-workflow` or use Skill tool with `skill: "github-workflow"`
+
+**When to invoke:**
+
+- BEFORE creating GitHub issues for features
+- BEFORE creating PRs (after ANY task completion)
+- BEFORE posting progress updates to GitHub issues
+- When linking documentation to issues/PRs
+- When coordinating multi-agent feature work
+
+**Core principle:** GitHub is the coordination hub - all work tracked with proper agent identification
+
+**Key requirements:**
+
+- Every GitHub interaction MUST include agent name (`**Agent**: {agent-name}`)
+- Task-level PRs are MANDATORY (create PR after EVERY task)
+- Screenshots must be committed and referenced via GitHub raw URLs
+- Issue comments link to execution logs and documentation
+- Feature branch stays alive for multiple task PRs
 
 ### Skill Integration in Workflow
 
