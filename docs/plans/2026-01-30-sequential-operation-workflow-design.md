@@ -1,8 +1,13 @@
-# Sequential Operation Workflow Design
+---
+title: "Sequential Operation Workflow Design"
+type: "design"
+status: "complete"
+version: "1.0"
+created: "2026-01-30"
+updated: "2026-01-30"
+---
 
-**Created:** 2026-01-30
-**Type:** Design Document
-**Status:** Validated
+# Sequential Operation Workflow Design
 
 ## Overview
 
