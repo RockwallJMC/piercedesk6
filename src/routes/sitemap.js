@@ -291,6 +291,15 @@ const sitemap = [
         ],
       },
       {
+        name: 'Service Agreements',
+        pathName: 'service-agreements',
+        key: 'service_agreements',
+        icon: 'material-symbols:contract-outline',
+        active: true,
+        path: paths.serviceAgreements,
+        selectionPrefix: '/service-agreements',
+      },
+      {
         name: 'Invoice',
         key: 'invoice',
         pathName: 'invoice',
