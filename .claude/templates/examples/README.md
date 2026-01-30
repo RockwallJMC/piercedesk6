@@ -82,8 +82,8 @@ Exit code: 0
 ### 4. Cross-Document References
 Link related documents:
 ```markdown
-- Related to INDEX: [docs/system/INDEX-feature.md](../../docs/system/INDEX-feature.md)
-- Related to Design: [phase1.1-design.md](../../docs/system/design/phase1.1-design.md)
+- Related to INDEX: [docs/system/INDEX-feature.md](docs/system/INDEX-feature.md)
+- Related to Design: [phase1.1-design.md](docs/system/design/phase1.1-design.md)
 ```
 
 ### 5. INDEX as Single Source of Truth
@@ -112,7 +112,7 @@ See CLAUDE.md "Abbreviated Workflow" section for details.
 
 ## Real-World Example
 
-The **test-rectangle feature** in `docs/system/INDEX-test-rectangle.md` is a real example that was created to validate the documentation framework. It shows:
+The **test-rectangle feature** in `docs/system/execution/INDEX-test-rectangle.md` is a real example that was created to validate the documentation framework. It shows:
 - How the templates work in practice
 - Documentation for a very simple feature (13-line code change)
 - Full workflow applied to shallow-impact feature (for framework testing)
@@ -129,7 +129,7 @@ The **test-rectangle feature** in `docs/system/INDEX-test-rectangle.md` is a rea
 
 ## Testing Note
 
-These examples are based on a fictional "button color update" feature. The test-rectangle feature in `docs/system/` is a real example that was actually implemented and verified.
+These examples are based on a fictional "button color update" feature. The test-rectangle feature in `docs/system/execution/` is a real example that was actually implemented and verified.
 
 ## Questions?
 

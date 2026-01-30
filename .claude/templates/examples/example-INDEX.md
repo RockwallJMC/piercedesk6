@@ -29,7 +29,7 @@ Update primary button color from blue to brand purple across all components. Aff
 ## Phase Breakdown
 
 ### Phase 1.1: Design
-- **Doc**: [`docs/system/design/phase1.1-button-color-design.md`](../../docs/system/design/phase1.1-button-color-design.md)
+- **Doc**: [`docs/system/design/phase1.1-button-color-design.md`](docs/system/design/phase1.1-button-color-design.md)
 - **Type**: Design
 - **Status**: ✅ Complete (v1.0)
 - **Assigned**: Claude
@@ -37,7 +37,7 @@ Update primary button color from blue to brand purple across all components. Aff
 - **Completed**: 2026-01-20
 
 ### Phase 1.2: Implementation
-- **Doc**: [`docs/system/execution/phase1.2-button-color-implementation.md`](../../docs/system/execution/phase1.2-button-color-implementation.md)
+- **Doc**: [`docs/system/execution/phase1.2-button-color-implementation.md`](docs/system/execution/phase1.2-button-color-implementation.md)
 - **Type**: Execution
 - **Status**: ✅ Complete (v1.0)
 - **Assigned**: Claude
@@ -153,10 +153,10 @@ Exit code: 0
 ## Related Documentation
 
 ### Design Docs
-- [Phase 1.1 Design](../../docs/system/design/phase1.1-button-color-design.md)
+- [Phase 1.1 Design](docs/system/design/phase1.1-button-color-design.md)
 
 ### User Docs
-- [UI Component Library](../../docs/user-docs/components/buttons.md)
+- [UI Component Library](docs/user-docs/components/buttons.md)
 
 ## Change Log
 

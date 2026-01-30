@@ -36,7 +36,7 @@ All phase progress updates are posted to the GitHub issue for external coordinat
 ## Phase Breakdown
 
 ### Phase 1.1: [Phase Name]
-- **Doc**: [`docs/system/design/phase1.1-topic.md`](../../docs/system/design/phase1.1-topic.md)
+- **Doc**: [`docs/system/design/phase1.1-topic.md`](docs/system/design/phase1.1-topic.md)
 - **Type**: Design
 - **Status**: ✅ Complete (v1.0) / 🚧 In Progress (v0.5) / ⏳ Planned / 🚫 Blocked
 - **Assigned**: Agent name or team member
@@ -44,7 +44,7 @@ All phase progress updates are posted to the GitHub issue for external coordinat
 - **Completed**: YYYY-MM-DD
 
 ### Phase 1.2: [Phase Name]
-- **Doc**: [`docs/system/execution/phase1.2-topic.md`](../../docs/system/execution/phase1.2-topic.md)
+- **Doc**: [`docs/system/execution/phase1.2-topic.md`](docs/system/execution/phase1.2-topic.md)
 - **Type**: Execution
 - **Status**: [Status]
 - **Assigned**: Agent name
@@ -184,15 +184,15 @@ $ npm run build
 ## Related Documentation
 
 ### Design Docs
-- [Design doc 1](../../docs/system/design/phase1.1-topic.md)
-- [Design doc 2](../../docs/system/design/phase1.2-topic.md)
+- [Design doc 1](docs/system/design/phase1.1-topic.md)
+- [Design doc 2](docs/system/design/phase1.2-topic.md)
 
 ### User Docs
-- [Feature guide](../../docs/user-docs/features/FEATURE-NAME.md)
-- [Architecture doc](../../docs/system/design/architecture/ARCHITECTURE-NAME.md)
+- [Feature guide](docs/user-docs/features/FEATURE-NAME.md)
+- [Architecture doc](docs/system/design/architecture/ARCHITECTURE-NAME.md)
 
 ### As-Built Docs
-- [As-built doc](../../docs/system/as-builts/feature-as-built.md)
+- [As-built doc](docs/system/as-builts/feature-as-built.md)
 
 ## Change Log
 
