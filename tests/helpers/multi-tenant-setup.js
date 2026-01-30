@@ -107,13 +107,14 @@ export async function loginAsOrgUser(page, org, userRole) {
   const email = TEST_ORGS[org].users[userRole];
   const password = TEST_ORGS[org].password;
 
-  // Clear any existing session
+  // Navigate to login page first
+  await page.goto('http://localhost:4000/authentication/default/jwt/login');
+
+  // Clear any existing session after navigation
   await page.evaluate(() => {
     localStorage.clear();
     sessionStorage.clear();
   });
-
-  await page.goto('http://localhost:4000/authentication/default/jwt/login');
 
   // Wait for login page to be ready
   await page.waitForSelector('input[type="email"]', { timeout: 5000 });

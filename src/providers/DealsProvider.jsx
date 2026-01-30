@@ -1,19 +1,42 @@
 'use client';
 
-import { createContext, use, useReducer, useCallback } from 'react';
-import { dealsData } from 'data/crm/deals';
+import { createContext, use, useReducer, useCallback, useEffect, useState } from 'react';
+import { useDeals, useUpdateDeal } from 'services/swr/api-hooks/useCRMDealsApi';
 import { DRAG_START, DRAG_OVER, DRAG_END, dealsReducer } from 'reducers/DealsReducer';
 
-const initialState = {
-  listItems: dealsData,
-  createDealDialog: { isOpen: false },
-  draggedList: null,
-  draggedDeal: null,
-};
+const STAGES = ['Contact', 'MQL', 'SQL', 'Opportunity', 'Won', 'Lost'];
 
 const DealsContext = createContext({});
 
 const DealsProvider = ({ children }) => {
+  // Fetch deals from API
+  const { data: groupedDeals, error, isLoading, mutate } = useDeals();
+  const { trigger: updateDeal } = useUpdateDeal();
+
+  // Transform API data to list format
+  const [listItems, setListItems] = useState([]);
+
+  useEffect(() => {
+    if (groupedDeals) {
+      const transformed = STAGES.map(stage => ({
+        id: stage,
+        title: stage,
+        deals: groupedDeals[stage] || [],
+        compactMode: false,
+      }));
+      setListItems(transformed);
+    }
+  }, [groupedDeals]);
+
+  const initialState = {
+    listItems: listItems,
+    createDealDialog: { isOpen: false },
+    draggedList: null,
+    draggedDeal: null,
+    isLoading,
+    error,
+  };
+
   const [state, dealsDispatch] = useReducer(dealsReducer, initialState);
 
   const handleDragStart = (event) => {
@@ -45,11 +68,55 @@ const DealsProvider = ({ children }) => {
     [],
   );
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
+    const { activeId, overId } = { activeId: event.active.id, overId: event.over.id };
+
+    // Optimistic update via reducer
     dealsDispatch({
       type: DRAG_END,
-      payload: { activeId: event.active.id, overId: event.over.id },
+      payload: { activeId, overId },
     });
+
+    // Find the deal and its new position after drag
+    const findDealAndStage = (dealId, lists) => {
+      for (const list of lists) {
+        const dealIndex = list.deals.findIndex(d => d.id === dealId);
+        if (dealIndex !== -1) {
+          return {
+            deal: list.deals[dealIndex],
+            stage: list.title,
+            stageOrder: dealIndex,
+          };
+        }
+      }
+      return null;
+    };
+
+    // Get updated list items after reducer update
+    // We need to wait a tick for the reducer to update state
+    setTimeout(async () => {
+      const currentListItems = state.listItems.length > 0 ? state.listItems : listItems;
+      const dealInfo = findDealAndStage(activeId, currentListItems);
+
+      if (dealInfo && dealInfo.deal) {
+        try {
+          // Call API to persist the change
+          await updateDeal({
+            id: dealInfo.deal.id,
+            updates: {
+              stage: dealInfo.stage,
+              stage_order: dealInfo.stageOrder,
+            },
+          });
+          // Revalidate to ensure consistency
+          mutate();
+        } catch (error) {
+          console.error('Failed to update deal position:', error);
+          // Revalidate to rollback optimistic update
+          mutate();
+        }
+      }
+    }, 0);
   };
 
   return (
