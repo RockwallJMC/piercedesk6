@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createApiClient } from 'lib/supabase/api-server';
 
+// Helper: Format decimal fields as strings with 2 decimal places
+function formatDealDecimals(deal) {
+  if (!deal) return deal;
+  return {
+    ...deal,
+    amount: deal.amount != null ? Number(deal.amount).toFixed(2) : null
+  };
+}
+
 // ============================================================================
 // PATCH /api/crm/deals/[id]
 // Update existing deal
@@ -70,7 +79,7 @@ export async function PATCH(request, { params }) {
       );
     }
 
-    return NextResponse.json(updatedDeal);
+    return NextResponse.json(formatDealDecimals(updatedDeal));
   } catch (error) {
     console.error('Unexpected error:', error);
     return NextResponse.json(

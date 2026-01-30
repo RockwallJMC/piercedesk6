@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createApiClient } from 'lib/supabase/api-server';
 
+// Helper: Format decimal fields as strings with 2 decimal places
+function formatDealDecimals(deal) {
+  if (!deal) return deal;
+  return {
+    ...deal,
+    amount: deal.amount != null ? Number(deal.amount).toFixed(2) : null
+  };
+}
+
 // ============================================================================
 // GET /api/crm/deals
 // Fetch all deals for authenticated user, grouped by stage
@@ -38,7 +47,7 @@ export async function GET(request) {
       );
     }
 
-    // Group deals by stage
+    // Format decimal fields and group deals by stage
     const grouped = {
       Contact: [],
       MQL: [],
@@ -50,7 +59,7 @@ export async function GET(request) {
 
     deals.forEach(deal => {
       if (grouped[deal.stage]) {
-        grouped[deal.stage].push(deal);
+        grouped[deal.stage].push(formatDealDecimals(deal));
       }
     });
 
@@ -138,7 +147,7 @@ export async function POST(request) {
       );
     }
 
-    return NextResponse.json(newDeal, { status: 201 });
+    return NextResponse.json(formatDealDecimals(newDeal), { status: 201 });
   } catch (error) {
     console.error('Unexpected error:', error);
     return NextResponse.json(

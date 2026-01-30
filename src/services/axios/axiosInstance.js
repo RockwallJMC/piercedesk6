@@ -1,11 +1,19 @@
 import { supabase } from '@/lib/supabase/client';
 import axios from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const EXTERNAL_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
   withCredentials: true,
+});
+
+// Use baseURL only for external API calls (not /api/* routes)
+axiosInstance.interceptors.request.use(async (config) => {
+  // Internal Next.js API routes start with /api/
+  if (!config.url?.startsWith('/api/')) {
+    config.baseURL = EXTERNAL_API_URL;
+  }
+  return config;
 });
 
 // Adding authorization header to axios instance if session exists
