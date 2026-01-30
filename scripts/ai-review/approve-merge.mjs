@@ -6,6 +6,12 @@ if (!githubToken) {
   process.exit(1);
 }
 
+const autoMergeEnabled = process.env.AUTO_MERGE_ENABLED;
+if (autoMergeEnabled !== "true") {
+  console.log("AUTO_MERGE_ENABLED is not set to 'true'. Skipping approval/merge.");
+  process.exit(0);
+}
+
 const eventPath = process.env.GITHUB_EVENT_PATH;
 if (!eventPath || !fs.existsSync(eventPath)) {
   console.error("GITHUB_EVENT_PATH missing or invalid.");
