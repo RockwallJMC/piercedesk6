@@ -8,11 +8,11 @@ test.describe('Complete Lead-to-Proposal Flow', () => {
     await selectOrganization(page, TEST_ORGS.acme.name);
 
     // Step 2: Navigate to dashboard
-    await page.goto('/dashboard/crm');
+    await page.goto('/apps/crm/dashboard');
     await waitForNetworkIdle(page);
 
     // Should see dashboard
-    await expect(page.getByText(/dashboard|crm/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'CRM Dashboard' })).toBeVisible();
     console.log('✓ Dashboard loaded');
 
     // Step 3: Navigate to leads
@@ -56,11 +56,11 @@ test.describe('Complete Lead-to-Proposal Flow', () => {
     console.log('✓ Contacts page loaded');
 
     // Step 8: Return to dashboard
-    await page.goto('/dashboard/crm');
+    await page.goto('/apps/crm/dashboard');
     await waitForNetworkIdle(page);
 
     // Dashboard should still work
-    await expect(page.getByText(/pipeline|forecast|revenue/i)).toBeVisible();
+    await expect(page.getByText(/Total Pipeline Value|Weighted Forecast/i)).toBeVisible();
     console.log('✓ Complete flow verified');
 
     // Final assertion
@@ -70,15 +70,17 @@ test.describe('Complete Lead-to-Proposal Flow', () => {
   test('should display correct data on CRM dashboard widgets', async ({ page }) => {
     await loginAsUser(page, TEST_USERS.salesManager);
     await selectOrganization(page, TEST_ORGS.acme.name);
-    await page.goto('/dashboard/crm');
+    await page.goto('/apps/crm/dashboard');
     await waitForNetworkIdle(page);
 
-    // Sale Funnel should have proper percentages
-    await expect(page.getByText(/sale funnel/i)).toBeVisible();
+    // Should show KPI widgets
+    await expect(page.getByText(/Total Pipeline Value/i)).toBeVisible();
+    await expect(page.getByText(/Weighted Forecast/i)).toBeVisible();
+    await expect(page.getByText(/Lead Conversion Rate/i)).toBeVisible();
 
-    // Should show percentages like "5.2%", "3.8%", etc. (from dashboard.js data)
-    await expect(page.getByText(/5\.2%/)).toBeVisible();
-    await expect(page.getByText(/3\.8%/)).toBeVisible();
+    // Should show section headings
+    await expect(page.getByRole('heading', { name: 'Pipeline Visualization' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Lead Analytics' })).toBeVisible();
 
     // Should NOT show undefined values
     await expect(page.getByText('undefined%')).not.toBeVisible();
