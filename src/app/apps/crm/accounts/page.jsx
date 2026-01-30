@@ -25,6 +25,7 @@ const AccountsPage = () => {
   const [filter, setFilter] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [viewMode, setViewMode] = useState(false);
   const [form, setForm] = useState({ name: '', industry: '', website: '', phone: '' });
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
@@ -109,6 +110,7 @@ const AccountsPage = () => {
                 website: params.row.website || '',
                 phone: params.row.phone || '',
               });
+              setViewMode(true);
               setDialogOpen(true);
             }}
           >
@@ -124,6 +126,7 @@ const AccountsPage = () => {
                 website: params.row.website || '',
                 phone: params.row.phone || '',
               });
+              setViewMode(false);
               setDialogOpen(true);
             }}
           >
@@ -164,6 +167,7 @@ const AccountsPage = () => {
           variant="contained"
           onClick={() => {
             setEditing(null);
+            setViewMode(false);
             setForm({ name: '', industry: '', website: '', phone: '' });
             setSaveError(null);
             setDialogOpen(true);
@@ -191,7 +195,7 @@ const AccountsPage = () => {
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>
-          {editing ? 'Edit Account' : 'Create Account'}
+          {viewMode ? 'View Account' : editing ? 'Edit Account' : 'Create Account'}
           <IconButton onClick={() => setDialogOpen(false)} sx={{ position: 'absolute', right: 8, top: 8 }}>
             <CloseIcon />
           </IconButton>
@@ -208,31 +212,37 @@ const AccountsPage = () => {
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               required
+              disabled={viewMode}
             />
             <TextField
               label="Industry"
               value={form.industry}
               onChange={(e) => setForm({ ...form, industry: e.target.value })}
+              disabled={viewMode}
             />
             <TextField
               label="Website"
               value={form.website}
               onChange={(e) => setForm({ ...form, website: e.target.value })}
+              disabled={viewMode}
             />
             <TextField
               label="Phone"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              disabled={viewMode}
             />
           </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)} disabled={saving}>
-            Cancel
+            {viewMode ? 'Close' : 'Cancel'}
           </Button>
-          <Button variant="contained" onClick={handleSave} disabled={saving || !form.name}>
-            {saving ? <CircularProgress size={20} /> : 'Save'}
-          </Button>
+          {!viewMode && (
+            <Button variant="contained" onClick={handleSave} disabled={saving || !form.name}>
+              {saving ? <CircularProgress size={20} /> : 'Save'}
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Stack>

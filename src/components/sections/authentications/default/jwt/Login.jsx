@@ -21,7 +21,6 @@ const Login = () => {
         : '/organizations';
       return { ok: true, redirectTo };
     }
-
     const { error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,

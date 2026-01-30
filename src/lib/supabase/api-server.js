@@ -1,36 +1,58 @@
 import { createServerClient } from '@supabase/ssr'
 
 /**
- * Create a Supabase client for API routes that receive Bearer tokens.
- * This client uses the Authorization header for RLS instead of cookies.
+ * Creates a Supabase client for API Route Handlers.
  *
- * Usage in API routes:
- *   const supabase = createApiClient(request)
- *   const { data: { user } } = await supabase.auth.getUser()
- *   // Now RLS will use this user for all queries
+ * Supports both:
+ * - Bearer token auth via Authorization header (used by API tests and axiosInstance)
+ * - Cookie-based auth via Supabase session cookies (used by browser flows)
+ *
+ * @param {Request} request - The Next.js request object
+ * @returns {SupabaseClient} Supabase client instance
  */
 export function createApiClient(request) {
-  const authHeader = request.headers.get('authorization')
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      global: {
-        headers: {
-          Authorization: authHeader || '',
-        },
-      },
-      cookies: {
-        // Empty cookie implementation for API routes
-        // These routes use Bearer tokens, not cookies
-        getAll() {
-          return []
-        },
-        setAll() {
-          // No-op for API routes
-        },
-      },
+  if (!supabaseUrl) {
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
+  }
+
+  if (!supabaseAnonKey) {
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable')
+  }
+
+  const authHeader = request.headers.get('authorization') || ''
+
+  // Extract cookies from the request headers
+  const cookieHeader = request.headers.get('cookie') || ''
+
+  // Parse cookies into a simple key-value store
+  const cookieStore = {}
+  cookieHeader.split(';').forEach(cookie => {
+    const [name, ...rest] = cookie.trim().split('=')
+    if (name) {
+      cookieStore[name] = rest.join('=')
     }
-  )
+  })
+
+  return createServerClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: authHeader,
+      },
+    },
+    cookies: {
+      get(name) {
+        return cookieStore[name]
+      },
+      set() {
+        // API routes handle cookies via response headers
+        // Cookie setting happens via NextResponse.cookies
+      },
+      remove() {
+        // API routes handle cookies via response headers
+      },
+    },
+  })
 }
