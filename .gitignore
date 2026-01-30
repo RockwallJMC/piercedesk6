@@ -48,6 +48,3 @@ yarn-error.log*
 next-env.d.ts
 
 public/assets
-
-# docs
-/docs/system/execution/testing/playwright/screenshots/
