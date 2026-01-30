@@ -1,0 +1,7 @@
+[WARNING] Image with src "/_next/static/media/17.d5899193.webp" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[WARNING] Image with src "/_next/static/media/19.ad04c7f7.webp" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[WARNING] Image with src "/_next/static/media/18.603f8f43.webp" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[WARNING] [ECharts] Instance ec_1769732469568 has been disposed @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297

@@ -12,7 +12,7 @@ gh issue create \
 {Brief description of what this feature accomplishes and its business value}
 
 ## Documentation
-- INDEX: [_sys_documents/execution/INDEX-{feature}.md](_sys_documents/execution/INDEX-{feature}.md)
+- INDEX: [docs/system/execution/INDEX-{feature}.md](docs/system/execution/INDEX-{feature}.md)
 - Design docs: Listed in INDEX Phase Breakdown
 
 ## Phases
@@ -55,7 +55,7 @@ gh issue create \
 Implements comprehensive user profile management including avatar uploads, settings, and preferences for authenticated users.
 
 ## Documentation
-- INDEX: [_sys_documents/execution/INDEX-user-profile.md](_sys_documents/execution/INDEX-user-profile.md)
+- INDEX: [docs/system/execution/INDEX-user-profile.md](docs/system/execution/INDEX-user-profile.md)
 - Design docs: Listed in INDEX Phase Breakdown
 
 ## Phases

@@ -132,7 +132,7 @@ const FileDropZone = ({
           </Typography>
         </Stack>
       </Box>
-      {error && <FormHelperText>{error}</FormHelperText>}
+      {error && <FormHelperText>{error?.message || error}</FormHelperText>}
 
       {previews.length > 0 && previewType === 'list' && (
         <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>

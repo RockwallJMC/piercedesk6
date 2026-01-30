@@ -125,7 +125,7 @@ const ProposalForm = ({ opportunity, onChange, onSuccess, onCancel }) => {
               {/* Error Alert */}
               {error && (
                 <Alert severity="error" onClose={() => setError(null)}>
-                  {error}
+                  {error?.message || error}
                 </Alert>
               )}
 

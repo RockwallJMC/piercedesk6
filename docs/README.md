@@ -1,132 +1,223 @@
 # PierceDesk Documentation
 
-Welcome to the PierceDesk documentation. This documentation covers the complete unified SaaS platform for physical security integrators.
+Welcome to the PierceDesk documentation hub. This directory contains all project documentation organized into two main areas:
 
-## Documentation Structure
+## 📁 Documentation Structure
 
-This documentation is organized into four main sections:
+### [/system/](./system/) - Internal System Documentation
 
-### 📐 [Architecture](architecture/)
+Internal documentation for development team, architects, and AI agents. Includes design documents, execution logs, test results, and system architecture.
 
-Technical architecture and system design documentation:
+**When to use:** Planning features, tracking implementation, documenting architecture, recording test results.
 
-- [**DESK-ARCHITECTURE.md**](architecture/DESK-ARCHITECTURE.md) - The 8-desk system overview
-- **DATABASE-ARCHITECTURE.md** - Multi-tenant architecture, RLS, schema design
-- **AUTHENTICATION-FLOW.md** - Supabase authentication and sessions
-- **API-DESIGN.md** - REST API patterns and SWR hooks
-- **DRAWER-ARCHITECTURE.md** - Contextual drawer system (future)
-- **SECURITY-MODEL.md** - RLS, RBAC, encryption standards
+👉 [Browse System Documentation](./system/)
 
-### 🎯 [Features](features/)
+### [/user-docs/](./user-docs/) - User-Facing Documentation
 
-User-facing feature guides and documentation:
+End-user documentation including feature guides, how-to tutorials, and API reference for PierceDesk users.
 
-- [Feature Documentation](features/) - User-facing feature guides
+**When to use:** Creating user guides, documenting features for end users, writing help content.
 
-### 📚 [Guides](guides/)
+👉 [Browse User Documentation](./user-docs/)
 
-### 🔍 [Quality Assurance](quality/)
+---
 
-Quality assurance documentation:
+## Quick Navigation
 
-- [Quality Documentation](quality/) - Security, performance, and QA
+### For Developers & Architects
 
-### 👥 [User Journeys](user-journeys/)
+| Document Type | Location | Purpose |
+|--------------|----------|---------|
+| **Design Docs** | [system/design/](./system/design/) | Pre-implementation architecture and decisions |
+| **Execution Logs** | [system/execution/](./system/execution/) | Implementation progress, test results, verification |
+| **As-Built Docs** | [system/as-builts/](./system/as-builts/) | Current deployed state documentation |
+| **Implementation Plans** | [system/plans/](./system/plans/) | Detailed phase implementation plans |
+| **Product Vision** | [system/vision/](./system/vision/) | Product vision and goals |
+| **Roadmap** | [system/roadmap/](./system/roadmap/) | Strategic planning documents |
 
-User journey documentation for key roles and workflows:
+### For End Users & Documentation Writers
 
-- [**Sales Manager - Phase 1 CRM**](user-journeys/sales-manager-phase1-crm.md) - Daily and weekly workflows for sales management
-- [**Sales Account Manager - Phase 1 CRM**](user-journeys/sales-account-manager-phase1-crm.md) - Lead-to-close sales process workflows
-- **Service Manager - Service Desk** - Service ticket and SLA management (planned)
-- **Project Manager - Projects Desk** - Project lifecycle management (planned)
+| Document Type | Location | Purpose |
+|--------------|----------|---------|
+| **Feature Guides** | [user-docs/features/](./user-docs/features/) | What PierceDesk can do |
+| **How-To Guides** | [user-docs/guides/](./user-docs/guides/) | Step-by-step task instructions |
+| **API Docs** | [user-docs/api/](./user-docs/api/) | Integration and API reference |
 
+---
 
-How-to guides and best practices:
+## Naming Conventions
 
-- [**DOCUMENTATION-GUIDE.md**](guides/DOCUMENTATION-GUIDE.md) - How to use the documentation framework
-- **GETTING-STARTED.md** - New developer onboarding
-- **DEVELOPMENT-SETUP.md** - Local development environment setup
-- **TESTING-GUIDE.md** - Testing practices and frameworks
-- **DEPLOYMENT-GUIDE.md** - Deployment procedures
-- **CONTRIBUTING.md** - How to contribute to PierceDesk
-- **TROUBLESHOOTING.md** - Common issues and solutions
+### System Documentation (`/system/`)
 
-### 🔌 [API Reference](api/)
+Format: `{type}-{feature|phase}-{topic}.md`
 
-REST API reference and integration documentation:
+**Examples:**
+- `design-phase1.1-crm-schema.md`
+- `execution-phase1.2-auth-integration.md`
+- `as-built-crm-desk-mvp.md`
+- `INDEX-crm-desk-mvp.md`
 
-- [API Documentation](api/) - REST API reference
+**Prefixes:** `design-`, `execution-`, `as-built-`, `plan-`, `INDEX-`, `debug-`, `realign-`
 
-## Quick Links
+📘 [Full System Naming Rules](./system/AGENT.md#naming-conventions)
 
-### For New Developers
-1. Start with [Getting Started Guide](guides/GETTING-STARTED.md) *(Coming Soon)*
-2. Set up your [Development Environment](guides/DEVELOPMENT-SETUP.md) *(Coming Soon)*
-3. Read [DESK-ARCHITECTURE](architecture/DESK-ARCHITECTURE.md) to understand the system
-4. Review [Documentation Guide](guides/DOCUMENTATION-GUIDE.md) for contribution workflow
+### User Documentation (`/user-docs/`)
 
-### For Feature Development
-1. Review [Documentation Guide](guides/DOCUMENTATION-GUIDE.md) for the complete workflow
-2. Check relevant [Feature Documentation](features/) for the desk you're working on
-3. Review relevant [User Journeys](user-journeys/) to understand user workflows
-4. Reference [API Documentation](api/) for integration patterns
-5. Follow [Testing Guide](guides/TESTING-GUIDE.md) *(Coming Soon)* for test requirements
+Format: `{topic}-{subtopic}.md` or `{feature-name}.md`
 
-### For Architecture Decisions
-1. Review existing [Architecture Documentation](architecture/)
-2. Reference the transformation plan in `_sys_documents/roadmap/`
-3. Check [DATABASE-ARCHITECTURE](architecture/DATABASE-ARCHITECTURE.md) *(Coming Soon)* for data model
-4. Follow [API-DESIGN](architecture/API-DESIGN.md) *(Coming Soon)* patterns
+**Examples:**
+- `getting-started.md`
+- `managing-contacts.md`
+- `creating-opportunities.md`
 
-## Documentation Principles
+**Rules:** User-friendly, task-oriented, no technical prefixes
 
-### Living Documentation
-All documentation in this folder is **user-facing** and should be:
-- Clear and jargon-free
-- Up-to-date with current implementation
-- Includes examples and code snippets
-- Cross-referenced with related docs
+📘 [Full User Docs Naming Rules](./user-docs/AGENT.md#naming-conventions)
 
-### Internal vs. User-Facing
-- **User-facing docs** (this folder): For developers, users, and stakeholders
-- **Internal docs** (`_sys_documents/`): Planning, tracking, as-builts, execution logs
+---
 
-### Versioning
-Documentation follows the codebase version:
-- Updated with each feature release
-- Breaking changes highlighted
-- Deprecation notices included
+## Governance
 
-## Contributing to Documentation
+Each documentation area has its own AGENT.md file with detailed governance rules:
 
-See [CONTRIBUTING.md](guides/CONTRIBUTING.md) *(Coming Soon)* and [DOCUMENTATION-GUIDE.md](guides/DOCUMENTATION-GUIDE.md) for:
-- How to add new documentation
-- Documentation standards and style guide
-- Review process
-- Templates and examples
+- **[system/AGENT.md](./system/AGENT.md)** - System documentation governance
+  - Naming conventions
+  - Required frontmatter
+  - Folder organization
+  - Quality standards
+  - Document lifecycle
 
-## Documentation Status
+- **[user-docs/AGENT.md](./user-docs/AGENT.md)** - User documentation governance
+  - Writing style guidelines
+  - Screenshot standards
+  - Content structure
+  - Audience considerations
 
-| Section | Status | Last Updated |
-|---------|--------|--------------|
-| Architecture | 🚧 In Progress | 2026-01-27 |
-| Features | ⏳ Planned | - |
-| User Journeys | ✅ Phase 1 CRM Complete | 2026-01-27 |
-| Guides | 🚧 In Progress | 2026-01-27 |
-| API | ⏳ Planned | - |
+---
 
-### Legend
-- ✅ Complete and current
-- 🚧 In progress
-- ⏳ Planned
-- 📝 Needs update
+## Getting Started
 
-## Getting Help
+### I want to...
 
-- **Documentation issues**: Open an issue on GitHub with label `documentation`
-- **Feature questions**: Check relevant [Feature Documentation](features/)
-- **Technical problems**: See [TROUBLESHOOTING.md](guides/TROUBLESHOOTING.md) *(Coming Soon)*
-- **Architecture questions**: Review [Architecture](architecture/) docs or ask the team
+**Document a new feature (internal)**
+1. Create INDEX file: `cp .claude/templates/INDEX-template.md docs/system/INDEX-{feature}.md`
+2. Create design doc: Use `design-` prefix in `docs/system/design/`
+3. Create execution doc: Use `execution-` prefix in `docs/system/execution/`
+4. Follow [Documentation Guide](./system/execution/guides/DOCUMENTATION-GUIDE.md)
+
+**Write a user guide**
+1. Choose folder: `features/` or `guides/`
+2. Follow [User Docs Template](./user-docs/AGENT.md#document-structure)
+3. Include screenshots and step-by-step instructions
+4. Review [Writing Examples](./user-docs/AGENT.md#writing-examples)
+
+**Document architecture**
+1. Create design doc: `docs/system/design/design-{feature}-{topic}.md`
+2. Include diagrams, decisions, trade-offs
+3. Link to INDEX if part of feature work
+4. Use [Design Template](./.claude/templates/phase-design-template.md)
+
+**Record test results**
+1. Add to execution doc: `docs/system/execution/execution-{phase}-{topic}.md`
+2. Include command output and screenshots
+3. Link test results to verification section
+4. Follow [Execution Template](./.claude/templates/phase-execution-template.md)
+
+---
+
+## Templates
+
+Available in `.claude/templates/`:
+
+| Template | Purpose | Location |
+|----------|---------|----------|
+| **INDEX Template** | Master feature tracking | `INDEX-template.md` |
+| **Phase Design** | Pre-implementation design | `phase-design-template.md` |
+| **Phase Execution** | Implementation log | `phase-execution-template.md` |
+| **As-Built** | Current state documentation | `as-built-template.md` |
+| **Debug** | Bug investigation | `debug-template.md` |
+| **Realignment** | Plan changes | `realignment-template.md` |
+
+---
+
+## Key Principles
+
+### System Documentation
+- **Evidence-based:** Always include verification command output
+- **Cross-referenced:** Link to INDEX, design, execution docs
+- **Version-controlled:** Use YAML frontmatter with status tracking
+- **File:line references:** Always include code locations
+
+### User Documentation
+- **User-focused:** Written for non-technical end users
+- **Task-oriented:** Focus on "how to" accomplish goals
+- **Visual:** Include screenshots and examples
+- **Clear:** Simple language, no jargon
+
+### Separation of Concerns
+- ✅ System docs: Internal architecture, testing, execution
+- ✅ User docs: Feature guides, how-tos, user workflows
+- ❌ Never mix internal technical details in user docs
+- ❌ Never put user guides in system docs
+
+---
+
+## Documentation Workflow
+
+### Standard Feature Development
+
+```
+1. Create INDEX → docs/system/INDEX-{feature}.md
+2. Create Design Doc → docs/system/design/design-{phase}-{topic}.md
+3. Create Implementation Plan → docs/system/plans/plan-YYYY-MM-DD-{topic}.md
+4. Create Execution Doc → docs/system/execution/execution-{phase}-{topic}.md
+5. Update As-Built → docs/system/as-builts/as-built-{feature}.md
+6. Create User Guide → docs/user-docs/guides/{feature-name}.md
+7. Create Feature Overview → docs/user-docs/features/{feature-name}.md
+```
+
+### Quick Reference
+
+| Phase | System Docs | User Docs |
+|-------|------------|-----------|
+| **Planning** | INDEX, design docs | - |
+| **Implementation** | Execution logs, plans | - |
+| **Testing** | Test results in execution/ | - |
+| **Deployment** | As-built docs | - |
+| **User Release** | - | Feature guides, how-tos |
+
+---
+
+## Quality Gates
+
+Before merging ANY feature:
+
+- [ ] INDEX file complete and current
+- [ ] Design docs have status and verification
+- [ ] Execution docs include test evidence
+- [ ] As-built reflects deployed state
+- [ ] Code references include file:line numbers
+- [ ] All YAML frontmatter valid
+- [ ] Cross-references verified
+- [ ] User-facing docs created (if applicable)
+
+---
+
+## Maintenance
+
+### Monthly
+- Update as-built docs with current state
+- Verify all links work
+- Check screenshot currency (user docs)
+- Review naming convention compliance
+
+### Quarterly
+- Documentation health audit
+- Consolidate duplicate content
+- Archive completed/locked docs
+- Update roadmap documents
+
+---
 
 ## External Resources
 
@@ -137,6 +228,16 @@ See [CONTRIBUTING.md](guides/CONTRIBUTING.md) *(Coming Soon)* and [DOCUMENTATION
 
 ---
 
-**Last updated**: 2026-01-27
-**Documentation version**: 1.0.0
-**PierceDesk version**: MVP Development
+## Support
+
+**Questions about:**
+- **System documentation:** See [system/AGENT.md](./system/AGENT.md)
+- **User documentation:** See [user-docs/AGENT.md](./user-docs/AGENT.md)
+- **Templates:** Browse `.claude/templates/`
+- **Workflow:** Read [DOCUMENTATION-GUIDE.md](./system/execution/guides/DOCUMENTATION-GUIDE.md)
+
+---
+
+**Last Updated:** 2026-01-30
+**Structure Version:** 2.0
+**Migration Date:** 2026-01-30

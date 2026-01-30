@@ -34,7 +34,7 @@ const ControlledSelect = ({ name, label, options, control, error }) => (
         </Select>
       )}
     />
-    <FormHelperText>{error}</FormHelperText>
+    <FormHelperText>{error?.message || error}</FormHelperText>
   </FormControl>
 );
 
