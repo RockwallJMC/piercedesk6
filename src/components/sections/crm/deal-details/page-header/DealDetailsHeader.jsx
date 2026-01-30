@@ -16,9 +16,9 @@ const DealDetailsHeader = ({ title }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const { down } = useBreakpoints();
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
-  
 
   const downLg = down('lg');
+  
   // Mock opportunity data - in real app, this would come from props or API
   const mockOpportunity = {
     id: 1,
@@ -28,7 +28,7 @@ const DealDetailsHeader = ({ title }) => {
     account: 'Acme Corporation',
   };
 
-
+  return (
     <>
       <Paper sx={{ px: { xs: 3, md: 5 }, py: 3 }}>
         <div>
@@ -40,14 +40,14 @@ const DealDetailsHeader = ({ title }) => {
             sx={{ mb: 1 }}
           />
           <Stack
+            direction="row"
             sx={{ gap: 2, justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}
           >
             <Typography variant="h4" sx={[{ flexGrow: 999 }, downLg && { fontSize: 'h5.fontSize' }]}>
               {title}
             </Typography>
-          </Typography>
-            <Stack gap={2} sx={{ justifyContent: 'space-between', flexGrow: 1 }}>
-              <Stack gap={{ xs: 1, sm: 2 }}>
+            <Stack direction="row" gap={2} sx={{ justifyContent: 'space-between', flexGrow: 1 }}>
+              <Stack direction="row" gap={{ xs: 1, sm: 2 }}>
                 <AccessToggle />
                 <DealStatus />
               </Stack>
@@ -64,13 +64,13 @@ const DealDetailsHeader = ({ title }) => {
                   <IconifyIcon icon="material-symbols:more-vert" sx={{ fontSize: 20 }} />
                 </Button>
               </Stack>
-              <CRMDropdownMenu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                handleClose={() => setAnchorEl(null)}
-              />
-              <DealStatus />
-            />
+            </Stack>
+          </Stack>
+          <CRMDropdownMenu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            handleClose={() => setAnchorEl(null)}
+          />
         </div>
       </Paper>
       
@@ -80,7 +80,6 @@ const DealDetailsHeader = ({ title }) => {
         opportunity={mockOpportunity}
       />
     </>
-    </Paper>
   );
 };
 
