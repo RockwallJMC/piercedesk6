@@ -178,7 +178,7 @@ export const projectsData = [
         milestones: [
           { id: 11, name: 'iOS App', date: '2024-06-30', completed: false },
           { id: 12, name: 'Android App', date: '2024-07-31', completed: false }
-        ]
+        ],
         startDate: '2024-04-01',
         endDate: '2024-07-31',
       },

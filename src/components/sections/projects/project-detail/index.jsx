@@ -13,10 +13,10 @@ import ProjectOverview from './ProjectOverview';
 import ProjectTasks from './ProjectTasks';
 import ProjectBudget from './ProjectBudget';
 import ProjectTeam from './ProjectTeam';
+import ProjectAIABilling from '../aia-billing/ProjectAIABilling';
 
 const ProjectDetail = ({ projectId }) => {
   const [activeTab, setActiveTab] = useState(0);
-import ProjectAIABilling from '../aia-billing/ProjectAIABilling';
   
   // Find project by ID (in real app, this would be an API call)
   const project = projectsData.find(p => p.id === parseInt(projectId)) || projectsData[0];
