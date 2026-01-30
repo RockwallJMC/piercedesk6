@@ -7,7 +7,7 @@ test.describe('Supabase Authentication', () => {
 
     await page.getByLabel('Email').fill(TEST_USERS.salesManager.email);
     await page.getByLabel('Password').fill(TEST_USERS.salesManager.password);
-    await page.getByRole('button', { name: 'Sign In' }).click();
+    await page.getByRole('button', { name: 'Log in' }).click();
 
     // Should redirect to organization selection or dashboard
     await expect(page).toHaveURL(/\/(organizations|dashboard)/);
@@ -18,7 +18,7 @@ test.describe('Supabase Authentication', () => {
 
     await page.getByLabel('Email').fill('invalid@example.com');
     await page.getByLabel('Password').fill('WrongPassword123!');
-    await page.getByRole('button', { name: 'Sign In' }).click();
+    await page.getByRole('button', { name: 'Log in' }).click();
 
     // Should show error message
     await expect(page.getByRole('alert')).toContainText(/invalid credentials|email or password/i);
@@ -29,7 +29,7 @@ test.describe('Supabase Authentication', () => {
     await page.goto('/authentication/default/jwt/login');
     await page.getByLabel('Email').fill(TEST_USERS.salesRep.email);
     await page.getByLabel('Password').fill(TEST_USERS.salesRep.password);
-    await page.getByRole('button', { name: 'Sign In' }).click();
+    await page.getByRole('button', { name: 'Log in' }).click();
 
     // Should show create organization form
     await expect(page.getByRole('heading', { name: /create organization/i })).toBeVisible();
@@ -48,7 +48,7 @@ test.describe('Supabase Authentication', () => {
     await page.goto('/authentication/default/jwt/login');
     await page.getByLabel('Email').fill(TEST_USERS.salesManager.email);
     await page.getByLabel('Password').fill(TEST_USERS.salesManager.password);
-    await page.getByRole('button', { name: 'Sign In' }).click();
+    await page.getByRole('button', { name: 'Log in' }).click();
 
     await page.getByRole('menuitem', { name: TEST_ORGS.acme.name }).click();
     await expect(page).toHaveURL(/\/dashboard/);
@@ -65,7 +65,7 @@ test.describe('Supabase Authentication', () => {
     await page.goto('/authentication/default/jwt/login');
     await page.getByLabel('Email').fill(TEST_USERS.salesManager.email);
     await page.getByLabel('Password').fill(TEST_USERS.salesManager.password);
-    await page.getByRole('button', { name: 'Sign In' }).click();
+    await page.getByRole('button', { name: 'Log in' }).click();
 
     // Click profile menu and logout
     await page.getByRole('button', { name: /profile|account/i }).click();
