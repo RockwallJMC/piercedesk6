@@ -338,8 +338,8 @@ npm run build
 ## Related Documentation
 
 ### Design Documents
-- [Original design](_sys_documents/design/phase-X.Y-topic.md)
-- [Updated design](_sys_documents/design/phase-X.Z-topic.md)
+- [Original design](docs/system/design/phase-X.Y-topic.md)
+- [Updated design](docs/system/design/phase-X.Z-topic.md)
 
 ### User Documentation
 - [User guide](docs/features/FEATURE-NAME.md)
@@ -347,7 +347,7 @@ npm run build
 
 ### Internal Documentation
 - [Architecture overview](docs/architecture/ARCHITECTURE-NAME.md)
-- [INDEX document](_sys_documents/execution/INDEX-feature-name.md)
+- [INDEX document](docs/system/execution/INDEX-feature-name.md)
 
 ## Glossary
 

@@ -10,6 +10,9 @@ actual_delay_days: 0
 affected_phases: ["X.Y", "X.Z"]
 ---
 
+> **GitHub Workflow Note:** For all GitHub issue/PR creation and updates, use the `/github-workflow` skill.
+> See `.claude/skills/github-workflow/SKILL.md` for complete templates and workflows with agent identification requirements.
+
 # REALIGN-XXX: Realignment Title
 
 ## Executive Summary
@@ -255,8 +258,8 @@ If realignment doesn't work, how to revert:
 
 ## Related Documents
 
-- [Original INDEX](_sys_documents/execution/INDEX-feature-name.md)
-- [Affected phase doc](_sys_documents/design/phase-X.Y-topic.md)
+- [Original INDEX](docs/system/execution/INDEX-feature-name.md)
+- [Affected phase doc](docs/system/design/phase-X.Y-topic.md)
 - [User feedback / Issue #123](https://github.com/org/repo/issues/123)
 
 ## Timeline

@@ -12,6 +12,9 @@ progress_percentage: 0
 estimated_completion: "YYYY-MM-DD"
 ---
 
+> **GitHub Workflow Note:** For all GitHub issue/PR creation and updates, use the `/github-workflow` skill.
+> See `.claude/skills/github-workflow/SKILL.md` for complete templates and workflows with agent identification requirements.
+
 # Phase X.Y: Feature Name - Implementation
 
 ## Implementation Log

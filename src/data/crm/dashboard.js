@@ -43,7 +43,7 @@ export const kpisData = [
   },
 ];
 
-// Deals Data for Greeting Component
+// Deals Data for Greeting Component (Summary Object)
 export const dealsData = {
   total: 147,
   inProgress: 89,
@@ -51,6 +51,38 @@ export const dealsData = {
   totalValue: 24500000,
   avgDealSize: 166667,
 };
+
+// Greeting Metrics Data (Array for CRMGreeting component)
+export const greetingMetricsData = [
+  {
+    label: 'Total Deals',
+    icon: 'material-symbols:handshake-outline',
+    count: '147',
+    percentage: 8.2,
+    trend: 'up',
+  },
+  {
+    label: 'In Progress',
+    icon: 'material-symbols:pending-actions-outline',
+    count: '89',
+    percentage: 12.5,
+    trend: 'up',
+  },
+  {
+    label: 'Closed Won',
+    icon: 'material-symbols:check-circle-outline',
+    count: '58',
+    percentage: 5.3,
+    trend: 'up',
+  },
+  {
+    label: 'Deal Value',
+    icon: 'material-symbols:attach-money-rounded',
+    count: '$24.5M',
+    percentage: 15.7,
+    trend: 'up',
+  },
+];
 
 // Generated Revenue Chart Data
 export const crmGeneratedRevenueData = {
@@ -101,18 +133,15 @@ export const acquisitionCostData = {
   ],
 };
 
-// Average Lifetime Value Data
+// Average Lifetime Value Data (CAC vs LTV Chart)
 export const avgLifetimeValueData = {
-  current: 48500,
-  previous: 44200,
-  trend: [
-    { month: 'Jan', value: 42000 },
-    { month: 'Feb', value: 43200 },
-    { month: 'Mar', value: 44200 },
-    { month: 'Apr', value: 45100 },
-    { month: 'May', value: 46300 },
-    { month: 'Jun', value: 47400 },
-    { month: 'Jul', value: 48500 },
+  cac: [
+    1450, 1420, 1380, 1350, 1320, 1280, 1250, 1220, 1200, 1180, 1150, 1120, 1100, 1080, 1050,
+    1020, 1000, 980, 960, 940, 920, 900, 880, 860, 850,
+  ],
+  ltv: [
+    42000, 43200, 44200, 45100, 46300, 47400, 48500, 49200, 50100, 51000, 52200, 53500, 54800,
+    56100, 57500, 58900, 60200, 61800, 63200, 64700, 66300, 67900, 69500, 71200, 72800,
   ],
 };
 
@@ -146,6 +175,9 @@ export const saleFunnelTableData = [
     value: 18000000,
     conversionRate: 70.0,
     avgDays: 0,
+    lostLead: 30.0,
+    thisMonth: 5.2,
+    stageIndicator: '#1976d2',
   },
   {
     stage: 'Qualified',
@@ -153,6 +185,9 @@ export const saleFunnelTableData = [
     value: 16800000,
     conversionRate: 50.0,
     avgDays: 7,
+    lostLead: 50.0,
+    thisMonth: 3.8,
+    stageIndicator: '#2e7d32',
   },
   {
     stage: 'Proposal',
@@ -160,6 +195,9 @@ export const saleFunnelTableData = [
     value: 14700000,
     conversionRate: 50.0,
     avgDays: 14,
+    lostLead: 50.0,
+    thisMonth: 4.5,
+    stageIndicator: '#ed6c02',
   },
   {
     stage: 'Negotiation',
@@ -167,6 +205,9 @@ export const saleFunnelTableData = [
     value: 12600000,
     conversionRate: 70.0,
     avgDays: 21,
+    lostLead: 30.0,
+    thisMonth: 2.1,
+    stageIndicator: '#9c27b0',
   },
   {
     stage: 'Closed Won',
@@ -174,5 +215,8 @@ export const saleFunnelTableData = [
     value: 24500000,
     conversionRate: 100,
     avgDays: 28,
+    lostLead: 0,
+    thisMonth: 6.3,
+    stageIndicator: '#2e7d32',
   },
 ];

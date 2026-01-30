@@ -12,6 +12,9 @@ progress_percentage: 100
 estimated_completion: "2026-01-21"
 ---
 
+> **GitHub Workflow Note:** For all GitHub issue/PR creation and updates, use the `/github-workflow` skill.
+> See `.claude/skills/github-workflow/SKILL.md` for complete templates and workflows with agent identification requirements.
+
 # Phase 1.2: Button Color Update - Implementation
 
 **Purpose:** This is an example phase execution document showing proper structure and format.

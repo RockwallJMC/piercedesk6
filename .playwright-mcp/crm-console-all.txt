@@ -1,0 +1,6 @@
+[LOG] [Fast Refresh] rebuilding @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[LOG] [Fast Refresh] done in 182ms @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[LOG] [HMR] connected @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[WARNING] [ECharts] Instance ec_1769732524377 has been disposed @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[WARNING] [ECharts] Instance ec_1769732524383 has been disposed @ http://localhost:4000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
