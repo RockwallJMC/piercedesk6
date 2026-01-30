@@ -347,7 +347,7 @@ npm run build
 
 ### Internal Documentation
 - [Architecture overview](docs/architecture/ARCHITECTURE-NAME.md)
-- [INDEX document](docs/system/execution/INDEX-feature-name.md)
+- [INDEX document](docs/system/INDEX-feature-name.md)
 
 ## Glossary
 
