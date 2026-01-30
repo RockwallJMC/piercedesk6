@@ -338,16 +338,16 @@ npm run build
 ## Related Documentation
 
 ### Design Documents
-- [Original design](docs/system/design/phase-X.Y-topic.md)
-- [Updated design](docs/system/design/phase-X.Z-topic.md)
+- [Original design](../../docs/system/design/phase-X.Y-topic.md)
+- [Updated design](../../docs/system/design/phase-X.Z-topic.md)
 
 ### User Documentation
-- [User guide](docs/features/FEATURE-NAME.md)
-- [API reference](docs/api/REST-API.md)
+- [User guide](../../docs/user-docs/features/FEATURE-NAME.md)
+- [API reference](../../docs/user-docs/api/REST-API.md)
 
 ### Internal Documentation
-- [Architecture overview](docs/architecture/ARCHITECTURE-NAME.md)
-- [INDEX document](docs/system/execution/INDEX-feature-name.md)
+- [Architecture overview](../../docs/system/design/architecture/ARCHITECTURE-NAME.md)
+- [INDEX document](../../docs/system/INDEX-feature-name.md)
 
 ## Glossary
 

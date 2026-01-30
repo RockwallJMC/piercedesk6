@@ -156,6 +156,6 @@ None - implementation proceeded without blockers
 
 ## Related Issues
 
-- Related to INDEX: [_sys_documents/execution/INDEX-button-color.md](INDEX-button-color.md)
-- Related to Design: [_sys_documents/design/phase1.1-button-color-design.md](../design/phase1.1-button-color-design.md)
+- Related to INDEX: [docs/system/INDEX-button-color.md](../../docs/system/INDEX-button-color.md)
+- Related to Design: [docs/system/design/phase1.1-button-color-design.md](../../docs/system/design/phase1.1-button-color-design.md)
 - GitHub Issue: #456

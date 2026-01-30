@@ -10,7 +10,7 @@ author: "Pierce Team"
 reviewers: ["design-lead", "accessibility-expert"]
 dependencies: []
 blocks: ["1.2"]
-related_docs: ["_sys_documents/execution/INDEX-button-color.md"]
+related_docs: ["../../docs/system/INDEX-button-color.md"]
 estimated_hours: 2
 complexity: "low"
 impact: "shallow"
@@ -146,6 +146,6 @@ Key considerations:
 
 ## Related Documentation
 
-- [INDEX Document](_sys_documents/execution/INDEX-button-color.md)
-- [Brand Guidelines](docs/design/brand-guidelines.md)
+- [INDEX Document](../../docs/system/INDEX-button-color.md)
+- [Brand Guidelines](../../docs/system/design/brand-guidelines.md)
 - [WCAG Contrast Standards](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
