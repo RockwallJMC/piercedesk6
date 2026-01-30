@@ -49,7 +49,7 @@ jobs:
 
   approve_merge:
     needs: [wait_for_q_check, wait_for_optional_reviews]
-    if: ${{ secrets.AUTO_MERGE_ENABLED == 'true' && needs.wait_for_q_check.result == 'success' && needs.wait_for_optional_reviews.result == 'success' }}
+    if: ${{ needs.wait_for_q_check.result == 'success' && needs.wait_for_optional_reviews.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node
@@ -60,4 +60,5 @@ jobs:
         run: node scripts/ai-review/approve-merge.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTO_MERGE_ENABLED: ${{ secrets.AUTO_MERGE_ENABLED }}
           MERGE_METHOD: ${{ secrets.MERGE_METHOD }}
