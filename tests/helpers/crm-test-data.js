@@ -68,6 +68,9 @@ export async function loginAsUser(page, user) {
   await page.getByLabel('Email').fill(user.email);
   await page.getByLabel('Password').fill(user.password);
   await page.getByRole('button', { name: 'Log in' }).click();
+
+  // Wait for redirect after login (could be /, /dashboard, or /organizations)
+  await page.waitForURL(/^http:\/\/localhost:4000\/(?!(authentication))/,  { timeout: 15000 });
   await waitForNetworkIdle(page);
 }
 
