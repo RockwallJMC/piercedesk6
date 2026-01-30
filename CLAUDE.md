@@ -175,7 +175,7 @@ cp .claude/templates/as-built-template.md docs/system/as-builts/as-built-feature
 ### Aurora-First UI Pattern
 
 **Delegate to `react-mui-frontend-engineer` with instruction:**
-1. Search Aurora template first (templates/aurora-next/src/)
+1. Search Aurora template first (template-aurora/src/)
 2. Copy-then-modify (NEVER edit templates directly)
 3. Update imports to @pierce/* packages
 
@@ -194,12 +194,6 @@ cp .claude/templates/as-built-template.md docs/system/as-builts/as-built-feature
 - Red-Green-Refactor cycle
 
 ## Key Reference Locations
-
-**Agent instructions (for delegation context):**
-- `AGENTS-MAIN/agents/uiux/exec.md` - UI standards
-- `AGENTS-MAIN/agents/wiring/exec.md` - API standards
-- `AGENTS-MAIN/agents/database/exec.md` - DB standards
-- `AGENTS-MAIN/agents/agent-instruction/` - Coding standards
 
 **Documentation:**
 - `.claude/templates/` - All document templates
