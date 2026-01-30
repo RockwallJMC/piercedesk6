@@ -252,22 +252,34 @@ PierceDesk uses a **hybrid documentation strategy**:
 
 ```
 piercedesk6/
-├── docs/                      # USER-FACING DOCUMENTATION
-│   ├── architecture/          # System design
-│   ├── features/              # Feature documentation
-│   ├── guides/                # How-to guides
-│   └── api/                   # API reference
-│
-└── _sys_documents/            # INTERNAL TRACKING
-    ├── AGENT.md               # Organization rules (READ THIS FIRST!)
-    ├── vision/                # Product vision
-    ├── roadmap/               # Strategic plans
-    ├── design/                # Design documents
-    ├── execution/             # Implementation tracking
-    └── as-builts/             # Current state docs
+└── docs/                      # ALL DOCUMENTATION
+    ├── README.md              # Master navigation guide
+    │
+    ├── system/                # INTERNAL SYSTEM DOCUMENTATION
+    │   ├── AGENT.md           # Governance rules (READ THIS FIRST!)
+    │   ├── README.md          # System docs navigation
+    │   ├── as-builts/         # Current state docs
+    │   ├── design/            # Design documents
+    │   │   ├── architecture/  # System architecture
+    │   │   ├── authentication/# Auth design
+    │   │   └── user-journeys/ # User flows
+    │   ├── execution/         # Implementation tracking, test results
+    │   │   ├── guides/        # Developer guides
+    │   │   ├── quality/       # Quality audits
+    │   │   └── testing/       # Test results
+    │   ├── plans/             # Implementation plans
+    │   ├── roadmap/           # Strategic plans
+    │   └── vision/            # Product vision
+    │
+    └── user-docs/             # USER-FACING DOCUMENTATION
+        ├── AGENT.md           # User docs governance
+        ├── README.md          # User guide navigation
+        ├── features/          # Feature documentation
+        ├── guides/            # How-to guides
+        └── api/               # API reference
 ```
 
-**CRITICAL:** Before creating ANY file in `_sys_documents/`, read [_sys_documents/AGENT.md](_sys_documents/AGENT.md) for strict organization rules, file naming conventions, and lifecycle management.
+**CRITICAL:** Before creating ANY file in `docs/system/`, read [docs/system/AGENT.md](docs/system/AGENT.md) for strict organization rules, file naming conventions, and lifecycle management.
 
 #### Feature Documentation Workflow
 
@@ -277,7 +289,7 @@ piercedesk6/
 
    ```bash
    cp .claude/templates/INDEX-template.md \
-      _sys_documents/execution/INDEX-feature-name.md
+      docs/system/INDEX-feature-name.md
    ```
 
    - Single source of truth for feature progress
@@ -302,7 +314,7 @@ piercedesk6/
    {Brief description from INDEX}
 
    ## Documentation
-   - INDEX: [_sys_documents/execution/INDEX-{feature}.md]
+   - INDEX: [docs/system/INDEX-{feature}.md]
    - Design docs: Listed in INDEX
 
    ## Phases
@@ -322,7 +334,7 @@ piercedesk6/
 
    d. Commit and push INDEX update:
    ```bash
-   git add _sys_documents/execution/INDEX-{feature}.md
+   git add docs/system/INDEX-{feature}.md
    git commit -m "Add GitHub issue tracking to INDEX
 
    Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
@@ -338,7 +350,7 @@ piercedesk6/
 
    ```bash
    cp .claude/templates/phase-design-template.md \
-      _sys_documents/design/phase-X.Y-topic.md
+      docs/system/design/design-phase-X.Y-topic.md
    ```
 
    - One per major phase of work
@@ -349,7 +361,7 @@ piercedesk6/
 
    ```bash
    cp .claude/templates/phase-execution-template.md \
-      _sys_documents/execution/phase-X.Y-topic.md
+      docs/system/execution/execution-phase-X.Y-topic.md
    ```
 
    - Implementation log with dated entries
@@ -360,7 +372,7 @@ piercedesk6/
 
    ```bash
    cp .claude/templates/as-built-template.md \
-      _sys_documents/as-builts/feature-as-built.md
+      docs/system/as-builts/as-built-feature-name.md
    ```
 
    - Reflects ACTUAL deployed state
@@ -369,7 +381,7 @@ piercedesk6/
 
 5. **Update User-Facing Documentation**
    - Use `Task(documentation-expert, "Generate docs")`
-   - Update `docs/features/`, `docs/architecture/`, `docs/api/`
+   - Update `docs/user-docs/features/`, `docs/system/design/architecture/`, `docs/user-docs/api/`
    - Keep user docs clear and current
 
 #### Abbreviated Workflow (Shallow Impact Features)
@@ -419,9 +431,9 @@ Use the simplified documentation process when ALL of these criteria are met:
 # Small fix: Update button color in single component
 # Criteria met: 1 file, 3 lines, no architecture/DB/API changes
 
-1. Create: _sys_documents/execution/INDEX-button-color-fix.md (simplified)
+1. Create: docs/system/INDEX-button-color-fix.md (simplified)
 2. Skip separate phase docs (straightforward change)
-3. Create: _sys_documents/execution/verification-button-color.md
+3. Create: docs/system/execution/execution-button-color-verification.md
 4. Capture: build output, lint output, screenshot
 ```
 
@@ -461,13 +473,13 @@ updated: "YYYY-MM-DD"
 
 **When bugs occur:**
 
-1. Create debug document: `_sys_documents/execution/debug-BUG-XXX.md`
+1. Create debug document: `docs/system/execution/debug-BUG-XXX.md`
 2. Invoke `/systematic-debugging` skill
 3. Document investigation, root cause, fix
 4. Update INDEX with blocker if needed
 
 
-1. Create realignment document: `_sys_documents/execution/realign-YYYY-MM-DD-topic.md`
+1. Create realignment document: `docs/system/execution/realign-YYYY-MM-DD-topic.md`
 2. Document original vs. new approach, rationale
 3. Get approval for scope/timeline changes
 4. Update INDEX and phase documents
@@ -490,7 +502,7 @@ Before merging ANY feature:
 ```bash
 # Create plan before starting any phase implementation
 cp .claude/templates/INDEX-template.md \
-   docs/plans/YYYY-MM-DD-phase-X.Y-topic.md
+   docs/system/plans/plan-YYYY-MM-DD-phase-X.Y-topic.md
 ```
 
 **Plan Requirements:**
@@ -500,7 +512,7 @@ cp .claude/templates/INDEX-template.md \
 - Test-first approach (TDD)
 - Commit strategy
 
-**Location**: `docs/plans/YYYY-MM-DD-description.md`
+**Location**: `docs/system/plans/plan-YYYY-MM-DD-description.md`
 
 **When to Use Abbreviated Workflow:**
 - Single file or ≤ 3 files modified
@@ -517,7 +529,7 @@ cp .claude/templates/INDEX-template.md \
 
 ```bash
 cp .claude/templates/as-built-template.md \
-   _sys_documents/as-builts/feature-name-as-built.md
+   docs/system/as-builts/as-built-feature-name.md
 ```
 
 **As-Built Purpose:**
@@ -546,7 +558,7 @@ cp .claude/templates/as-built-template.md \
 
 **Documentation Compliance:**
 
-See [Documentation Compliance Audit Template](docs/plans/2026-01-29-documentation-compliance-remediation.md) for assessment process.
+See [Documentation Compliance Audit Template](docs/system/plans/plan-2026-01-29-documentation-compliance-remediation.md) for assessment process.
 
 **For detailed workflow**, see [Documentation Guide](docs/guides/DOCUMENTATION-GUIDE.md)
 

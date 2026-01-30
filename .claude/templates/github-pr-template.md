@@ -13,8 +13,8 @@ gh pr create \
 
 ## Links
 - Closes #{issue-number}
-- INDEX: [INDEX-{feature}.md](_sys_documents/execution/INDEX-{feature}.md)
-- Design: [phase1.1-{topic}.md](_sys_documents/design/phase1.1-{topic}.md)
+- INDEX: [INDEX-{feature}.md](docs/system/execution/INDEX-{feature}.md)
+- Design: [phase1.1-{topic}.md](docs/system/design/phase1.1-{topic}.md)
 
 ## Changes
 - {Change 1 with description} (Phase X.Y)
@@ -95,8 +95,8 @@ Implements comprehensive user profile management including avatar uploads, setti
 
 ## Links
 - Closes #123
-- INDEX: [INDEX-user-profile.md](_sys_documents/execution/INDEX-user-profile.md)
-- Design: [phase1.1-profile-schema.md](_sys_documents/design/phase1.1-profile-schema.md)
+- INDEX: [INDEX-user-profile.md](docs/system/execution/INDEX-user-profile.md)
+- Design: [phase1.1-profile-schema.md](docs/system/design/phase1.1-profile-schema.md)
 
 ## Changes
 - Added user_profiles table with RLS policies for multi-tenant isolation (Phase 1.1)

@@ -175,6 +175,9 @@ export const saleFunnelTableData = [
     value: 18000000,
     conversionRate: 70.0,
     avgDays: 0,
+    lostLead: 30.0,
+    thisMonth: 5.2,
+    stageIndicator: '#1976d2',
   },
   {
     stage: 'Qualified',
@@ -182,6 +185,9 @@ export const saleFunnelTableData = [
     value: 16800000,
     conversionRate: 50.0,
     avgDays: 7,
+    lostLead: 50.0,
+    thisMonth: 3.8,
+    stageIndicator: '#2e7d32',
   },
   {
     stage: 'Proposal',
@@ -189,6 +195,9 @@ export const saleFunnelTableData = [
     value: 14700000,
     conversionRate: 50.0,
     avgDays: 14,
+    lostLead: 50.0,
+    thisMonth: 4.5,
+    stageIndicator: '#ed6c02',
   },
   {
     stage: 'Negotiation',
@@ -196,6 +205,9 @@ export const saleFunnelTableData = [
     value: 12600000,
     conversionRate: 70.0,
     avgDays: 21,
+    lostLead: 30.0,
+    thisMonth: 2.1,
+    stageIndicator: '#9c27b0',
   },
   {
     stage: 'Closed Won',
@@ -203,5 +215,8 @@ export const saleFunnelTableData = [
     value: 24500000,
     conversionRate: 100,
     avgDays: 28,
+    lostLead: 0,
+    thisMonth: 6.3,
+    stageIndicator: '#2e7d32',
   },
 ];
