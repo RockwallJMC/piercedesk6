@@ -258,7 +258,7 @@ If realignment doesn't work, how to revert:
 
 ## Related Documents
 
-- [Original INDEX](docs/system/execution/INDEX-feature-name.md)
+- [Original INDEX](docs/system/INDEX-feature-name.md)
 - [Affected phase doc](docs/system/design/phase-X.Y-topic.md)
 - [User feedback / Issue #123](https://github.com/org/repo/issues/123)
 
