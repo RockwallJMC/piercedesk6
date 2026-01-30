@@ -1,8 +1,25 @@
-# Sequential Operation Workflow Design
+---
+title: "Sequential Operation Workflow Design"
+type: "design"
+status: "complete"
+version: "1.0"
+created: "2026-01-30"
+updated: "2026-01-30"
+author: "Pierce Team"
+reviewers: []
+dependencies: []
+blocks: []
+related_docs:
+  - "docs/plans/2026-01-30-claude-md-sequential-workflow-implementation.md"
+estimated_hours: 0
+complexity: "high"
+impact: "deep"
+verification:
+  - "Design validated"
+  - "Ready for implementation"
+---
 
-**Created:** 2026-01-30
-**Type:** Design Document
-**Status:** Validated
+# Sequential Operation Workflow Design
 
 ## Overview
 
