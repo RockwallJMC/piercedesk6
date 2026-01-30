@@ -1,3 +1,12 @@
+---
+title: "Debugging Next.js with Claude Code"
+type: "guide"
+status: "complete"
+version: "1.0"
+created: "2026-01-30"
+updated: "2026-01-30"
+---
+
 # Debugging Next.js with Claude Code
 
 This guide explains how to effectively use Claude Code to debug Next.js runtime issues.
@@ -246,7 +255,7 @@ Claude will:
 ### DON'T:
 - ❌ Skip error details ("it just doesn't work")
 - ❌ Try random fixes without Claude's analysis
-- ✅ Make multiple changes at once
+- ❌ Make multiple changes at once
 - ❌ Skip verification steps
 - ❌ Claim "fixed" without running tests
 

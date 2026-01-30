@@ -1,3 +1,12 @@
+---
+title: "System Documentation Overview"
+type: "guide"
+status: "complete"
+version: "1.0"
+created: "2026-01-30"
+updated: "2026-01-30"
+---
+
 # System Documentation
 
 Internal documentation for PierceDesk development team, architects, and AI agents.
