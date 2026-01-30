@@ -27,6 +27,7 @@ export const rootPaths = {
   hiringRoot: 'hiring',
   hiringAdmin: 'admin',
   hiringCandidate: 'candidate',
+  serviceDeskRoot: 'service-desk',
 };
 
 const paths = {
@@ -146,6 +147,11 @@ const paths = {
   hiringCandidateDetails: `/${rootPaths.appsRoot}/${rootPaths.hiringRoot}/${rootPaths.hiringAdmin}/candidate-details`,
 
   ...docRoutePaths,
+  // Service Desk paths
+  serviceDeskTickets: `/${rootPaths.appsRoot}/${rootPaths.serviceDeskRoot}/tickets`,
+  serviceDeskTicketDetails: (ticketId) =>
+    `/${rootPaths.appsRoot}/${rootPaths.serviceDeskRoot}/ticket-details${ticketId ? `/${ticketId}` : ''}`,
+
 };
 
 export const authPaths = {
