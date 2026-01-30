@@ -1,97 +1,51 @@
-# GitHub Issue Template
+# GitHub Issue Template (DEPRECATED)
 
-Use this template when creating GitHub issues after plan approval using `gh issue create`.
+**IMPORTANT: This template is superseded by the `/github-workflow` skill.**
 
-## Command
+## Use the GitHub Workflow Skill
 
-```bash
-gh issue create \
-  --title "Feature: {Feature Name}" \
-  --body "$(cat <<'EOF'
-## Overview
-{Brief description of what this feature accomplishes and its business value}
-
-## Documentation
-- INDEX: [docs/system/execution/INDEX-{feature}.md](docs/system/execution/INDEX-{feature}.md)
-- Design docs: Listed in INDEX Phase Breakdown
-
-## Phases
-- [ ] Phase 1.1: {Phase name and description}
-- [ ] Phase 1.2: {Phase name and description}
-- [ ] Phase 1.3: {Phase name and description}
-
-## Branch
-`feature/desk-{feature-name}`
-
-## Verification Checklist
-- [ ] All tests passing
-- [ ] Build succeeds
-- [ ] Linting clean
-- [ ] E2E tests complete with screenshots
-- [ ] Documentation updated
-
----
-🤖 Created by Claude Code
-EOF
-)"
-```
-
-## Template Variables
-
-Replace these placeholders with actual values:
-
-- `{Feature Name}` - Short, descriptive feature name (e.g., "User Profile Management")
-- `{Brief description...}` - 1-2 sentence overview from INDEX
-- `{feature}` - Kebab-case feature identifier (e.g., "user-profile")
-- `{Phase name and description}` - Phase title from INDEX (e.g., "Database Schema - User profiles table")
-
-## Example
+For the most current and complete GitHub issue/PR templates and workflows, use:
 
 ```bash
-gh issue create \
-  --title "Feature: User Profile Management" \
-  --body "$(cat <<'EOF'
-## Overview
-Implements comprehensive user profile management including avatar uploads, settings, and preferences for authenticated users.
-
-## Documentation
-- INDEX: [docs/system/execution/INDEX-user-profile.md](docs/system/execution/INDEX-user-profile.md)
-- Design docs: Listed in INDEX Phase Breakdown
-
-## Phases
-- [ ] Phase 1.1: Database schema - user_profiles table with RLS
-- [ ] Phase 1.2: Profile UI components - form, avatar, settings
-- [ ] Phase 1.3: API integration - CRUD endpoints for profiles
-
-## Branch
-`feature/desk-user-profile`
-
-## Verification Checklist
-- [ ] All tests passing
-- [ ] Build succeeds
-- [ ] Linting clean
-- [ ] E2E tests complete with screenshots
-- [ ] Documentation updated
-
----
-🤖 Created by Claude Code
-EOF
-)"
+Skill tool with skill: "github-workflow"
 ```
 
-## Workflow Integration
+**Or see:** `.claude/skills/github-workflow/SKILL.md`
 
-This template is used in:
-1. **Step 1.5** of Feature Documentation Workflow (CLAUDE.md)
-2. **GitHub Integration** section of Phase 1 (DOCUMENTATION-GUIDE.md)
-3. After plan approval, before implementation starts
+## Why Use the Skill?
 
-## Follow-up Actions
+The github-workflow skill contains:
+- Complete issue creation templates
+- Task-level PR templates
+- Progress update templates (with agent identification)
+- Screenshot upload workflow for Playwright tests
+- All GitHub coordination workflows in one place
+- Mandatory agent identification requirements
 
-After creating the issue:
-1. Update INDEX frontmatter with `github_issue: "#{number}"`
-2. Commit and push INDEX update
-3. Post kickoff comment:
-   ```bash
-   gh issue comment {issue-number} --body "🚀 Feature branch created and INDEX updated. Starting implementation..."
-   ```
+## Key Requirements
+
+All GitHub issue/PR creation must:
+- **Include agent identification**: `**Agent**: {agent-name}`
+- **Follow templates exactly** (rigid skill)
+- **Always work from GitHub issue number/title**
+- **Create task-level PRs** after EVERY task completion
+- **Reference issue** in all PRs and commits
+
+## Quick Reference
+
+```bash
+# Invoke the skill before any GitHub operation
+Skill tool with skill: "github-workflow"
+
+# The skill contains templates for:
+# 1. GitHub Issue Creation (Feature Kickoff)
+# 2. Progress Updates (7 mandatory checkpoints)
+# 3. Task-Level PRs (MANDATORY after every task)
+# 4. Feature Completion & Issue Closure
+# 5. Agent Identification (always required)
+```
+
+---
+
+**Last Updated**: 2026-01-30
+**Status**: DEPRECATED - Use github-workflow skill instead

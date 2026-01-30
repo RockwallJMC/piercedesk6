@@ -236,295 +236,37 @@ test.describe('Feature Name', () => {
 });
 ```
 
-## GitHub Issue Updates (MANDATORY)
+## GitHub Workflow (MANDATORY)
 
-After EVERY test execution milestone, you MUST post comprehensive updates to the GitHub issue. This is NOT optional.
+All GitHub issue/PR creation and updates MUST follow the `/github-workflow` skill.
 
-### Critical Requirements
+**Invoke before:**
+- Creating GitHub issues
+- Creating PRs (after EVERY task)
+- Posting test updates to issues (with screenshots)
 
-**ALWAYS UPLOAD ACTUAL SCREENSHOTS TO GITHUB, NOT JUST FILENAMES**
+**Key Requirements:**
+- Always include agent identification: `**Agent**: playwright-tester`
+- Create task-level PRs after EVERY task completion
+- Follow templates exactly (rigid skill)
+- Always work from GitHub issue number/title
+- Reference issue in all PRs and commits
+- **Screenshots MUST be committed to repo** and referenced via GitHub raw URLs
 
-- Use GitHub's image upload in comments
-- Upload images directly to the issue comment
-- Do NOT just reference local file paths
-- Users on GitHub CANNOT see local file paths
-
-### Workflow - Step by Step
-
-#### Step 1: Capture Screenshots During Tests
-
-```typescript
-// In your test file
-await page.screenshot({
-  path: `./test-results/screenshots/${feature}-${scenario}.png`,
-  fullPage: true
-});
-```
-
-#### Step 2: Upload Screenshots to Repository
-
+**For complete workflow and templates (including screenshot upload process):**
 ```bash
-# Create phase-specific screenshot directory
-mkdir -p screenshots/phase-{X.Y}
-
-# Copy all test screenshots
-cp ./test-results/screenshots/*.png screenshots/phase-{X.Y}/
-
-# Commit and push screenshots FIRST (so GitHub URLs are available)
-git add screenshots/phase-{X.Y}/
-git commit -m "test: add E2E screenshots for Phase {X.Y}
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
-git push
+Skill tool with skill: "github-workflow"
 ```
 
-#### Step 3: Get GitHub Raw URLs for Screenshots
-
-After pushing, construct GitHub raw URLs using this format:
-```bash
-# Format: https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{filename}.png
-# Example: https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/lead-creation-success.png
-
-# Note: Use raw.githubusercontent.com (NOT github.com/blob) for direct image access
-# This ensures images render correctly in all contexts
-```
-
-#### Step 4: Post Progress Update with Embedded Screenshots
-
-```bash
-gh issue comment {issue-number} --body "✅ **Task {N} Complete - {Task Name}**
-
-## Test Results
-- ✅ All {N} tests passing
-- Test file: \`tests/{test-file}.spec.js\`
-- Duration: {MM}s
-- Coverage: {list scenarios}
-
-## Test Execution Output
-\`\`\`
-{paste actual test output showing pass counts}
-\`\`\`
-
-## Screenshots
-
-### {Scenario 1 Name}
-![{scenario-1-description}](https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{screenshot1}.png)
-
-### {Scenario 2 Name}
-![{scenario-2-description}](https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{screenshot2}.png)
-
-### {Scenario 3 Name}
-![{scenario-3-description}](https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{screenshot3}.png)
-
-## Verification Evidence
-- Build: \`npm run build\` - exit 0 ✅
-- Lint: \`npm run lint\` - 0 errors ✅
-- Tests: \`npx playwright test\` - {N}/{N} passed ✅
-
-## Documentation
-- Test code: [tests/{test-file}.spec.js](link)
-- Execution log: [_sys_documents/execution/phase{X.Y}-{topic}.md](link)
-
----
-🤖 Posted by playwright-tester agent"
-```
-
-#### Step 5: Create Pull Request (MANDATORY After Each Task)
-
-After posting task completion update, you MUST create a pull request for the task.
-
-**Why task-level PRs?**
-- Continuous integration with main branch
-- Easier code reviews (smaller, focused changes)
-- Early feedback before next task
-- Clear git history per task
-
-**PR Creation Steps:**
-
-1. **Verify all checks pass**:
-   ```bash
-   npm run build    # Must exit 0
-   npm run lint     # Must show 0 errors
-   npx playwright test  # All tests passing
-   ```
-
-2. **Create PR with gh CLI**:
-   ```bash
-   gh pr create \
-     --title "Task: {Task Name} (Phase {X.Y})" \
-     --body "$(cat <<'EOF'
-   ## Task Summary
-   Completed Task {N} of Phase {X.Y}: {Task description}
-
-   ## Links
-   - Issue: #{issue-number}
-   - INDEX: [INDEX-{feature}.md](_sys_documents/execution/INDEX-{feature}.md)
-   - Plan: [docs/plans/{plan-file}.md](docs/plans/{plan-file}.md)
-
-   ## Changes in This Task
-   - {Change 1}
-   - {Change 2}
-   - {Change 3}
-
-   ## Tests
-   - Test file: \`tests/{test-file}.spec.js\`
-   - Tests added/modified: {N}
-   - All tests passing: ✅ {N}/{N}
-
-   ## Verification Evidence
-
-   ### Build
-   \`\`\`
-   $ npm run build
-   ✅ Build succeeded (exit 0)
-   \`\`\`
-
-   ### Tests
-   \`\`\`
-   $ npx playwright test
-   ✅ {N}/{N} tests passing
-   \`\`\`
-
-   ## Screenshots
-   See issue #{issue-number} for all embedded test screenshots.
-
-   ## Next Task
-   After merge, will proceed to Task {N+1}: {Next task name}
-
-   ---
-   🤖 Generated by playwright-tester agent
-   EOF
-   )"
-   ```
-
-3. **Link PR to issue**:
-   ```bash
-   gh issue comment {issue-number} --body "🔗 **Pull Request Created for Task {N}**
-
-   **PR #{pr-number}**: Task {N} - {Task Name}
-
-   **Status**: Ready for review ✅
-
-   **Contents**:
-   - Created {N} E2E tests
-   - All tests passing
-   - Screenshots uploaded
-
-   **Next**: After merge, will proceed to Task {N+1}"
-   ```
-
-4. **Monitor and merge**:
-   ```bash
-   # After approval, merge (keeps feature branch alive for next tasks)
-   gh pr merge {pr-number} --squash --delete-branch=false
-
-   # Update feature branch from main
-   git checkout main && git pull origin main
-   git checkout {feature-branch} && git merge main
-   ```
-
-5. **Post merge confirmation**:
-   ```bash
-   gh issue comment {issue-number} --body "✅ **Task {N} PR Merged**
-
-   PR #{pr-number} merged to main successfully.
-
-   **Progress**: {percentage}% ({N} of {M} tasks complete)
-
-   Starting Task {N+1}: {Next task name}"
-   ```
-
-**IMPORTANT:** Do NOT skip this step. Every task MUST have its own PR.
-
-#### Step 6: Update Phase Progress Regularly
-
-Post updates at these checkpoints:
-- **Task start**: Announce beginning of task
-- **After TDD RED**: Show failing test output
-- **After TDD GREEN**: Show passing test output + screenshot
-- **Task complete**: Full results with all screenshots
-- **After PR merge**: Merge confirmation and next task announcement
-- **Phase milestone**: Every 30-40% progress
-
-### Example: Complete Update Flow
-
-```bash
-# 1. Commit and push screenshots
-git add screenshots/phase-1.8/ && \
-git commit -m "test: add lead-to-proposal flow screenshots" && \
-git push
-
-# 2. Post comprehensive update with GitHub URLs
-gh issue comment 28 --body "✅ **Task 1 Complete - Lead-to-Proposal E2E Flow**
-
-## Test Results
-- ✅ 1 comprehensive flow test passing
-- Test file: \`tests/crm-lead-to-proposal-flow.spec.js\`
-- Duration: 45s
-- Coverage: Lead creation, qualification, opportunity conversion, proposal creation, proposal acceptance
-
-## Test Execution Output
-\`\`\`
-Running 1 test using 1 worker
-
-  ✓  [chromium] › crm-lead-to-proposal-flow.spec.js:5:3 › Lead-to-Proposal Complete Flow › should complete full journey from lead to accepted proposal (45s)
-
-  1 passed (45s)
-\`\`\`
-
-## Screenshots
-
-### Lead Created Successfully
-![Lead creation with contact details](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/01-lead-created.png)
-
-### Lead Qualified to Opportunity
-![Lead status changed to qualified](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/02-lead-qualified.png)
-
-### Opportunity Created
-![Opportunity created from qualified lead](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/03-opportunity-created.png)
-
-### Proposal Generated
-![Proposal created with line items](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/04-proposal-created.png)
-
-### Proposal Accepted - Flow Complete
-![Final state - proposal accepted](https://raw.githubusercontent.com/RockwallJMC/piercedesk6/feature/desk-testing-polish-phase1.8/screenshots/phase-1.8/05-proposal-accepted.png)
-
-## Verification Evidence
-- Build: \`npm run build\` - exit 0 ✅
-- Tests: \`npx playwright test tests/crm-lead-to-proposal-flow.spec.js\` - 1/1 passed ✅
-
-## Documentation
-- Test code: [tests/crm-lead-to-proposal-flow.spec.js](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/tests/crm-lead-to-proposal-flow.spec.js)
-- Implementation plan: [docs/plans/2026-01-29-phase1.8-testing-polish.md](https://github.com/RockwallJMC/piercedesk6/blob/feature/desk-testing-polish-phase1.8/docs/plans/2026-01-29-phase1.8-testing-polish.md)
-
-Progress: Task 1 of 7 complete (14%)
-
----
-🤖 Posted by playwright-tester agent"
-```
-
-### Screenshot Naming Convention
-
-Use descriptive names:
-- `{feature}-{scenario}-success.png` (e.g., `profile-form-validation-success.png`)
-- `{feature}-{scenario}-error.png` (e.g., `profile-upload-error-state.png`)
-- `{feature}-{workflow}-complete.png` (e.g., `profile-edit-complete.png`)
-
-### Key Screenshots to Capture
-
-- Initial state
-- User interactions (form fills, clicks)
-- Validation states (success, error)
-- Final state
-- Edge cases (empty states, error states)
-
-### How to Get Issue Number
-
-The GitHub issue number is in the INDEX frontmatter:
-```yaml
-github_issue: "#123"
-```
-
-Read the INDEX file for the feature you're working on to get this value.
+Or see: `.claude/skills/github-workflow/SKILL.md`
+
+**Screenshot Workflow Summary:**
+1. Capture screenshots during tests
+2. Commit screenshots to `screenshots/phase-{X.Y}/` directory
+3. Push to repository
+4. Use GitHub raw URLs in issue comments: `https://raw.githubusercontent.com/{owner}/{repo}/{branch}/screenshots/phase-{X.Y}/{file}.png`
+5. Post comprehensive update with embedded images
+
+The github-workflow skill contains complete templates for Playwright test updates with screenshots.
 
 You approach every testing task with thoroughness and precision, ensuring that the test suite serves as a reliable safety net for the application's functionality.

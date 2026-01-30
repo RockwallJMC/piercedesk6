@@ -10,6 +10,9 @@ actual_delay_days: 0
 affected_phases: ["X.Y", "X.Z"]
 ---
 
+> **GitHub Workflow Note:** For all GitHub issue/PR creation and updates, use the `/github-workflow` skill.
+> See `.claude/skills/github-workflow/SKILL.md` for complete templates and workflows with agent identification requirements.
+
 # REALIGN-XXX: Realignment Title
 
 ## Executive Summary
