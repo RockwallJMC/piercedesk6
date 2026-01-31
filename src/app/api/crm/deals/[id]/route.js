@@ -11,6 +11,116 @@ function formatDealDecimals(deal) {
 }
 
 // ============================================================================
+// GET /api/crm/deals/[id]
+// Fetch single deal with nested data (contact, company, collaborators, activities)
+// ============================================================================
+export async function GET(request, { params }) {
+  try {
+    const supabase = createApiClient(request);
+
+    // Validate JWT token server-side
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const dealId = (await params).id;
+
+    // Fetch deal with contact and company joins
+    const { data: deal, error: dealError } = await supabase
+      .from('deals')
+      .select(`
+        *,
+        contact:crm_contacts!deals_contact_id_fkey (
+          *,
+          company:companies!crm_contacts_company_id_fkey (
+            *
+          )
+        )
+      `)
+      .eq('id', dealId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (dealError || !deal) {
+      return NextResponse.json(
+        { error: 'Deal not found' },
+        { status: 404 }
+      );
+    }
+
+    // Fetch company with ALL deals (not just this one)
+    const { data: companyDeals } = await supabase
+      .from('deals')
+      .select('*')
+      .eq('company_id', deal.contact?.company?.id)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    // Fetch deal collaborators grouped by role
+    const { data: collaborators } = await supabase
+      .from('deal_collaborators')
+      .select(`
+        role,
+        user:auth.users!deal_collaborators_user_id_fkey (
+          id,
+          email,
+          raw_user_meta_data
+        )
+      `)
+      .eq('deal_id', dealId)
+      .eq('user_id', user.id);
+
+    // Group collaborators by role
+    const collaboratorsByRole = {
+      owner: collaborators?.find(c => c.role === 'owner')?.user || null,
+      collaborators: collaborators?.filter(c => c.role === 'collaborator').map(c => c.user) || [],
+      followers: collaborators?.filter(c => c.role === 'follower').map(c => c.user) || [],
+    };
+
+    // Fetch activity summary (counts by type)
+    const { data: activities } = await supabase
+      .from('crm_activities')
+      .select('activity_type')
+      .eq('entity_type', 'deal')
+      .eq('entity_id', dealId)
+      .eq('user_id', user.id);
+
+    const activitySummary = {
+      total: activities?.length || 0,
+      by_type: activities?.reduce((acc, activity) => {
+        acc[activity.activity_type] = (acc[activity.activity_type] || 0) + 1;
+        return acc;
+      }, {}) || {},
+    };
+
+    // Construct response with nested data
+    const response = {
+      ...formatDealDecimals(deal),
+      company: {
+        ...deal.contact?.company,
+        deals: companyDeals || [],
+      },
+      collaborators: collaboratorsByRole,
+      activity_summary: activitySummary,
+    };
+
+    return NextResponse.json(response);
+
+  } catch (error) {
+    console.error('Error fetching deal details:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// ============================================================================
 // PATCH /api/crm/deals/[id]
 // Update existing deal
 // ============================================================================
