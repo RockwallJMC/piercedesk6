@@ -215,7 +215,7 @@ export async function PATCH(request, { params }) {
     }
 
     // Sanitize body - only allow specific fields (prevent user_id injection)
-    const allowedFields = ['name', 'stage', 'stage_order', 'company_id', 'contact_id', 'amount', 'priority', 'progress', 'close_date'];
+    const allowedFields = ['name', 'stage', 'stage_order', 'company_id', 'contact_id', 'amount', 'priority', 'progress', 'close_date', 'forecast_category', 'probability', 'description'];
     const sanitizedData = {};
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
@@ -225,9 +225,24 @@ export async function PATCH(request, { params }) {
 
     // Validate enum and numeric fields (defense-in-depth)
     if (sanitizedData.stage !== undefined) {
-      const allowedStages = ['Contact', 'MQL', 'SQL', 'Opportunity', 'Won', 'Lost'];
+      const allowedStages = ['lead', 'qualified', 'proposal', 'negotiation', 'closed_won', 'closed_lost'];
       if (typeof sanitizedData.stage !== 'string' || !allowedStages.includes(sanitizedData.stage)) {
-        return NextResponse.json({ error: 'Invalid stage' }, { status: 400 });
+        return NextResponse.json({ error: 'Invalid stage value' }, { status: 400 });
+      }
+    }
+
+    // Validate forecast_category enum
+    if (sanitizedData.forecast_category !== undefined) {
+      const allowedCategories = ['best_case', 'commit', 'pipeline', 'omitted'];
+      if (typeof sanitizedData.forecast_category !== 'string' || !allowedCategories.includes(sanitizedData.forecast_category)) {
+        return NextResponse.json({ error: 'Invalid forecast_category value' }, { status: 400 });
+      }
+    }
+
+    // Validate close_date format
+    if (sanitizedData.close_date !== undefined && sanitizedData.close_date !== null) {
+      if (isNaN(Date.parse(sanitizedData.close_date))) {
+        return NextResponse.json({ error: 'Invalid close_date format' }, { status: 400 });
       }
     }
 
@@ -247,22 +262,34 @@ export async function PATCH(request, { params }) {
       sanitizedData.progress = progressNumber;
     }
 
+    // Validate amount (positive number)
     if (sanitizedData.amount !== undefined) {
       const amountNumber = Number(sanitizedData.amount);
-      if (!Number.isFinite(amountNumber) || amountNumber < 0) {
-        return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
+      if (typeof sanitizedData.amount !== 'number' || !Number.isFinite(amountNumber) || amountNumber < 0) {
+        return NextResponse.json({ error: 'Invalid amount value' }, { status: 400 });
       }
       sanitizedData.amount = amountNumber;
     }
 
+    // Validate probability (0-100 range)
+    if (sanitizedData.probability !== undefined) {
+      const probabilityNumber = Number(sanitizedData.probability);
+      if (typeof sanitizedData.probability !== 'number' || !Number.isFinite(probabilityNumber) || probabilityNumber < 0 || probabilityNumber > 100) {
+        return NextResponse.json({ error: 'Invalid probability value' }, { status: 400 });
+      }
+      sanitizedData.probability = probabilityNumber;
+    }
+
     // Basic string validation to mitigate injection-style payloads
-    const stringFields = ['name', 'priority'];
+    const stringFields = ['name', 'priority', 'description'];
     for (const field of stringFields) {
       if (sanitizedData[field] !== undefined) {
         if (typeof sanitizedData[field] !== 'string') {
           return NextResponse.json({ error: `Invalid type for ${field}` }, { status: 400 });
         }
-        if (sanitizedData[field].length > 1024) {
+        // Allow longer description field
+        const maxLength = field === 'description' ? 5000 : 1024;
+        if (sanitizedData[field].length > maxLength) {
           return NextResponse.json({ error: `${field} is too long` }, { status: 400 });
         }
       }
