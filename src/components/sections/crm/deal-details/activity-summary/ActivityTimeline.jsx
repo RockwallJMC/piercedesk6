@@ -16,7 +16,7 @@ const ActivityTimeline = ({ timeline }) => {
       }}
     >
       {timeline.map((item, index) => (
-        <TimelineItem key={item.id} sx={{ '&:before': { flex: 0, padding: 0 } }}>
+        <TimelineItem key={item.id} sx={{ '&:before': { flex: 0, padding: 0 } }} data-testid={item.testId}>
           <TimelineSeparator>
             <TimelineDot color="primary" />
             {index < timeline.length - 1 && (

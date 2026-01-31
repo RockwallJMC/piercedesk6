@@ -70,15 +70,31 @@ const DealDetails = ({ dealId }) => {
 
   const activitySummary = {
     summary: [
-      { id: 'call', attribute: 'Calls', value: deal.activity_summary?.by_type?.call || 0 },
-      { id: 'email', attribute: 'Emails', value: deal.activity_summary?.by_type?.email || 0 },
-      { id: 'meeting', attribute: 'Meeting', value: deal.activity_summary?.by_type?.meeting || 0 },
+      {
+        id: 'call',
+        attribute: 'Calls',
+        value: deal.activity_summary?.by_type?.call || 0,
+        testId: 'activity-type-call',
+      },
+      {
+        id: 'email',
+        attribute: 'Emails',
+        value: deal.activity_summary?.by_type?.email || 0,
+        testId: 'activity-type-email',
+      },
+      {
+        id: 'meeting',
+        attribute: 'Meeting',
+        value: deal.activity_summary?.by_type?.meeting || 0,
+        testId: 'activity-type-meeting',
+      },
     ],
     timeline: deal.recent_activities?.slice(0, 4).map(a => ({
       id: a.id,
       title: a.subject,
       description: a.description,
       date: a.activity_date,
+      testId: 'timeline-item',
     })) || [],
   };
 
@@ -138,11 +154,11 @@ const DealDetails = ({ dealId }) => {
   const currentStage = stageMapping[deal.stage] || 1;
 
   const salesPipelineData = [
-    { id: 1, name: 'Contact', status: currentStage >= 1 ? 'done' : 'pending' },
-    { id: 2, name: 'MQL', status: currentStage >= 2 ? 'done' : 'pending' },
-    { id: 3, name: 'SQL', status: currentStage >= 3 ? 'done' : 'pending' },
-    { id: 4, name: 'Chance', status: currentStage >= 4 ? 'done' : 'pending' },
-    { id: 5, name: 'W/L', status: currentStage >= 5 ? 'ongoing' : 'pending' },
+    { id: 1, name: 'Contact', status: currentStage >= 1 ? 'done' : 'pending', testId: 'stage-contact' },
+    { id: 2, name: 'MQL', status: currentStage >= 2 ? 'done' : 'pending', testId: 'stage-mql' },
+    { id: 3, name: 'SQL', status: currentStage >= 3 ? 'done' : 'pending', testId: 'stage-sql' },
+    { id: 4, name: 'Chance', status: currentStage >= 4 ? 'done' : 'pending', testId: 'stage-chance' },
+    { id: 5, name: 'W/L', status: currentStage >= 5 ? 'ongoing' : 'pending', testId: 'stage-wl' },
   ];
 
   const drawerContent = (

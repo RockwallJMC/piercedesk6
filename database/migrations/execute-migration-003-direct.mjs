@@ -3,11 +3,7 @@
  * This bypasses SQL execution by using schema introspection and ALTER TABLE
  */
 
-import { createClient } from '@supabase/supabase-js';
 import pg from 'pg';
-
-const supabaseUrl = 'https://iixfjulmrexivuehoxti.supabase.co';
-const serviceRoleKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlpeGZqdWxtcmV4aXZ1ZWhveHRpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NzQ3MzUzNywiZXhwIjoyMDgzMDQ5NTM3fQ.-9kWLYoix_N4B1YgSyn6e2Mw1iIKknPFBfCB88FW_lU';
 
 // Construct connection string for direct Postgres connection
 const connectionString = `postgresql://postgres.iixfjulmrexivuehoxti:${process.env.SUPABASE_DB_PASSWORD || '[PASSWORD]'}@aws-0-us-west-1.pooler.supabase.com:6543/postgres`;

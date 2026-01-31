@@ -101,7 +101,7 @@ BEGIN
     '33000000-0000-0000-0000-000000000001',
     test_user_id,
     'Global Bank HQ Security Upgrade',
-    'Opportunity',
+    'proposal',
     3,
     '50000000-0000-0000-0000-000000000001',
     '51000000-0000-0000-0000-000000000001',
@@ -115,6 +115,6 @@ BEGIN
   ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     amount = EXCLUDED.amount,
-    last_update = now();
+    updated_at = now();
 
 END $$;

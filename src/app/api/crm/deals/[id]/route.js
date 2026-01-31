@@ -73,6 +73,7 @@ export async function GET(request, { params }) {
         )
       `)
       .eq('deal_id', dealId)
+      .eq('organization_id', deal.organization_id)
       .eq('user_id', user.id);
 
     // Group collaborators by role
@@ -84,7 +85,7 @@ export async function GET(request, { params }) {
 
     // Fetch activity summary (counts by type)
     const { data: activities } = await supabase
-      .from('crm_activities')
+      .from('activities')
       .select('activity_type')
       .eq('entity_type', 'deal')
       .eq('entity_id', dealId)

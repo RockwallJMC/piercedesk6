@@ -33,15 +33,15 @@ const Contact = ({ contact }) => {
             <Avatar variant="rounded" src={contact.avatar} sx={{ width: 80, height: 80 }} />
 
             <Stack direction="column" gap={1}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }} data-testid="contact-name">
                 {contact.name}
               </Typography>
 
               <Stack direction="column" gap={0.5}>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }} data-testid="contact-title">
                   {contact.designation}
                 </Typography>
-                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }} data-testid="contact-company">
                   {contact.company}
                 </Typography>
               </Stack>

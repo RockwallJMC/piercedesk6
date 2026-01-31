@@ -76,13 +76,13 @@ INSERT INTO deals (
   contact_id,
   company_id,
   organization_id,
-  create_date,
+  created_at,
   created_by
 )
 SELECT
   '00000000-0000-0000-0000-000000000001', -- Known test ID
   u.id,
-  'Test Deal - Replica Badidas Futbol',
+  'Replica Badidas Futbol',
   'proposal',
   105000,
   NOW() + interval '90 days',

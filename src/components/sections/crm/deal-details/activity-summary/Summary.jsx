@@ -14,7 +14,7 @@ const Summary = ({ summary }) => {
       </Typography>
       <Stack gap={1} justifyContent="space-between">
         {summary.map((item) => (
-          <Stack key={item.id} gap={0.5} sx={{ alignItems: 'center' }}>
+          <Stack key={item.id} gap={0.5} sx={{ alignItems: 'center' }} data-testid={item.testId}>
             <Stack
               sx={{
                 width: 24,

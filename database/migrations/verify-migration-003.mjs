@@ -5,8 +5,14 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://iixfjulmrexivuehoxti.supabase.co';
-const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlpeGZqdWxtcmV4aXZ1ZWhveHRpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NzQ3MzUzNywiZXhwIjoyMDgzMDQ5NTM3fQ.-9kWLYoix_N4B1YgSyn6e2Mw1iIKknPFBfCB88FW_lU';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://iixfjulmrexivuehoxti.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseServiceKey) {
+  console.error('❌ Missing SUPABASE_SERVICE_ROLE_KEY environment variable.');
+  console.error('   Please set SUPABASE_SERVICE_ROLE_KEY before running this script.');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
@@ -24,7 +30,7 @@ async function verifyMigration() {
   // Test 1: Check contacts table new columns
   console.log('1️⃣  Checking contacts table columns...');
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('contacts')
       .select('personal_email, alternate_phone, date_of_birth, linkedin_url, profile_image_url, status, notes, priority, tags')
       .limit(0);
@@ -45,7 +51,7 @@ async function verifyMigration() {
   // Test 2: Check companies table new columns
   console.log('\n2️⃣  Checking companies table columns...');
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('companies')
       .select('phone, street_address, city, state, country, zip_code, founding_year, notes')
       .limit(0);
@@ -80,7 +86,7 @@ async function verifyMigration() {
       tags: ['test', 'verification']
     };
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('contacts')
       .insert(testContact)
       .select()
