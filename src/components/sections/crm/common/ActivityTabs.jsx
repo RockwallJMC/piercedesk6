@@ -7,6 +7,8 @@ import Tab from '@mui/material/Tab';
 import Tabs, { tabsClasses } from '@mui/material/Tabs';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import useSWR from 'swr';
+import axiosInstance from 'services/axios/axiosInstance';
 import { useCRMActivities } from 'services/swr/api-hooks/useCRMActivitiesApi';
 import AllActivitiesTabPanel from './activity-tab-panels/all-activities';
 import CallLogTabPanel from './activity-tab-panels/call-log';
@@ -34,12 +36,51 @@ const tabToActivityType = {
   [ActivityTab.Notes]: 'note',
 };
 
-const ActivityTabs = ({ contactId }) => {
+const ActivityTabs = ({ contactId, entityType, entityId }) => {
   const [activeTab, setActiveTab] = useState(ActivityTab.Activities);
 
   // Fetch activities based on selected tab
   const activityType = tabToActivityType[activeTab];
-  const { data: activities, isLoading } = useCRMActivities(contactId, activityType);
+
+  // Generic fetcher for activities that supports both contact and opportunity entities
+  const activitiesFetcher = async (entityType, entityId, activityType) => {
+    const params = new URLSearchParams({
+      entity_type: entityType,
+      entity_id: entityId,
+    });
+
+    if (activityType) {
+      params.append('activity_type', activityType);
+    }
+
+    const response = await axiosInstance.get(`/api/crm/activities?${params.toString()}`);
+    return response;
+  };
+
+  // Support both contactId (legacy) and entityType/entityId (new)
+  const effectiveEntityType = entityType || 'contact';
+  const effectiveEntityId = entityId || contactId;
+
+  // Use legacy hook for contacts, generic fetcher for everything else
+  const legacyHook = useCRMActivities(
+    contactId && !entityType ? contactId : null,
+    activityType
+  );
+
+  const genericHook = useSWR(
+    entityType && entityId
+      ? ['crm-activities', effectiveEntityType, effectiveEntityId, activityType]
+      : null,
+    () => activitiesFetcher(effectiveEntityType, effectiveEntityId, activityType),
+    {
+      suspense: false,
+      revalidateOnMount: true,
+      revalidateOnFocus: false,
+    }
+  );
+
+  // Use whichever hook is active
+  const { data: activities, isLoading } = entityType ? genericHook : legacyHook;
 
   const handleChange = (_event, newValue) => setActiveTab(newValue);
 

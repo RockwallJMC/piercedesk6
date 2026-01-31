@@ -12,7 +12,7 @@ import OpportunityConvertToProject from 'components/sections/crm/common/Opportun
 import AccessToggle from './AccessToggle';
 import DealStatus from './DealStatus';
 
-const DealDetailsHeader = ({ title }) => {
+const DealDetailsHeader = ({ title, 'data-testid': dataTestId }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const { down } = useBreakpoints();
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
@@ -43,7 +43,11 @@ const DealDetailsHeader = ({ title }) => {
             direction="row"
             sx={{ gap: 2, justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}
           >
-            <Typography variant="h4" sx={[{ flexGrow: 999 }, downLg && { fontSize: 'h5.fontSize' }]}>
+            <Typography
+              variant="h4"
+              sx={[{ flexGrow: 999 }, downLg && { fontSize: 'h5.fontSize' }]}
+              data-testid={dataTestId}
+            >
               {title}
             </Typography>
             <Stack direction="row" gap={2} sx={{ justifyContent: 'space-between', flexGrow: 1 }}>

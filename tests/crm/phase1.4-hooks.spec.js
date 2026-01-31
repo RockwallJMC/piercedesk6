@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { TEST_DATA } from '../helpers/multi-tenant-setup.js';
 
 test.describe('Phase 1.4 - Deal Details Hooks', () => {
   test('useCRMDealApi hook fetches and caches deal data', async ({ page }) => {
-    await page.goto('/apps/crm/deal-details?id=test-deal-id');
+    await page.goto(`/apps/crm/deal-details?id=${TEST_DATA.ACME_OPPORTUNITY.id}`);
 
     // Wait for data to load
     await page.waitForSelector('[data-testid="deal-name"]');
@@ -22,7 +23,7 @@ test.describe('Phase 1.4 - Deal Details Hooks', () => {
   });
 
   test('useCRMDealApi handles loading state', async ({ page }) => {
-    await page.goto('/apps/crm/deal-details?id=test-deal-id');
+    await page.goto(`/apps/crm/deal-details?id=${TEST_DATA.ACME_OPPORTUNITY.id}`);
 
     // Should show loading initially
     await expect(page.locator('[data-testid="loading-skeleton"]')).toBeVisible();

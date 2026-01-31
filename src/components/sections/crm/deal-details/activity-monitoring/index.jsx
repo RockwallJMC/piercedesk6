@@ -3,7 +3,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ActivityTabs from '../../common/ActivityTabs';
 
-const ActivityMonitoring = () => {
+const ActivityMonitoring = ({ dealId }) => {
   return (
     <Paper
       component={Stack}
@@ -13,7 +13,7 @@ const ActivityMonitoring = () => {
       <Typography variant="h5" sx={{ mb: 4 }}>
         Activity Monitoring
       </Typography>
-      <ActivityTabs />
+      <ActivityTabs entityType="opportunity" entityId={dealId} />
     </Paper>
   );
 };
