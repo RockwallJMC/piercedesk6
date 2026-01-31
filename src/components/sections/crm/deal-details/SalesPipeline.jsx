@@ -33,6 +33,8 @@ const SalesPipeline = ({ salesPipelineData }) => {
               )
             }
             sx={{ height: 46 }}
+            data-testid={data.testId}
+            data-status={data.status}
           >
             {data.name}
           </Button>
