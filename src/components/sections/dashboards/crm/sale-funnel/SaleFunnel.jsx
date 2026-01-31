@@ -1,14 +1,55 @@
 'use client';
 
-import { Paper } from '@mui/material';
+import { CircularProgress, Alert, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { saleFunnelData, saleFunnelTableData } from 'data/crm/dashboard';
 import DashboardMenu from 'components/common/DashboardMenu';
 import SectionHeader from 'components/common/SectionHeader';
 import SaleFunnelChart from './SaleFunnelChart';
 import SaleFunnelTable from './SaleFunnelTable';
+import { useCRMDashboardApi } from '@/services/swr/api-hooks/useCRMDashboardApi';
+
+const stageColors = {
+  'Contact': 'chBlue.100',
+  'MQL': 'chBlue.200',
+  'SQL': 'chBlue.300',
+  'Opportunity': 'chBlue.400',
+  'Won': 'chGreen.500',
+  'Lost': 'chGrey.400'
+};
 
 const SaleFunnel = () => {
+  const { salesFunnel, isLoading, hasError } = useCRMDashboardApi();
+
+  if (isLoading) {
+    return (
+      <Paper background={1} sx={{ height: 1, p: { xs: 3, md: 5 }, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}>
+        <CircularProgress />
+      </Paper>
+    );
+  }
+
+  if (hasError || !salesFunnel) {
+    return (
+      <Paper background={1} sx={{ height: 1, p: { xs: 3, md: 5 } }}>
+        <Alert severity="error">Failed to load sales funnel</Alert>
+      </Paper>
+    );
+  }
+
+  // Transform API data [{stage, count, conversionRate}] to chart format {stage: count}
+  const saleFunnelData = salesFunnel.reduce((acc, item) => {
+    acc[item.stage.toLowerCase()] = item.count;
+    return acc;
+  }, {});
+
+  // Transform API data to table format
+  const saleFunnelTableData = salesFunnel.map(item => ({
+    stageIndicator: stageColors[item.stage] || 'chBlue.300',
+    stage: item.stage,
+    lostLead: item.conversionRate, // Using conversion rate as the metric
+    thisMonth: item.count // Using count as the this month value
+  }));
+
   return (
     <Paper background={1} sx={{ height: 1, p: { xs: 3, md: 5 } }}>
       <SectionHeader
