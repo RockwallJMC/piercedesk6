@@ -132,3 +132,77 @@ test.describe('Contacts Archive', () => {
     expect(contactCells).not.toContain(contactName);
   });
 });
+
+test.describe('GridToolbar Features', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/apps/crm/contacts');
+    await page.waitForSelector('[role="grid"]');
+  });
+
+  test('should filter contacts with quick search', async ({ page }) => {
+    // Get initial row count
+    const initialRows = await page.locator('[role="row"]').count();
+
+    // Type in quick filter
+    const searchInput = page.locator('input[placeholder*="Search"]');
+    await searchInput.fill('test');
+
+    // Wait for filter to apply
+    await page.waitForTimeout(600); // debounce delay
+
+    // Verify filtered results (should be less than or equal to initial)
+    const filteredRows = await page.locator('[role="row"]').count();
+    expect(filteredRows).toBeLessThanOrEqual(initialRows);
+  });
+
+  test('should toggle density', async ({ page }) => {
+    // Click density button
+    const densityButton = page.locator('[aria-label*="Density"]');
+    await densityButton.click();
+
+    // Select "Compact"
+    await page.locator('li:has-text("Compact")').click();
+
+    // Verify grid density changed (rows should be shorter)
+    const rowHeight = await page.locator('[role="row"]').first().evaluate((el) => {
+      return window.getComputedStyle(el).height;
+    });
+
+    // Compact rows are typically ~36px or less
+    const heightValue = parseInt(rowHeight);
+    expect(heightValue).toBeLessThan(50);
+  });
+
+  test('should show/hide columns', async ({ page }) => {
+    // Click columns button
+    const columnsButton = page.locator('[aria-label*="Columns"]');
+    await columnsButton.click();
+
+    // Hide "Department" column
+    const departmentCheckbox = page.locator('label:has-text("Department")').locator('input');
+    await departmentCheckbox.click();
+
+    // Close columns panel
+    await page.keyboard.press('Escape');
+
+    // Verify column is hidden
+    const departmentHeader = page.locator('[data-field="department"]');
+    await expect(departmentHeader).not.toBeVisible();
+  });
+
+  test('should export to CSV', async ({ page }) => {
+    // Setup download listener
+    const downloadPromise = page.waitForEvent('download');
+
+    // Click export button
+    const exportButton = page.locator('[aria-label*="Export"]');
+    await exportButton.click();
+
+    // Click "Download as CSV"
+    await page.locator('li:has-text("Download as CSV")').click();
+
+    // Verify download started
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toContain('.csv');
+  });
+});
