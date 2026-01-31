@@ -148,17 +148,19 @@ export async function loginAsOrgUser(page, org, userRole) {
  * @param {Page} page - Playwright page object
  */
 export async function logout(page) {
-  // Navigate to logout route
-  await page.goto('http://localhost:4000/authentication/logout');
+  // Clear cookies and storage to log out
+  await page.context().clearCookies();
 
-  // Wait for redirect to login page
-  await page.waitForURL(/\/authentication.*login/, { timeout: 5000 });
-
-  // Clear storage to ensure clean logout
   await page.evaluate(() => {
     localStorage.clear();
     sessionStorage.clear();
   });
+
+  // Navigate to login page
+  await page.goto('http://localhost:4000/authentication/default/jwt/login');
+
+  // Wait for login page to be ready
+  await page.waitForSelector('input[type="email"]', { timeout: 5000 });
 }
 
 /**
