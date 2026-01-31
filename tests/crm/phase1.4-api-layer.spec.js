@@ -108,4 +108,24 @@ test.describe('Phase 1.4 - Deal Details API', () => {
     const response = await request.get(`${BASE_URL}/api/crm/deals/33000000-0000-0000-0000-000000000001`);
     expect(response.status()).toBe(401);
   });
+
+  test('GET /api/crm/deals/[id]/analytics returns aggregations', async ({ request }) => {
+    const dealId = '33000000-0000-0000-0000-000000000001';
+
+    const response = await request.get(`${BASE_URL}/api/crm/deals/${dealId}/analytics`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    expect(response.status()).toBe(200);
+
+    const analytics = await response.json();
+
+    // Verify structure
+    expect(analytics.deal_progress).toBeGreaterThanOrEqual(0);
+    expect(analytics.deal_progress).toBeLessThanOrEqual(100);
+    expect(analytics.win_loss_ratio).toBeDefined();
+    expect(analytics.conversion_rate).toBeDefined();
+    expect(analytics.engagement_metrics).toBeDefined();
+  });
 });
