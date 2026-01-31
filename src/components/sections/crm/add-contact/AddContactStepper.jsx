@@ -5,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Container, Stack, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
+import { useRouter } from 'next/navigation';
 import CompanyInfoForm, {
   companyInfoSchema,
 } from 'components/sections/crm/add-contact/steps/CompanyInfoForm';
@@ -14,6 +15,7 @@ import LeadInfoForm, {
 import PersonalInfoForm, {
   personalInfoSchema,
 } from 'components/sections/crm/add-contact/steps/PersonalInfoForm';
+import { useCreateCRMContact } from '@/services/swr/api-hooks/useCRMContactApi';
 
 const steps = [
   {
@@ -72,6 +74,8 @@ const AddContactStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState({});
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
+  const { trigger: createContact, isMutating: isCreating } = useCreateCRMContact();
   const methods = useForm({
     resolver: yupResolver(validationSchemas[activeStep]),
     defaultValues: {
@@ -95,12 +99,22 @@ const AddContactStepper = () => {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
-  const onSubmit = (data) => {
-    console.log('Form data', data);
-    enqueueSnackbar('Contact added successfully', { variant: 'success' });
-    reset();
-    setCompletedSteps({});
-    setActiveStep(0);
+  const onSubmit = async (data) => {
+    try {
+      const result = await createContact(data);
+      enqueueSnackbar('Contact added successfully', { variant: 'success' });
+      reset();
+      setCompletedSteps({});
+      setActiveStep(0);
+
+      // Redirect to lead-details page with the new contact ID
+      if (result?.contact?.id) {
+        router.push(`/apps/crm/lead-details/${result.contact.id}`);
+      }
+    } catch (error) {
+      console.error('Failed to create contact:', error);
+      enqueueSnackbar(error.message || 'Failed to create contact', { variant: 'error' });
+    }
   };
   const handleStepClick = (step) => {
     setActiveStep(step);
@@ -140,7 +154,7 @@ const AddContactStepper = () => {
             )}
 
             {activeStep === steps.length - 1 ? (
-              <Button type="submit" variant="soft" sx={{ px: 4 }}>
+              <Button type="submit" variant="soft" sx={{ px: 4 }} loading={isCreating}>
                 Save
               </Button>
             ) : (

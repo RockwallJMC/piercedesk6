@@ -19,6 +19,11 @@ const nextConfig = {
         hostname: 'prium.github.io',
         pathname: '/aurora/images/**',
       },
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+        pathname: '/storage/**',
+      },
     ],
   },
   experimental: {
