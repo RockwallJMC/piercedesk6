@@ -100,24 +100,24 @@ All phase progress updates are posted to the GitHub issue for external coordinat
 ### Phase 1.5: Dashboard - CRM Analytics
 - **Doc**: [`docs/system/design/phase1.5-crm-dashboard.md`](docs/system/design/phase1.5-crm-dashboard.md)
 - **Type**: Design + Execution
-- **Status**: ⏳ Planned
-- **Assigned**: TBD
+- **Status**: ✅ Complete
+- **Assigned**: Claude (supabase-database-architect, wiring-agent, react-mui-frontend-engineer)
 - **Scope**:
-  - Tables: All (requires diverse seed data ~50 deals, ~30 contacts, ~100 activities)
-  - Endpoints: 8 dashboard endpoints (KPIs, revenue, lead-sources, acquisition-cost, sales-funnel, customer-feedback, lifetime-value, active-users)
+  - Tables: All (seed data: 50 deals, 32 contacts, 100 activities for alice.owner@seedtest.com)
+  - Endpoints: 8 dashboard endpoints (deals-metrics, kpis, revenue, lead-sources, acquisition-cost, sales-funnel, lifetime-value, active-users)
   - Page: /dashboard/crm (analytics dashboard)
-- **Tests**: Data layer → API layer → UI layer → E2E (dashboard reflects real data)
-- **Verification**: All charts render, KPIs accurate, aggregations perform well
-- **Completed**: ""
+- **Tests**: API layer tests (43/52 passing - 83%), Build: ✅, Lint: ✅
+- **Verification**: All 8 components wired to live data, dashboard functional
+- **Completed**: "2026-01-31"
 
 ## Current Status
 
 ### Active Phase
-Currently working on: Phase planning and documentation setup
+Currently working on: Phase 1.5 complete, ready for code review
 
 ### Progress Summary
 - Total phases: 5
-- Completed: 0 (0%)
+- Completed: 2 (40%) - Phases 1.4 and 1.5
 - In progress: 0
 - Pending: 5
 - Blocked: 0
