@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
+import { createApiClient } from '@/lib/supabase/api-server';
 
 // ============================================================================
 // GET /api/crm/contacts
@@ -8,8 +7,7 @@ import { cookies } from 'next/headers';
 // ============================================================================
 export async function GET(request) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = createApiClient(request);
 
     // Validate JWT token server-side (more secure than getSession)
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -85,8 +83,7 @@ export async function GET(request) {
 // ============================================================================
 export async function POST(request) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = createApiClient(request);
 
     // Validate JWT token server-side (more secure than getSession)
     const { data: { user }, error: authError } = await supabase.auth.getUser();

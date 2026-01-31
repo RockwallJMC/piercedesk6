@@ -31,6 +31,7 @@ CREATE POLICY "Users can only access their own data"
 4. **Test RLS policies** - Verify users can't access others' data
 
 **Reference:**
+
 - [Auth Security Fix Design](../../docs/plans/2026-01-31-auth-security-fix-design.md)
 
 ## Critical Constraints
@@ -250,23 +251,20 @@ Before finalizing any database code:
 - [ ] Migrations are idempotent (use IF NOT EXISTS, IF EXISTS)
 - [ ] **INVOKED VERIFY-BEFORE-COMPLETE SKILL** - Ran migrations, showed EXPLAIN ANALYZE output, tested RLS
 
-**GitHub Workflow (MANDATORY AFTER EACH TASK):**
+**GitHub Workflow (when used):**
 
-All GitHub issue/PR creation and updates MUST follow the `/github-workflow` skill.
+When interacting with GitHub issues, follow the `/github-workflow` skill.
 
 **Invoke before:**
 
 - Creating GitHub issues
-- Creating PRs (after EVERY task)
 - Posting updates to issues
 
 **Key Requirements:**
 
 - Always include agent identification: `**Agent**: supabase-database-architect`
-- Create task-level PRs after EVERY task completion
 - Follow templates exactly (rigid skill)
 - Always work from GitHub issue number/title
-- Reference issue in all PRs and commits
 
 **For complete workflow and templates:**
 

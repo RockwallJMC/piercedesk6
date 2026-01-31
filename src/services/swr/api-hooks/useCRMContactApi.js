@@ -8,7 +8,7 @@ import useSWRMutation from 'swr/mutation';
  * Fetcher function for all contacts
  * Contacts are automatically filtered by organization_id server-side
  *
- * @returns {Promise<Array>} Array of contact objects with account data
+ * @returns {Promise<Array>} Array of contact objects with company joins
  */
 const contactsFetcher = async () => {
   const response = await axiosInstance.get('/api/crm/contacts');
@@ -24,7 +24,7 @@ const contactsFetcher = async () => {
  *
  * @example
  * const { data: contacts, error, isLoading, mutate } = useContacts();
- * // contacts = [{ id, first_name, last_name, email, ..., account: { id, name } }, ...]
+ * // contacts = [{ id, first_name, last_name, email, ..., company: { id, name, ... } }, ...]
  */
 export const useContacts = (config) => {
   const swr = useSWR(
