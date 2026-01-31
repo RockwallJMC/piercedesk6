@@ -19,7 +19,7 @@ export async function GET(request) {
     const { data: membership } = await supabase
       .from('organization_members')
       .select('organization_id')
-      .eq('organization_id', organizationId)
+      .eq('user_id', user.id)
       .eq('is_active', true)
       .maybeSingle();
 
