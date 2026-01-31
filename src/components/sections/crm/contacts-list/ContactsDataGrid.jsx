@@ -23,7 +23,7 @@ import {
 import { useCRMContacts, useUpdateCRMContact, useArchiveContact } from '@/services/swr/api-hooks/useCRMContactApi';
 import paths from '@/routes/paths';
 
-export default function ContactsDataGrid() {
+export default function ContactsDataGrid({ filterModel, onFilterModelChange, apiRef, filterButtonEl }) {
   const router = useRouter();
   const { contacts, isLoading, mutate } = useCRMContacts();
   const { updateContact } = useUpdateCRMContact();
@@ -348,13 +348,15 @@ export default function ContactsDataGrid() {
         rows={contacts}
         columns={columns}
         loading={isLoading}
+        apiRef={apiRef}
+        filterModel={filterModel}
+        onFilterModelChange={onFilterModelChange}
         slots={{
           toolbar: GridToolbar,
         }}
         slotProps={{
           toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
+            showQuickFilter: false,
           },
         }}
         onCellEditStop={handleCellEditCommit}

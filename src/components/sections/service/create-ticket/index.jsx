@@ -7,9 +7,9 @@ import { useBreakpoints } from 'providers/BreakpointsProvider';
 import paths from 'routes/paths';
 import PageBreadcrumb from 'components/sections/common/PageBreadcrumb';
 import BottomBar from 'components/sections/service/create-ticket/BottomBar';
-import ServiceAside from 'components/sections/service/create-ticket/aside/EventAside';
-import ServiceSections from 'components/sections/service/create-ticket/main/EventSections';
-import useCreateTicketForm from 'components/sections/service/create-ticket/useCreateEventForm';
+import ServiceAside from 'components/sections/service/create-ticket/aside/ServiceAside';
+import ServiceSections from 'components/sections/service/create-ticket/main/ServiceSections';
+import useCreateTicketForm from 'components/sections/service/create-ticket/useCreateTicketForm';
 
 const CreateTicket = () => {
   const { methods } = useCreateTicketForm();
@@ -28,7 +28,7 @@ const CreateTicket = () => {
 
   return (
     <FormProvider {...methods}>
-      <Stack component="form" id="createTicketForm" onSubmit={handleSubmit(onSubmit)}>
+      <Stack component="form" id="createServiceTicketForm" onSubmit={handleSubmit(onSubmit)}>
         <Paper sx={{ p: { xs: 3, md: 5 }, flex: 1 }}>
           <Box sx={{ mb: 3 }}>
             <PageBreadcrumb

@@ -4,32 +4,65 @@ import { closestCenter } from '@dnd-kit/core';
 import { Button, Stack } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import SortableDnd from 'components/base/SortableDnd';
-import EventImageDropzone from './EventImageDropzone';
-import EventOverview from './EventOverview';
-import DraggableEventSection from './draggable-section';
+import ServiceFileDropzone from './ServiceFileDropzone';
+import ServiceOverview from './ServiceOverview';
+import DraggableServiceSection from './draggable-section';
 
 const initializeSectionFields = (type, title) => ({
   title,
   contentType: type,
-  ...(type === 'paragraph' && { paragraphContents: '' }),
-  ...(type === 'list' && {
-    listItems: [
-      { value: '', itemId: 'item1' },
-      { value: '', itemId: 'item2' },
-      { value: '', itemId: 'item3' },
+  images: [],
+  ...(type === 'activity' && {
+    activityName: '',
+    activityType: '',
+    activityDescription: '',
+    durationEstimate: 0,
+  }),
+  ...(type === 'parts' && {
+    parts: [
+      {
+        name: '',
+        manufacturer: '',
+        partNumber: '',
+        quantity: 1,
+        unitCost: 0,
+        userGuideUrl: '',
+        partId: 'part1',
+      },
     ],
   }),
-  ...(type === 'info' && {
-    infoItems: [
-      { option: '', value: '', itemId: 'item1' },
-      { option: '', value: '', itemId: 'item2' },
-      { option: '', value: '', itemId: 'item3' },
+  ...(type === 'photos' && {
+    photos: [
+      {
+        caption: '',
+        type: 'Documentation',
+        timestamp: new Date().toISOString(),
+        photoId: 'photo1',
+      },
     ],
-    imageAlignment: 'right',
+  }),
+  ...(type === 'labor' && {
+    arrivalTime: null,
+    departureTime: null,
+    leadTech: '',
+    helperTechs: [],
+    hourlyRate: 0,
+  }),
+  ...(type === 'notes' && {
+    instructionType: 'Customer Notes',
+    notesContent: '',
+    isPriority: false,
+  }),
+  ...(type === 'device' && {
+    deviceName: '',
+    makeModel: '',
+    serialNumber: '',
+    deviceLocation: '',
+    deviceWorkPerformed: '',
   }),
 });
 
-const EventSections = () => {
+const ServiceSections = () => {
   const { control } = useFormContext();
 
   const {
@@ -44,7 +77,7 @@ const EventSections = () => {
   });
 
   const addSection = () =>
-    append(initializeSectionFields('paragraph', `Section ${sections.length + 1}`));
+    append(initializeSectionFields('activity', `Section ${sections.length + 1}`));
 
   const handleChange = (index, event) => {
     const updatedContentType = event.target.value;
@@ -61,15 +94,15 @@ const EventSections = () => {
   return (
     <div>
       <Stack direction="column" sx={{ rowGap: 4, mb: 4 }}>
-        <EventImageDropzone />
-        <EventOverview />
+        <ServiceFileDropzone />
+        <ServiceOverview />
         <SortableDnd
           items={sections}
           handleDragEnd={handleDragEnd}
           collisionDetection={closestCenter}
         >
           {sections.map((section, index) => (
-            <DraggableEventSection
+            <DraggableServiceSection
               key={section.id}
               section={section}
               index={index}
@@ -93,4 +126,4 @@ const EventSections = () => {
   );
 };
 
-export default EventSections;
+export default ServiceSections;

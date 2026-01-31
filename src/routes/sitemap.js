@@ -272,6 +272,13 @@ const sitemap = [
             pathName: 'add-contact',
             active: true,
           },
+          {
+            name: 'Contacts',
+            key: 'contacts',
+            path: paths.contacts,
+            pathName: 'contacts',
+            active: true,
+          },
         ],
       },
       {

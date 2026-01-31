@@ -5,7 +5,7 @@ import IconifyIcon from 'components/base/IconifyIcon';
 import Image from 'components/base/Image';
 import ScrollSpyContent from 'components/scroll-spy/ScrollSpyContent';
 
-const EventPerformers = ({ performerList }) => {
+const EventEquipment = ({ equipmentList }) => {
   const { topbarHeight } = useNavContext();
 
   return (
@@ -13,19 +13,19 @@ const EventPerformers = ({ performerList }) => {
       <Grid size={{ xs: 12, xl: 6 }}>
         <div>
           <ScrollSpyContent
-            id="details"
+            id="equipment"
             sx={(theme) => ({
               scrollMarginTop: theme.mixins.topOffset(topbarHeight, 75, true),
             })}
           >
             <Typography variant="h6" sx={{ my: 3, lineHeight: 1.5 }}>
-              Details
+              Equipment
             </Typography>
           </ScrollSpyContent>
           <List sx={{ listStylePosition: 'inside', mb: 3 }} disablePadding>
-            {performerList.performers.map((performer) => (
+            {equipmentList.equipment.map((item) => (
               <ListItem
-                key={performer}
+                key={item}
                 disablePadding
                 sx={{
                   columnGap: 0.7,
@@ -42,7 +42,7 @@ const EventPerformers = ({ performerList }) => {
                   />
                 </ListItemIcon>
                 <ListItemText
-                  primary={performer}
+                  primary={item}
                   slotProps={{
                     primary: { variant: 'subtitle1', color: 'text.secondary' },
                   }}
@@ -55,8 +55,8 @@ const EventPerformers = ({ performerList }) => {
       </Grid>
       <Grid size={{ xs: 12, xl: 6 }}>
         <Image
-          src={performerList.image.src}
-          alt={performerList.image.alt}
+          src={equipmentList.image.src}
+          alt={equipmentList.image.alt}
           height={584}
           width={600}
           sx={({ mixins }) => ({
@@ -72,4 +72,4 @@ const EventPerformers = ({ performerList }) => {
   );
 };
 
-export default EventPerformers;
+export default EventEquipment;

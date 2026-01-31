@@ -1,12 +1,9 @@
 'use client';
 
-import { Avatar, Button, Divider, Link, Paper, Stack, Typography } from '@mui/material';
-import useNumberFormat from 'hooks/useNumberFormat';
+import { Avatar, Divider, Link, Paper, Stack, Typography } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 
 const EventOrganizerInfo = ({ organizer }) => {
-  const { numberFormat } = useNumberFormat();
-
   return (
     <Paper
       background={1}
@@ -18,12 +15,11 @@ const EventOrganizerInfo = ({ organizer }) => {
         borderRadius: 6,
         p: 3,
         height: 1,
-        justifyContent: 'space-between',
       }}
     >
       <Stack direction="column" gap={3}>
         <Typography variant="h6" sx={{ lineHeight: 1.5 }}>
-          Organizer
+          Lead Technician
         </Typography>
 
         <Stack direction={{ xs: 'column', sm: 'row', xl: 'column' }} rowGap={3} columnGap={4}>
@@ -34,13 +30,6 @@ const EventOrganizerInfo = ({ organizer }) => {
             <div>
               <Typography variant="body2" sx={{ fontWeight: 700 }}>
                 {organizer.name}
-              </Typography>
-              <Typography component="p" variant="caption" color="text.secondary">
-                {numberFormat(organizer.followers, {
-                  notation: 'compact',
-                  compactDisplay: 'short',
-                })}
-                &nbsp; followers
               </Typography>
             </div>
           </Stack>
@@ -80,14 +69,48 @@ const EventOrganizerInfo = ({ organizer }) => {
           </div>
         </Stack>
 
-        <Typography variant="body2" color="text.secondary">
-          {organizer.description}
-        </Typography>
-      </Stack>
+        {/* Vehicle Info */}
+        {organizer.vehicle && (
+          <Stack spacing={1}>
+            <Typography variant="caption" color="text.disabled" sx={{ textTransform: 'uppercase' }}>
+              Vehicle Information
+            </Typography>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <IconifyIcon icon="material-symbols:local-shipping-outline" fontSize={16} color="text.secondary" />
+              <Typography variant="body2" color="text.secondary">
+                {organizer.vehicle.make} {organizer.vehicle.model}
+              </Typography>
+            </Stack>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 3 }}>
+              {organizer.vehicle.vehicleNumber}
+            </Typography>
+          </Stack>
+        )}
 
-      <Button variant="contained" color="neutral" sx={{ alignSelf: 'flex-start' }}>
-        Follow
-      </Button>
+        {/* Helper Technicians */}
+        {organizer.helpers && organizer.helpers.length > 0 && (
+          <Stack spacing={1}>
+            <Typography variant="caption" color="text.disabled" sx={{ textTransform: 'uppercase' }}>
+              Helper Technicians
+            </Typography>
+            {organizer.helpers.map((helper, index) => (
+              <Stack key={index} spacing={0.5}>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {helper.name}
+                </Typography>
+                <Stack direction="row" spacing={2}>
+                  <Link href={`tel:${helper.phone}`} variant="caption" color="text.secondary">
+                    {helper.phone}
+                  </Link>
+                  <Link href={`mailto:${helper.email}`} variant="caption" color="text.secondary">
+                    {helper.email}
+                  </Link>
+                </Stack>
+              </Stack>
+            ))}
+          </Stack>
+        )}
+      </Stack>
     </Paper>
   );
 };

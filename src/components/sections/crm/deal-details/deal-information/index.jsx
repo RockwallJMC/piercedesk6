@@ -97,7 +97,7 @@ const DealInformation = ({ deal, updateDeal, dealInformation }) => {
 
           <DealInfoItem attribute="Create Date" value={deal.created_at} background={true} />
 
-          <DealInfoItem attribute="Created By" value={deal.created_by} background={false} />
+          <DealInfoItem attribute="Created By" value={deal.created_by?.full_name || deal.created_by?.email || 'System'} background={false} />
 
           <DealInfoItem attribute="Current Stage" background={true}>
             <EditableSelect
@@ -138,9 +138,18 @@ const DealInformation = ({ deal, updateDeal, dealInformation }) => {
 
           <DealInfoItem attribute="Budget Forecast" background={true}>
             <EditableCurrencyInput
-              value={deal.value}
-              onSave={(value) => handleFieldUpdate('value', value)}
+              value={deal.amount}
+              onSave={(value) => handleFieldUpdate('amount', value)}
               label="Budget Forecast"
+            />
+          </DealInfoItem>
+
+          <DealInfoItem attribute="Forecast Category" background={true}>
+            <EditableSelect
+              value={deal.forecast_category}
+              onSave={(value) => handleFieldUpdate('forecast_category', value)}
+              label="Forecast Category"
+              options={FORECAST_OPTIONS}
             />
           </DealInfoItem>
 

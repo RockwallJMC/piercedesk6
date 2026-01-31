@@ -18,7 +18,7 @@ const EventTerms = ({ eventTermsConditions }) => {
             })}
           >
             <Typography variant="h6" sx={{ my: 3 }}>
-              Event Terms & Conditions
+              Terms & Conditions
             </Typography>
           </ScrollSpyContent>
           <List disablePadding>

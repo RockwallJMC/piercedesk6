@@ -25,13 +25,13 @@ const TicketPurchaseToolbar = ({ onPurchaseClick }) => {
           justifyContent: 'space-between',
         }}
       >
-        <Typography variant="h6">10$ - 200$</Typography>
+        <Typography variant="h6">$125 - $225</Typography>
         <Stack spacing={1}>
           <Button variant="soft" shape="square" color="neutral">
             <IconifyIcon icon="material-symbols:favorite-outline-rounded" width={20} height={20} />
           </Button>
           <Button variant="contained" onClick={onPurchaseClick}>
-            Purchase
+            Request Payment
           </Button>
         </Stack>
       </Container>

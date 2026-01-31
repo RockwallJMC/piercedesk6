@@ -9,7 +9,10 @@ export const eventInfo = {
   startTime: '9:00am',
   endTime: '11:00am',
   organizerName: 'Acme Security Solutions',
+  customerType: 'Business',
   location: 'Maverick Convention Center, 56335 Ardella Greens Apt. 511, East Maeville, Arizona',
+  phone: '+1-555-123-4567',
+  email: 'service@acmesecurity.com',
   mapLink: '#!',
 };
 
@@ -231,6 +234,20 @@ export const performerList = {
   image: { src: image('details/4'), alt: 'Security equipment' },
 };
 
+export const equipmentList = {
+  equipment: [
+    'Main control panel - Model: DSC PowerSeries Pro',
+    'Door/window sensors (x12) - Honeywell 5816',
+    'Motion detectors (x8) - DSC LC-100-PI',
+    'Glass break sensors (x4) - Honeywell FG730',
+    'Surveillance cameras (x12) - Hikvision DS-2CD2143G0-I',
+    'Keypad - DSC HS2LCDWF9',
+    'Backup battery - 12V 7Ah sealed lead acid',
+    'Cellular communicator - Honeywell AlarmNet',
+  ],
+  image: { src: image('details/4'), alt: 'Security equipment' },
+};
+
 export const organizerEvents = [
   {
     id: 1,
@@ -275,12 +292,26 @@ export const organizerEvents = [
 ];
 
 export const organizerInfo = {
-  name: 'Acme Security Solutions',
-  followers: 1250,
-  phone: '+1-555-123-4567',
-  email: 'service@acmesecurity.com',
-  description:
-    'Acme Security Solutions is your trusted partner for commercial security systems, HVAC maintenance, and facility management. We specialize in service contracts, emergency repairs, and system installations with 24/7 support. Our certified technicians ensure your business stays secure and operational. 🔧🛡️',
+  name: 'John Davis',
+  phone: '+1-555-789-1234',
+  email: 'john.davis@acmesecurity.com',
+  vehicle: {
+    make: 'Ford',
+    model: 'F-150',
+    vehicleNumber: 'Truck #12',
+  },
+  helpers: [
+    {
+      name: 'Mike Johnson',
+      phone: '+1-555-789-5678',
+      email: 'mike.johnson@acmesecurity.com',
+    },
+    {
+      name: 'Sarah Williams',
+      phone: '+1-555-789-9012',
+      email: 'sarah.williams@acmesecurity.com',
+    },
+  ],
 };
 
 export const eventTermsConditions = {

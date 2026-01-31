@@ -69,8 +69,8 @@ const TicketPurchaseDrawer = ({ open, handleClose }) => {
   } = methods;
 
   const onSubmit = (data) => {
-    console.log('Event Form Data:', data);
-    enqueueSnackbar('Ticket purchased successfully!', {
+    console.log('Payment Form Data:', data);
+    enqueueSnackbar('Payment authorized successfully!', {
       variant: 'success',
       autoHideDuration: 3000,
     });
@@ -113,7 +113,7 @@ const TicketPurchaseDrawer = ({ open, handleClose }) => {
               }}
             >
               <Stack sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h6">Ticket price</Typography>
+                <Typography variant="h6">Authorize Payment</Typography>
                 <IconButton onClick={handleClose}>
                   <IconifyIcon icon="material-symbols:close" fontSize={20} />
                 </IconButton>
@@ -221,6 +221,30 @@ const TicketPurchaseDrawer = ({ open, handleClose }) => {
                 )}
               />
               <EventTicketForm sx={{ mb: 3 }} />
+
+              {/* Signature Capture Placeholder */}
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>
+                  Customer Signature
+                </Typography>
+                <Box
+                  sx={{
+                    height: 150,
+                    borderRadius: 2,
+                    bgcolor: 'background.elevation2',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: 1,
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Typography variant="body2" color="text.disabled">
+                    Signature capture - Phase 4
+                  </Typography>
+                </Box>
+              </Box>
+
               <EventPaymentMethod />
             </Box>
           </SimpleBar>
@@ -236,7 +260,7 @@ const TicketPurchaseDrawer = ({ open, handleClose }) => {
             }}
           >
             <Button type="submit" fullWidth variant="contained" color="primary">
-              Buy tickets
+              Authorize Payment & Close Ticket
             </Button>
           </Box>
         </Box>

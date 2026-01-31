@@ -11,13 +11,13 @@ const EventDescription = ({ description }) => {
     <Grid container spacing={{ xs: 4, md: 6, xl: 10 }} justifyContent="center">
       <Grid size={{ xs: 12, xl: 6 }}>
         <ScrollSpyContent
-          id="description"
+          id="summary"
           sx={(theme) => ({
             scrollMarginTop: theme.mixins.topOffset(topbarHeight, 75, true),
           })}
         >
           <Typography variant="h6" sx={{ my: 3, lineHeight: 1.5 }}>
-            Description
+            Summary
           </Typography>
         </ScrollSpyContent>
         <Box sx={{ mb: 3 }}>{description.content}</Box>

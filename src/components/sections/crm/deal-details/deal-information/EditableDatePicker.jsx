@@ -60,37 +60,32 @@ const EditableDatePicker = ({ value, onSave, label }) => {
     </Stack>
   );
 
-  const renderEdit = (editValue, setEditValue, handleSave, handleCancel, isSaving) => {
-    const [dateValue, setDateValue] = useState(editValue ? dayjs(editValue) : null);
-
-    return (
-      <Stack direction="row" gap={1} alignItems="flex-start">
-        <DatePicker
-          label={label}
-          value={dateValue}
-          onChange={(newValue) => {
-            setDateValue(newValue);
-            if (newValue) {
-              handleSave(newValue.toISOString());
+  const renderEdit = (editValue, setEditValue, handleSave, handleCancel, isSaving) => (
+    <Stack direction="row" gap={1} alignItems="flex-start">
+      <DatePicker
+        label={label}
+        value={editValue ? dayjs(editValue) : null}
+        onChange={(newValue) => {
+          if (newValue) {
+            handleSave(newValue.toISOString());
+          }
+        }}
+        slotProps={{
+          textField: {
+            variant: 'filled',
+            fullWidth: true,
+            autoFocus: true,
+            onBlur: handleCancel,
+            onKeyDown: (e) => {
+              if (e.key === 'Escape') handleCancel();
             }
-          }}
-          slotProps={{
-            textField: {
-              variant: 'filled',
-              fullWidth: true,
-              autoFocus: true,
-              onBlur: handleCancel,
-              onKeyDown: (e) => {
-                if (e.key === 'Escape') handleCancel();
-              }
-            }
-          }}
-          disabled={isSaving}
-        />
-        {isSaving && <CircularProgress size={20} sx={{ mt: 2 }} />}
-      </Stack>
-    );
-  };
+          }
+        }}
+        disabled={isSaving}
+      />
+      {isSaving && <CircularProgress size={20} sx={{ mt: 2 }} />}
+    </Stack>
+  );
 
   return (
     <EditableField

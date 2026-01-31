@@ -3,7 +3,7 @@ import { SwiperSlide } from 'swiper/react';
 import { Button, Stack, Typography } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import Swiper from 'components/base/Swiper';
-import EventCard from 'components/sections/events/event-detail/main/EventCard';
+import EventCard from 'components/sections/service/ticket-detail/main/EventCard';
 
 const EventShowcase = ({ showcase }) => {
   const navigationPrevRef = useRef(null);
@@ -21,7 +21,7 @@ const EventShowcase = ({ showcase }) => {
         }}
       >
         <Typography variant="h6" sx={{ lineHeight: 1.5 }}>
-          More events from this organizer
+          Service Documentation
         </Typography>
         <Stack
           sx={{

@@ -12,13 +12,13 @@ const EventSchedule = ({ schedule }) => {
       <Grid size={{ xs: 12, xl: 6 }}>
         <div>
           <ScrollSpyContent
-            id="details"
+            id="instructions"
             sx={(theme) => ({
               scrollMarginTop: theme.mixins.topOffset(topbarHeight, 75, true),
             })}
           >
             <Typography variant="h6" sx={{ my: 3, lineHeight: 1.5 }}>
-              Details
+              Instructions
             </Typography>
           </ScrollSpyContent>
           <Stack direction="column" sx={{ gap: { xs: 2.5, sm: 1 }, mb: 3 }}>

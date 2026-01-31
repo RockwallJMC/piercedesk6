@@ -1,10 +1,10 @@
 import { Button, Divider, Paper, Stack } from '@mui/material';
 import { useNavContext } from 'layouts/main-layout/NavProvider';
 import SimpleBar from 'components/base/SimpleBar';
-import EventPrivacy from 'components/sections/events/create-event/aside/EventPrivacy';
-import TicketPrice from 'components/sections/events/create-event/aside/TicketPrice';
+import ServicePricing from 'components/sections/service/create-ticket/aside/ServicePricing';
+import TicketSettings from 'components/sections/service/create-ticket/aside/TicketSettings';
 
-const EventAside = ({ handleClose }) => {
+const ServiceAside = ({ handleClose }) => {
   const { topbarHeight } = useNavContext();
 
   return (
@@ -22,8 +22,8 @@ const EventAside = ({ handleClose }) => {
     >
       <SimpleBar sx={{ flex: 1, maxHeight: 1, overflowY: 'auto' }}>
         <Stack direction="column" divider={<Divider flexItem orientation="horizontal" />}>
-          <TicketPrice handleClose={handleClose} />
-          <EventPrivacy />
+          <ServicePricing handleClose={handleClose} />
+          <TicketSettings />
         </Stack>
       </SimpleBar>
 
@@ -43,7 +43,7 @@ const EventAside = ({ handleClose }) => {
           Save as draft
         </Button>
         <Button
-          form="createEventForm"
+          form="createServiceTicketForm"
           type="submit"
           variant="contained"
           color="primary"
@@ -51,11 +51,11 @@ const EventAside = ({ handleClose }) => {
             flexGrow: 1,
           }}
         >
-          Publish
+          Create Ticket
         </Button>
       </Stack>
     </Paper>
   );
 };
 
-export default EventAside;
+export default ServiceAside;

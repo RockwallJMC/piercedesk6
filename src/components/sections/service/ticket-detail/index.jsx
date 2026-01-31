@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Container } from '@mui/material';
+import { Box, Container, Stack, Typography } from '@mui/material';
 import { eventInfo } from 'data/service-tickets';
 import { useBreakpoints } from 'providers/BreakpointsProvider';
-import { useSettingsContext } from 'providers/SettingsProvider';
-import Image from 'components/base/Image';
 import ScrollSpy from 'components/scroll-spy';
 import EventOrganizer from 'components/sections/service/ticket-detail/EventOrganizer';
 import EventsTabPanel from 'components/sections/service/ticket-detail/EventsTabPanel';
@@ -14,9 +12,6 @@ import TicketPurchaseToolbar from 'components/sections/service/ticket-detail/Tic
 import EventInfo from 'components/sections/service/ticket-detail/main/EventInfo';
 
 const TicketDetail = () => {
-  const {
-    config: { assetsDir },
-  } = useSettingsContext();
   const [openPurchaseTicketDrawer, setOpenPurchaseTicketDrawer] = useState(false);
   const { up } = useBreakpoints();
   const upXl = up('xl');
@@ -24,18 +19,26 @@ const TicketDetail = () => {
   return (
     <ScrollSpy offset={600}>
       <Container maxWidth={false} sx={{ maxWidth: 1280, p: { xs: 3, md: 5 } }}>
-        <Image
-          src={`${assetsDir}/images/events/details/1.webp`}
-          alt="Event Banner"
-          height={300}
-          width={1200}
+        <Box
           sx={{
             width: 1,
+            height: 300,
             borderRadius: 6,
-            objectFit: 'cover',
-            display: 'block',
+            bgcolor: 'grey.300',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-        />
+        >
+          <Stack spacing={1} alignItems="center">
+            <Typography variant="h5" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+              Service Location Map
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.disabled' }}>
+              Mapbox integration - Phase 4
+            </Typography>
+          </Stack>
+        </Box>
 
         <EventInfo eventInfo={eventInfo} />
 

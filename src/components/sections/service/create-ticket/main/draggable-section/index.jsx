@@ -12,12 +12,15 @@ import {
   Typography,
 } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
-import EventInfoSection from 'components/sections/events/create-event/main/draggable-section/EventInfoSection';
-import EventListSection from 'components/sections/events/create-event/main/draggable-section/EventListSection';
-import EventParagraphSection from 'components/sections/events/create-event/main/draggable-section/EventParagraphSection';
+import ServiceActivitySection from 'components/sections/service/create-ticket/main/draggable-section/ServiceActivitySection';
+import ServicePartsSection from 'components/sections/service/create-ticket/main/draggable-section/ServicePartsSection';
+import ServicePhotoSection from 'components/sections/service/create-ticket/main/draggable-section/ServicePhotoSection';
+import ServiceLaborSection from 'components/sections/service/create-ticket/main/draggable-section/ServiceLaborSection';
+import ServiceNotesSection from 'components/sections/service/create-ticket/main/draggable-section/ServiceNotesSection';
+import ServiceDeviceSection from 'components/sections/service/create-ticket/main/draggable-section/ServiceDeviceSection';
 import StyledTextField from 'components/styled/StyledTextField';
 
-const DraggableEventSection = ({ section, index, handleChange, remove }) => {
+const DraggableServiceSection = ({ section, index, handleChange, remove }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: section.id,
   });
@@ -70,15 +73,18 @@ const DraggableEventSection = ({ section, index, handleChange, remove }) => {
             {`Section ${index + 1}`}
           </Typography>
 
-          <FormControl sx={{ maxWidth: { xs: 110, sm: 120 }, flexGrow: 1 }}>
+          <FormControl sx={{ maxWidth: { xs: 140, sm: 160 }, flexGrow: 1 }}>
             <StyledTextField
               select
               value={section.contentType}
               onChange={(e) => handleChange(index, e)}
             >
-              <MenuItem value="paragraph">Paragraph</MenuItem>
-              <MenuItem value="list">List</MenuItem>
-              <MenuItem value="info">Info</MenuItem>
+              <MenuItem value="activity">Activity</MenuItem>
+              <MenuItem value="parts">Parts</MenuItem>
+              <MenuItem value="photos">Photos</MenuItem>
+              <MenuItem value="labor">Labor</MenuItem>
+              <MenuItem value="notes">Notes</MenuItem>
+              <MenuItem value="device">Device</MenuItem>
             </StyledTextField>
           </FormControl>
           <IconButton color="error" onClick={() => remove(index)}>
@@ -94,12 +100,15 @@ const DraggableEventSection = ({ section, index, handleChange, remove }) => {
           error={!!errors.sections?.[index]?.title}
           helperText={errors.sections?.[index]?.title?.message}
         />
-        {section.contentType === 'paragraph' && <EventParagraphSection sectionIndex={index} />}
-        {section.contentType === 'list' && <EventListSection sectionIndex={index} />}
-        {section.contentType === 'info' && <EventInfoSection sectionIndex={index} />}
+        {section.contentType === 'activity' && <ServiceActivitySection sectionIndex={index} />}
+        {section.contentType === 'parts' && <ServicePartsSection sectionIndex={index} />}
+        {section.contentType === 'photos' && <ServicePhotoSection sectionIndex={index} />}
+        {section.contentType === 'labor' && <ServiceLaborSection sectionIndex={index} />}
+        {section.contentType === 'notes' && <ServiceNotesSection sectionIndex={index} />}
+        {section.contentType === 'device' && <ServiceDeviceSection sectionIndex={index} />}
       </Stack>
     </Paper>
   );
 };
 
-export default DraggableEventSection;
+export default DraggableServiceSection;

@@ -1,8 +1,8 @@
 import { Container } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { organizerEvents, organizerInfo } from 'data/events';
-import EventOrganizerInfo from 'components/sections/events/event-detail/main/EventOrganizerInfo';
-import EventShowcase from 'components/sections/events/event-detail/main/EventShowcase';
+import { organizerEvents, organizerInfo } from 'data/service-tickets';
+import EventOrganizerInfo from 'components/sections/service/ticket-detail/main/EventOrganizerInfo';
+import EventShowcase from 'components/sections/service/ticket-detail/main/EventShowcase';
 
 const EventOrganizer = () => {
   return (

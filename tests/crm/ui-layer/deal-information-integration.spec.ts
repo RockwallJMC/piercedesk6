@@ -28,14 +28,32 @@ import { TEST_DATA } from '../../helpers/multi-tenant-setup.js';
 // Use authenticated storage state (user is already logged in)
 test.use({ storageState: 'tests/.auth/user.json' });
 
-// Test configuration
-const DEAL_ID = TEST_DATA.ACME_OPPORTUNITY.id;
-const DEAL_DETAILS_URL = `http://localhost:4000/apps/crm/deals/${DEAL_ID}`;
+// Shared state for deal ID
+let dealId: string;
 
 test.describe('Deal Information - Inline Editing E2E', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, request }) => {
+    // Fetch first available deal for authenticated user
+    const response = await request.get('http://localhost:4000/api/crm/deals');
+
+    if (!response.ok()) {
+      throw new Error(`Failed to fetch deals: ${response.status()} ${response.statusText()}`);
+    }
+
+    // API returns deals grouped by stage: { Contact: [...], MQL: [...], SQL: [...], etc. }
+    const groupedDeals = await response.json();
+
+    // Flatten all deals from all stages
+    const allDeals = Object.values(groupedDeals).flat();
+
+    if (!allDeals || allDeals.length === 0) {
+      throw new Error('No deals found for testing. Please create a deal first or ensure test data is seeded.');
+    }
+
+    dealId = allDeals[0].id;
+
     // Navigate to deal details page (already authenticated via storageState)
-    await page.goto(DEAL_DETAILS_URL);
+    await page.goto(`http://localhost:4000/apps/crm/deal-details/${dealId}`);
     await page.waitForLoadState('networkidle');
 
     // Wait for Deal Information panel to load
@@ -356,9 +374,9 @@ test.describe('Deal Information - Inline Editing E2E', () => {
   });
 
   test('should handle API error with toast and rollback', async ({ page }) => {
-    // Intercept API call to simulate error
+    // Intercept API call to simulate error (using dynamic dealId)
     let requestCount = 0;
-    await page.route('**/api/crm/deals/*', route => {
+    await page.route(`**/api/crm/deals/${dealId}`, route => {
       requestCount++;
       if (route.request().method() === 'PATCH') {
         route.fulfill({
