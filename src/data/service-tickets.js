@@ -14,6 +14,13 @@ export const eventInfo = {
   phone: '+1-555-123-4567',
   email: 'service@acmesecurity.com',
   mapLink: '#!',
+  serviceLocation: {
+    address: 'Maverick Convention Center, 56335 Ardella Greens Apt. 511, East Maeville, Arizona',
+    latitude: 33.4484, // Phoenix, Arizona coordinates
+    longitude: -112.0740,
+    zoom: 15,
+  },
+  status: 'completed', // For Phase 4: payment button visibility testing
 };
 
 export const description = {

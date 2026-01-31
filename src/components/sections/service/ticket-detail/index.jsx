@@ -10,6 +10,7 @@ import EventsTabPanel from 'components/sections/service/ticket-detail/EventsTabP
 import TicketPurchaseDrawer from 'components/sections/service/ticket-detail/TicketPurchaseDrawer';
 import TicketPurchaseToolbar from 'components/sections/service/ticket-detail/TicketPurchaseToolbar';
 import EventInfo from 'components/sections/service/ticket-detail/main/EventInfo';
+import ServiceLocationMap from 'components/sections/service/ticket-detail/ServiceLocationMap';
 
 const TicketDetail = () => {
   const [openPurchaseTicketDrawer, setOpenPurchaseTicketDrawer] = useState(false);
@@ -19,26 +20,10 @@ const TicketDetail = () => {
   return (
     <ScrollSpy offset={600}>
       <Container maxWidth={false} sx={{ maxWidth: 1280, p: { xs: 3, md: 5 } }}>
-        <Box
-          sx={{
-            width: 1,
-            height: 300,
-            borderRadius: 6,
-            bgcolor: 'grey.300',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Stack spacing={1} alignItems="center">
-            <Typography variant="h5" sx={{ color: 'text.secondary', fontWeight: 600 }}>
-              Service Location Map
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.disabled' }}>
-              Mapbox integration - Phase 4
-            </Typography>
-          </Stack>
-        </Box>
+        <ServiceLocationMap
+          location={eventInfo.serviceLocation}
+          address={eventInfo.serviceLocation?.address}
+        />
 
         <EventInfo eventInfo={eventInfo} />
 
@@ -49,7 +34,10 @@ const TicketDetail = () => {
         <EventOrganizer />
       </Container>
 
-      <TicketPurchaseToolbar onPurchaseClick={() => setOpenPurchaseTicketDrawer(true)} />
+      <TicketPurchaseToolbar
+        onPurchaseClick={() => setOpenPurchaseTicketDrawer(true)}
+        ticketStatus={eventInfo.status}
+      />
       <TicketPurchaseDrawer
         open={openPurchaseTicketDrawer}
         handleClose={() => setOpenPurchaseTicketDrawer(false)}

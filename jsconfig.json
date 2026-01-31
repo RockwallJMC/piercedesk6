@@ -18,9 +18,25 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
-      "*": ["./src/*"],
       "@/*": ["./src/*"],
+      "components/*": ["./src/components/*"],
+      "hooks/*": ["./src/hooks/*"],
+      "providers/*": ["./src/providers/*"],
+      "reducers/*": ["./src/reducers/*"],
+      "theme/*": ["./src/theme/*"],
+      "services/*": ["./src/services/*"],
+      "layouts/*": ["./src/layouts/*"],
+      "contexts/*": ["./src/contexts/*"],
+      "lib/*": ["./src/lib/*"],
+      "data/*": ["./src/data/*"],
+      "docs/*": ["./src/docs/*"],
+      "helpers/*": ["./src/helpers/*"],
+      "locales/*": ["./src/locales/*"],
+      "routes/*": ["./src/routes/*"],
+      "types/*": ["./src/types/*"],
+      "config": ["./src/config.js"],
       "assets/*": ["./public/assets/*"]
     }
   },

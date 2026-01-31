@@ -4,9 +4,9 @@ import { useCallback, useState } from 'react';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Box, Button, InputAdornment, Stack, Tab } from '@mui/material';
 import { useGridApiRef } from '@mui/x-data-grid';
-import { useBreakpoints } from 'providers/BreakpointsProvider';
-import IconifyIcon from 'components/base/IconifyIcon';
-import StyledTextField from 'components/styled/StyledTextField';
+import { useBreakpoints } from '@/providers/BreakpointsProvider';
+import IconifyIcon from '@/components/base/IconifyIcon';
+import StyledTextField from '@/components/styled/StyledTextField';
 import ContactsDataGrid from './ContactsDataGrid';
 
 const ContactsListContainer = () => {

@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import {
   Box,
   Card,
@@ -8,11 +11,29 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import IconifyIcon from 'components/base/IconifyIcon';
 import Image from 'components/base/Image';
 
 const EventCard = ({ event, sx }) => {
   const { title, image, priceRange, date, time, location } = event;
+  const { enqueueSnackbar } = useSnackbar();
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  const handleToggleFavorite = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setIsFavorited(!isFavorited);
+
+    enqueueSnackbar(
+      isFavorited ? 'Removed from favorites' : 'Saved to favorites',
+      {
+        variant: isFavorited ? 'info' : 'success',
+        autoHideDuration: 2000,
+      }
+    );
+  };
 
   return (
     <Link href="#!">
@@ -68,9 +89,25 @@ const EventCard = ({ event, sx }) => {
                   {location}
                 </Typography>
               </div>
-              <IconButton edge="start" aria-label="favourite">
+              <IconButton
+                edge="start"
+                aria-label="favourite"
+                onClick={handleToggleFavorite}
+                sx={{
+                  color: isFavorited ? 'error.main' : 'text.secondary',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    color: 'error.main',
+                    transform: 'scale(1.1)',
+                  },
+                }}
+              >
                 <IconifyIcon
-                  icon="material-symbols:favorite-outline-rounded"
+                  icon={
+                    isFavorited
+                      ? 'material-symbols:favorite-rounded'
+                      : 'material-symbols:favorite-outline-rounded'
+                  }
                   width={20}
                   height={20}
                 />

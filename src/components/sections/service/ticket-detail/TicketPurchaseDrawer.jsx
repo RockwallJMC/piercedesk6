@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -19,6 +19,7 @@ import {
 import Drawer, { drawerClasses } from '@mui/material/Drawer';
 import useNumberFormat from 'hooks/useNumberFormat';
 import { useSnackbar } from 'notistack';
+import SignatureCanvas from 'react-signature-canvas';
 import IconifyIcon from 'components/base/IconifyIcon';
 import SimpleBar from 'components/base/SimpleBar';
 import EventTicketForm, {
@@ -48,6 +49,8 @@ const CombinedEventFormSchema = EventTicketFormSchema.concat(EventPaymentMethodS
 const TicketPurchaseDrawer = ({ open, handleClose }) => {
   const { currencyFormat } = useNumberFormat();
   const { enqueueSnackbar } = useSnackbar();
+  const signatureRef = useRef(null);
+
   const methods = useForm({
     resolver: yupResolver(CombinedEventFormSchema),
     defaultValues: {
@@ -68,8 +71,25 @@ const TicketPurchaseDrawer = ({ open, handleClose }) => {
     formState: { isSubmitSuccessful },
   } = methods;
 
+  const handleClearSignature = () => {
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+    }
+  };
+
   const onSubmit = (data) => {
-    console.log('Payment Form Data:', data);
+    // Get signature data
+    const signatureData = signatureRef.current?.toDataURL();
+
+    if (!signatureData || signatureRef.current?.isEmpty()) {
+      enqueueSnackbar('Please provide your signature', {
+        variant: 'warning',
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+
+    console.log('Payment Form Data:', { ...data, signature: signatureData });
     enqueueSnackbar('Payment authorized successfully!', {
       variant: 'success',
       autoHideDuration: 3000,
@@ -79,7 +99,10 @@ const TicketPurchaseDrawer = ({ open, handleClose }) => {
 
   useEffect(() => {
     reset();
-  }, [isSubmitSuccessful]);
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+    }
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <Drawer
@@ -222,26 +245,52 @@ const TicketPurchaseDrawer = ({ open, handleClose }) => {
               />
               <EventTicketForm sx={{ mb: 3 }} />
 
-              {/* Signature Capture Placeholder */}
+              {/* Signature Capture */}
               <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>
-                  Customer Signature
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}
+                >
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                    Customer Signature
+                  </Typography>
+                  <Button
+                    size="small"
+                    variant="text"
+                    onClick={handleClearSignature}
+                    startIcon={<IconifyIcon icon="material-symbols:refresh" />}
+                  >
+                    Clear
+                  </Button>
+                </Stack>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                  Customer authorizes payment
                 </Typography>
                 <Box
                   sx={{
                     height: 150,
                     borderRadius: 2,
-                    bgcolor: 'background.elevation2',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    bgcolor: 'background.paper',
                     border: 1,
                     borderColor: 'divider',
+                    overflow: 'hidden',
+                    '& canvas': {
+                      width: '100% !important',
+                      height: '100% !important',
+                    },
                   }}
                 >
-                  <Typography variant="body2" color="text.disabled">
-                    Signature capture - Phase 4
-                  </Typography>
+                  <SignatureCanvas
+                    ref={signatureRef}
+                    canvasProps={{
+                      style: {
+                        width: '100%',
+                        height: '150px',
+                      },
+                    }}
+                    backgroundColor="rgb(255, 255, 255)"
+                  />
                 </Box>
               </Box>
 

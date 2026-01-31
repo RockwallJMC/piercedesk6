@@ -1,4 +1,9 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -36,6 +41,9 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ['@iconify/react', 'lodash', '@mui/x-date-pickers', '@mui/lab'],
+  },
+  turbopack: {
+    root: __dirname,
   },
 };
 

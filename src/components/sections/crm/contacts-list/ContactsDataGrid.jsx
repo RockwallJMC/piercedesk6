@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   DataGrid,
   GridToolbar,
-  GridActionsCellItem,
+  GRID_CHECKBOX_SELECTION_COL_DEF,
 } from '@mui/x-data-grid';
 import {
   Box,
@@ -15,13 +15,29 @@ import {
   Snackbar,
   Alert,
   Button,
+  Avatar,
+  Typography,
 } from '@mui/material';
-import {
-  Visibility as ViewIcon,
-  Archive as ArchiveIcon,
-} from '@mui/icons-material';
 import { useCRMContacts, useUpdateCRMContact, useArchiveContact } from '@/services/swr/api-hooks/useCRMContactApi';
 import paths from '@/routes/paths';
+import DashboardMenu from '@/components/common/DashboardMenu';
+import DataGridPagination from '@/components/pagination/DataGridPagination';
+
+// Helper function for status chip colors
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'active':
+      return 'success';
+    case 'inactive':
+      return 'neutral';
+    case 'archived':
+      return 'warning';
+    default:
+      return 'neutral';
+  }
+};
+
+const defaultPageSize = 8;
 
 export default function ContactsDataGrid({ filterModel, onFilterModelChange, apiRef, filterButtonEl }) {
   const router = useRouter();
@@ -207,25 +223,47 @@ export default function ContactsDataGrid({ filterModel, onFilterModelChange, api
   );
 
   // Column definitions
-  const columns = [
+  const columns = useMemo(() => [
     {
-      field: 'first_name',
-      headerName: 'First Name',
-      width: 150,
-      editable: true,
+      ...GRID_CHECKBOX_SELECTION_COL_DEF,
+      width: 64,
     },
     {
-      field: 'last_name',
-      headerName: 'Last Name',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'email',
-      headerName: 'Email',
-      width: 200,
-      editable: true,
-      type: 'email',
+      field: 'contact',
+      headerName: 'Contact',
+      minWidth: 240,
+      flex: 1,
+      filterable: true,
+      sortable: true,
+      editable: false,
+      valueGetter: (value, row) => `${row.first_name} ${row.last_name}`,
+      renderCell: (params) => {
+        const { first_name, last_name, email } = params.row;
+        const fullName = `${first_name} ${last_name}`;
+        const initials = `${first_name?.[0] || ''}${last_name?.[0] || ''}`.toUpperCase();
+
+        return (
+          <Stack
+            direction="row"
+            sx={{
+              gap: 1.5,
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ width: 24, height: 24 }}>
+              {initials}
+            </Avatar>
+            <div>
+              <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
+                {fullName}
+              </Typography>
+              <MuiLink href="#!" variant="caption">
+                {email}
+              </MuiLink>
+            </div>
+          </Stack>
+        );
+      },
     },
     {
       field: 'phone',
@@ -258,6 +296,17 @@ export default function ContactsDataGrid({ filterModel, onFilterModelChange, api
       editable: true,
       type: 'singleSelect',
       valueOptions: ['active', 'inactive'],
+      renderCell: (params) => {
+        if (!params.value) return null;
+        return (
+          <Chip
+            label={params.value}
+            variant="soft"
+            color={getStatusColor(params.value)}
+            sx={{ textTransform: 'capitalize' }}
+          />
+        );
+      },
     },
     {
       field: 'account',
@@ -291,9 +340,9 @@ export default function ContactsDataGrid({ filterModel, onFilterModelChange, api
         return (
           <Chip
             label={params.value}
-            size="small"
-            color="primary"
-            variant="outlined"
+            variant="soft"
+            color="info"
+            sx={{ textTransform: 'capitalize' }}
           />
         );
       },
@@ -314,37 +363,47 @@ export default function ContactsDataGrid({ filterModel, onFilterModelChange, api
         return (
           <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap' }}>
             {params.value.map((tag, idx) => (
-              <Chip key={idx} label={tag} size="small" />
+              <Chip
+                key={idx}
+                label={tag}
+                size="small"
+                variant="soft"
+              />
             ))}
           </Stack>
         );
       },
     },
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<ViewIcon />}
-          label="View"
-          onClick={() => handleView(params.id)}
-          showInMenu={false}
-        />,
-        <GridActionsCellItem
-          icon={<ArchiveIcon />}
-          label="Archive"
-          onClick={() => handleArchive(params.id)}
-          showInMenu={false}
-        />,
-      ],
+      field: 'action',
+      headerName: '',
+      filterable: false,
+      sortable: false,
+      align: 'right',
+      width: 60,
+      headerAlign: 'right',
+      renderCell: (params) => (
+        <DashboardMenu
+          menuItems={[
+            {
+              label: 'View',
+              onClick: () => handleView(params.id),
+            },
+            {
+              label: 'Archive',
+              onClick: () => handleArchive(params.id),
+              sx: { color: 'error.main' },
+            },
+          ]}
+        />
+      ),
     },
-  ];
+  ], [handleView, handleArchive]);
 
   return (
-    <Box sx={{ height: 600, width: '100%' }}>
+    <Box sx={{ width: '100%' }}>
       <DataGrid
+        rowHeight={72}
         rows={contacts}
         columns={columns}
         loading={isLoading}
@@ -353,10 +412,14 @@ export default function ContactsDataGrid({ filterModel, onFilterModelChange, api
         onFilterModelChange={onFilterModelChange}
         slots={{
           toolbar: GridToolbar,
+          basePagination: (props) => <DataGridPagination showFullPagination {...props} />,
         }}
         slotProps={{
           toolbar: {
             showQuickFilter: false,
+          },
+          panel: {
+            target: filterButtonEl,
           },
         }}
         onCellEditStop={handleCellEditCommit}
@@ -365,10 +428,20 @@ export default function ContactsDataGrid({ filterModel, onFilterModelChange, api
         disableRowSelectionOnClick
         initialState={{
           pagination: {
-            paginationModel: { pageSize: 25 },
+            paginationModel: {
+              pageSize: defaultPageSize,
+            },
           },
         }}
-        pageSizeOptions={[10, 25, 50, 100]}
+        pageSizeOptions={[defaultPageSize]}
+        sx={{
+          '& .margin': {
+            pr: 3,
+          },
+          '& .MuiDataGrid-columnHeaders': {
+            minWidth: '100%',
+          },
+        }}
       />
 
       {/* Toast Notifications */}
