@@ -1,0 +1,4 @@
+
+> piercedesk6@1.7.0 lint
+> eslint . --ext .js,.jsx --max-warnings 0
+

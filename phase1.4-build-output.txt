@@ -1,0 +1,126 @@
+
+> piercedesk6@1.7.0 build
+> NODE_OPTIONS='--max-old-space-size=4096' next build
+
+▲ Next.js 16.1.5 (Turbopack)
+- Environments: .env
+- Experiments (use with caution):
+  · optimizePackageImports
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 25.3s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/85) ...
+  Generating static pages using 7 workers (21/85) 
+  Generating static pages using 7 workers (42/85) 
+  Generating static pages using 7 workers (63/85) 
+✓ Generating static pages using 7 workers (85/85) in 1265.0ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /api/crm/activities
+├ ƒ /api/crm/contacts
+├ ƒ /api/crm/contacts/[id]
+├ ƒ /api/crm/deals
+├ ƒ /api/crm/deals/[id]
+├ ƒ /api/crm/deals/[id]/analytics
+├ ƒ /apps/calendar
+├ ƒ /apps/chat
+├ ƒ /apps/chat/[conversationId]
+├ ƒ /apps/chat/new
+├ ƒ /apps/crm/accounts
+├ ƒ /apps/crm/add-contact
+├ ƒ /apps/crm/deal-details
+├ ƒ /apps/crm/deals
+├ ƒ /apps/crm/lead-details
+├ ƒ /apps/ecommerce/admin/create-order
+├ ƒ /apps/ecommerce/admin/invoice
+├ ƒ /apps/ecommerce/admin/invoice-list
+├ ƒ /apps/ecommerce/admin/order
+├ ƒ /apps/ecommerce/admin/order-list
+├ ƒ /apps/ecommerce/admin/product-list
+├ ƒ /apps/ecommerce/admin/product-listing
+├ ƒ /apps/ecommerce/admin/refund
+├ ƒ /apps/ecommerce/customer/cart
+├ ƒ /apps/ecommerce/customer/checkout
+├ ƒ /apps/ecommerce/customer/customer-account
+├ ƒ /apps/ecommerce/customer/homepage
+├ ƒ /apps/ecommerce/customer/order-confirmation
+├ ƒ /apps/ecommerce/customer/order-details
+├ ƒ /apps/ecommerce/customer/order-list
+├ ƒ /apps/ecommerce/customer/order-track
+├ ƒ /apps/ecommerce/customer/payment
+├ ƒ /apps/ecommerce/customer/product-details/[[...id]]
+├ ƒ /apps/ecommerce/customer/products
+├ ƒ /apps/ecommerce/customer/wishlist
+├ ƒ /apps/email/details/[label]/[id]
+├ ƒ /apps/email/list/[label]
+├ ƒ /apps/events/create-event
+├ ƒ /apps/events/event-detail
+├ ƒ /apps/file-manager
+├ ƒ /apps/file-manager/[id]
+├ ƒ /apps/hiring/admin/candidate-details
+├ ƒ /apps/hiring/admin/job-opening
+├ ƒ /apps/hiring/admin/new-opening
+├ ƒ /apps/hiring/admin/pipeline
+├ ƒ /apps/hiring/candidate/job-application
+├ ƒ /apps/hiring/candidate/job-details/[[...id]]
+├ ƒ /apps/hiring/candidate/job-list
+├ ƒ /apps/invoice/create-invoice
+├ ƒ /apps/invoice/invoice-list
+├ ƒ /apps/invoice/invoice-preview
+├ ƒ /apps/invoice/invoice-preview/[id]
+├ ƒ /apps/kanban
+├ ƒ /apps/kanban/boards
+├ ƒ /apps/kanban/create-board
+├ ƒ /apps/scheduler
+├ ƒ /apps/service-desk/tickets
+├ ƒ /apps/social
+├ ƒ /authentication/default/auth0/login
+├ ƒ /authentication/default/firebase/forgot-password
+├ ƒ /authentication/default/firebase/login
+├ ƒ /authentication/default/firebase/sign-up
+├ ƒ /authentication/default/jwt/2fa
+├ ƒ /authentication/default/jwt/forgot-password
+├ ƒ /authentication/default/jwt/login
+├ ƒ /authentication/default/jwt/set-password
+├ ƒ /authentication/default/jwt/sign-up
+├ ƒ /authentication/default/logged-out
+├ ƒ /component-docs/[slug]
+├ ƒ /dashboard/analytics
+├ ƒ /dashboard/crm
+├ ƒ /dashboard/ecommerce
+├ ƒ /dashboard/hiring
+├ ƒ /dashboard/hrm
+├ ƒ /dashboard/project
+├ ƒ /dashboard/time-tracker
+├ ƒ /desks/projects
+├ ƒ /desks/projects/[id]
+├ ƒ /documentation/[slug]
+├ ƒ /error/404
+├ ƒ /pages/account
+├ ƒ /pages/coming-soon
+├ ƒ /pages/faq
+├ ƒ /pages/faq/[category]
+├ ƒ /pages/landing/404
+├ ƒ /pages/landing/about-us
+├ ƒ /pages/landing/coming-soon
+├ ƒ /pages/landing/contact
+├ ƒ /pages/landing/faq
+├ ƒ /pages/landing/homepage
+├ ƒ /pages/landing/maintenance
+├ ƒ /pages/notifications
+├ ƒ /pages/pricing/column
+├ ƒ /pages/pricing/table
+├ ƒ /pages/starter
+└ ƒ /showcase
+
+
+ƒ Proxy (Middleware)
+
+ƒ  (Dynamic)  server-rendered on demand
+

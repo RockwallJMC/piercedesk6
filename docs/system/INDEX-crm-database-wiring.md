@@ -72,12 +72,13 @@ All phase progress updates are posted to the GitHub issue for external coordinat
 
 ### Phase 1.3: Interaction Page - Lead Details (Simpler)
 - **Doc**: [`docs/system/design/phase1.3-lead-details.md`](docs/system/design/phase1.3-lead-details.md)
+- **GitHub Issue**: [#68](https://github.com/RockwallJMC/piercedesk6/issues/68)
 - **Type**: Design + Execution
-- **Status**: ⏳ Planned
+- **Status**: 📝 Design Complete
 - **Assigned**: TBD
 - **Scope**:
-  - Tables: contacts, deals, activities (activities added here)
-  - Endpoints: GET /api/crm/contacts/[id], GET /api/crm/activities?contact_id=[id], PATCH /api/crm/contacts/[id], POST /api/crm/activities
+  - Tables: contacts, deals, activities (existing schema, use polymorphic pattern)
+  - Endpoints: GET /api/crm/contacts/[id], GET /api/crm/activities, PATCH /api/crm/contacts/[id], POST /api/crm/activities
   - Page: /apps/crm/lead-details (contact details with activity tabs)
 - **Tests**: Data layer → API layer → UI layer → E2E (activity logging works)
 - **Verification**: Contact details load, ongoing deals shown, activity tabs functional
@@ -86,15 +87,15 @@ All phase progress updates are posted to the GitHub issue for external coordinat
 ### Phase 1.4: Interaction Page - Deal Details (Complex)
 - **Doc**: [`docs/system/design/phase1.4-deal-details.md`](docs/system/design/phase1.4-deal-details.md)
 - **Type**: Design + Execution
-- **Status**: ⏳ Planned
-- **Assigned**: TBD
+- **Status**: ✅ Complete
+- **Assigned**: Claude (supabase-database-architect, wiring-agent, react-mui-frontend-engineer, playwright-tester)
 - **Scope**:
   - Tables: All (deals, contacts, companies, activities, deal_collaborators)
   - Endpoints: GET /api/crm/deals/[id], PATCH /api/crm/deals/[id], GET /api/crm/deals/[id]/analytics
   - Page: /apps/crm/deal-details (comprehensive deal view)
 - **Tests**: Data layer → API layer → UI layer → E2E (all relationships load)
-- **Verification**: Deal details with all relations, analytics charts, activity timeline
-- **Completed**: ""
+- **Verification**: All tests passing, build successful, lint clean
+- **Completed**: "2026-01-31"
 
 ### Phase 1.5: Dashboard - CRM Analytics
 - **Doc**: [`docs/system/design/phase1.5-crm-dashboard.md`](docs/system/design/phase1.5-crm-dashboard.md)
