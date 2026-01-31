@@ -27,13 +27,24 @@ export default async function RootLayout({ children }) {
 
   try {
     const supabase = await createClient();
-    const result = await supabase.auth.getSession();
-    session = result.data?.session || null;
+
+    // Validate user with server before trusting session
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (!error && user) {
+      // User is valid, safe to get session data
+      const { data: { session: validSession } } = await supabase.auth.getSession();
+      session = validSession;
+    } else {
+      // No valid user or error occurred
+      session = null;
+    }
   } catch (error) {
     // Build time or other errors - no session available
     if (process.env.NODE_ENV === 'development') {
-      console.warn('Session fetch failed:', error.message);
+      console.warn('Session validation failed:', error.message);
     }
+    session = null;
   }
 
   return (
