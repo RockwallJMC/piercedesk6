@@ -27,7 +27,6 @@ export const rootPaths = {
   hiringRoot: 'hiring',
   hiringAdmin: 'admin',
   hiringCandidate: 'candidate',
-  serviceDeskRoot: 'service-desk',
 };
 
 const paths = {
@@ -104,6 +103,8 @@ const paths = {
   dealDetails: (dealId) =>
     `/${rootPaths.appsRoot}/${rootPaths.crmRoot}/deal-details${dealId ? `/${dealId}` : ''}`,
   addContact: `/${rootPaths.appsRoot}/${rootPaths.crmRoot}/add-contact`,
+  contacts: `/${rootPaths.appsRoot}/${rootPaths.crmRoot}/contacts`,
+  contactDetails: (id) => `/${rootPaths.appsRoot}/${rootPaths.crmRoot}/contact-details/${id}`,
   deals: `/${rootPaths.appsRoot}/${rootPaths.crmRoot}/deals`,
 
   chat: `/${rootPaths.appsRoot}/chat`,
@@ -148,11 +149,6 @@ const paths = {
   hiringCandidateDetails: `/${rootPaths.appsRoot}/${rootPaths.hiringRoot}/${rootPaths.hiringAdmin}/candidate-details`,
 
   ...docRoutePaths,
-  // Service Desk paths
-  serviceDeskTickets: `/${rootPaths.appsRoot}/${rootPaths.serviceDeskRoot}/tickets`,
-  serviceDeskTicketDetails: (ticketId) =>
-    `/${rootPaths.appsRoot}/${rootPaths.serviceDeskRoot}/ticket-details${ticketId ? `/${ticketId}` : ''}`,
-
 };
 
 export const authPaths = {
