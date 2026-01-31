@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createApiClient } from '@/lib/supabase/api-server';
 
 export async function GET(request, { params }) {
   try {
-    const supabase = await createClient();
+    const supabase = await createApiClient(request);
     const { id } = await params;
 
     // Verify authentication
