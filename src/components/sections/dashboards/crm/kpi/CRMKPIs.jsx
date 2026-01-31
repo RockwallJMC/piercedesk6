@@ -1,14 +1,37 @@
 'use client';
 
-import { Avatar, ButtonBase, Paper, Typography } from '@mui/material';
+import { Avatar, ButtonBase, CircularProgress, Alert, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import IconifyIcon from 'components/base/IconifyIcon';
 import KPI from './KPI';
+import { useCRMDashboardApi } from '@/services/swr/api-hooks/useCRMDashboardApi';
 
-const CRMKPIs = ({ data }) => {
+const CRMKPIs = () => {
+  const { kpis, isLoading, hasError } = useCRMDashboardApi();
+
+  if (isLoading) {
+    return (
+      <Grid size={12}>
+        <Paper background={1} sx={{ p: { xs: 3, md: 5 }, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+          <CircularProgress />
+        </Paper>
+      </Grid>
+    );
+  }
+
+  if (hasError || !kpis) {
+    return (
+      <Grid size={12}>
+        <Paper background={1} sx={{ p: { xs: 3, md: 5 } }}>
+          <Alert severity="error">Failed to load KPIs</Alert>
+        </Paper>
+      </Grid>
+    );
+  }
+
   return (
     <>
-      {data.map((kpi) => (
+      {kpis.map((kpi) => (
         <Grid key={kpi.title} size={{ xs: 6, sm: 4, lg: 6, xl: 4 }}>
           <KPI {...kpi} />
         </Grid>
