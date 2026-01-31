@@ -1,13 +1,13 @@
 'use client';
 
 import { useRef } from 'react';
-import { Box, ButtonBase, Paper, Stack, Typography } from '@mui/material';
+import { Box, ButtonBase, CircularProgress, Alert, Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { leadSoursesData } from 'data/crm/dashboard';
 import useToggleChartLegends from 'hooks/useToggleChartLegends';
 import DashboardMenu from 'components/common/DashboardMenu';
 import SectionHeader from 'components/common/SectionHeader';
 import LeadSourcesChart from './LeadSourcesChart';
+import { useCRMDashboardApi } from '@/services/swr/api-hooks/useCRMDashboardApi';
 
 const chartLegends = [
   { label: 'Organic', color: 'chBlue.400' },
@@ -19,6 +19,29 @@ const chartLegends = [
 const LeadSources = () => {
   const chartRef = useRef(null);
   const { legendState, handleLegendToggle } = useToggleChartLegends(chartRef);
+  const { leadSources, isLoading, hasError } = useCRMDashboardApi();
+
+  if (isLoading) {
+    return (
+      <Paper sx={{ height: 1, p: { xs: 3, md: 5 }, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}>
+        <CircularProgress />
+      </Paper>
+    );
+  }
+
+  if (hasError || !leadSources) {
+    return (
+      <Paper sx={{ height: 1, p: { xs: 3, md: 5 } }}>
+        <Alert severity="error">Failed to load lead sources</Alert>
+      </Paper>
+    );
+  }
+
+  // Transform API data [{source, count}] to chart format [{value, name}]
+  const leadSoursesData = leadSources.map(item => ({
+    value: item.count,
+    name: item.source
+  }));
 
   return (
     <Paper sx={{ height: 1, p: { xs: 3, md: 5 } }}>
