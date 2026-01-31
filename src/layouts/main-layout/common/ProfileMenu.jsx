@@ -58,42 +58,52 @@ const ProfileMenu = ({ type = 'default' }) => {
   const { data: organizations } = useSWR(
     authUser ? 'user-organizations' : null,
     async () => {
-      const { data, error } = await supabase
-        .from('organization_members')
-        .select(
-          `
-          id,
-          role,
-          is_active,
-          joined_at,
-          organizations (
+      try {
+        const { data, error } = await supabase
+          .from('organization_members')
+          .select(
+            `
             id,
-            name,
-            slug,
-            created_at
+            role,
+            is_active,
+            joined_at,
+            organizations (
+              id,
+              name,
+              slug,
+              created_at
+            )
+          `
           )
-        `
-        )
-        .eq('user_id', authUser.id)
-        .order('joined_at', { ascending: false });
+          .eq('user_id', authUser.id)
+          .order('joined_at', { ascending: false });
 
-      if (error) throw error;
+        if (error) {
+          console.error('Error fetching organizations:', error);
+          return [];
+        }
 
-      // Flatten the structure
-      return (data || []).map((membership) => ({
-        membershipId: membership.id,
-        id: membership.organizations.id,
-        name: membership.organizations.name,
-        slug: membership.organizations.slug,
-        role: membership.role,
-        isActive: membership.is_active,
-        joinedAt: membership.joined_at,
-        createdAt: membership.organizations.created_at,
-      }));
+        // Flatten the structure
+        return (data || []).map((membership) => ({
+          membershipId: membership.id,
+          id: membership.organizations.id,
+          name: membership.organizations.name,
+          slug: membership.organizations.slug,
+          role: membership.role,
+          isActive: membership.is_active,
+          joinedAt: membership.joined_at,
+          createdAt: membership.organizations.created_at,
+        }));
+      } catch (err) {
+        console.error('Failed to fetch organizations:', err);
+        return [];
+      }
     },
     {
       revalidateOnFocus: false,
       revalidateOnMount: true,
+      shouldRetryOnError: false,
+      dedupingInterval: 60000, // Cache for 1 minute
     }
   );
 
