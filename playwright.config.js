@@ -55,7 +55,10 @@ module.exports = defineConfig({
     // Desktop Chrome
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'tests/.auth/user.json',
+      },
       dependencies: ['setup'],
     },
     // Mobile Safari
