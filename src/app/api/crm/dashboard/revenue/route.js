@@ -14,6 +14,20 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get user's organization_id
+    const { data: membership } = await supabase
+      .from('organization_members')
+      .select('organization_id')
+      .eq('organization_id', organizationId)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    const organizationId = membership?.organization_id || user.user_metadata?.organization_id || user.app_metadata?.organization_id;
+
+    if (!organizationId) {
+      return NextResponse.json({ error: 'User is not a member of any active organization' }, { status: 400 });
+    }
+
     // Calculate current and previous month dates
     const now = new Date();
     const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -24,7 +38,7 @@ export async function GET(request) {
     const { data: thisMonthDeals, error: thisMonthError } = await supabase
       .from('deals')
       .select('amount')
-      .eq('user_id', user.id)
+      .eq('organization_id', organizationId)
       .eq('stage', 'Won')
       .gte('close_date', firstDayThisMonth.toISOString())
       .lte('close_date', now.toISOString());
@@ -37,7 +51,7 @@ export async function GET(request) {
     const { data: lastMonthDeals, error: lastMonthError } = await supabase
       .from('deals')
       .select('amount')
-      .eq('user_id', user.id)
+      .eq('organization_id', organizationId)
       .eq('stage', 'Won')
       .gte('close_date', firstDayLastMonth.toISOString())
       .lt('close_date', firstDayThisMonth.toISOString());

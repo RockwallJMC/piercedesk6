@@ -14,11 +14,25 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get user's organization_id
+    const { data: membership } = await supabase
+      .from('organization_members')
+      .select('organization_id')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    const organizationId = membership?.organization_id || user.user_metadata?.organization_id || user.app_metadata?.organization_id;
+
+    if (!organizationId) {
+      return NextResponse.json({ error: 'User is not a member of any active organization' }, { status: 400 });
+    }
+
     // Fetch all deals with stage info
     const { data: deals, error: dealsError } = await supabase
       .from('deals')
       .select('stage')
-      .eq('user_id', user.id);
+      .eq('organization_id', organizationId);
 
     if (dealsError) throw dealsError;
 

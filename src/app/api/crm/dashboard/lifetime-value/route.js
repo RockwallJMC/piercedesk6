@@ -14,6 +14,20 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get user's organization_id
+    const { data: membership } = await supabase
+      .from('organization_members')
+      .select('organization_id')
+      .eq('organization_id', organizationId)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    const organizationId = membership?.organization_id || user.user_metadata?.organization_id || user.app_metadata?.organization_id;
+
+    if (!organizationId) {
+      return NextResponse.json({ error: 'User is not a member of any active organization' }, { status: 400 });
+    }
+
     const { searchParams } = new URL(request.url);
     const dateFrom = searchParams.get('dateFrom') || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const dateTo = searchParams.get('dateTo') || new Date().toISOString();
@@ -27,7 +41,7 @@ export async function GET(request) {
     const { data: currentDeals, error: currentError } = await supabase
       .from('deals')
       .select('lifetime_value, amount, contact_id')
-      .eq('user_id', user.id)
+      .eq('organization_id', organizationId)
       .gte('create_date', dateFrom)
       .lte('create_date', dateTo);
 
@@ -37,7 +51,7 @@ export async function GET(request) {
     const { data: prevDeals, error: prevError } = await supabase
       .from('deals')
       .select('lifetime_value, amount')
-      .eq('user_id', user.id)
+      .eq('organization_id', organizationId)
       .gte('create_date', prevDateFrom)
       .lte('create_date', prevDateTo);
 

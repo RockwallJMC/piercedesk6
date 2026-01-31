@@ -15,6 +15,20 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get user's organization_id
+    const { data: membership } = await supabase
+      .from('organization_members')
+      .select('organization_id')
+      .eq('organization_id', organizationId)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    const organizationId = membership?.organization_id || user.user_metadata?.organization_id || user.app_metadata?.organization_id;
+
+    if (!organizationId) {
+      return NextResponse.json({ error: 'User is not a member of any active organization' }, { status: 400 });
+    }
+
     // Parse query params
     const { searchParams } = new URL(request.url);
     const dateFrom = searchParams.get('dateFrom') || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -29,7 +43,7 @@ export async function GET(request) {
     const { count: createdCount, error: createdError } = await supabase
       .from('deals')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
+      .eq('organization_id', organizationId)
       .gte('create_date', dateFrom)
       .lte('create_date', dateTo);
 
@@ -39,7 +53,7 @@ export async function GET(request) {
     const { count: prevCreatedCount, error: prevCreatedError } = await supabase
       .from('deals')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
+      .eq('organization_id', organizationId)
       .gte('create_date', prevDateFrom)
       .lte('create_date', prevDateTo);
 
@@ -49,7 +63,7 @@ export async function GET(request) {
     const { count: closedCount, error: closedError } = await supabase
       .from('deals')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
+      .eq('organization_id', organizationId)
       .not('close_date', 'is', null)
       .gte('close_date', dateFrom)
       .lte('close_date', dateTo);
@@ -60,7 +74,7 @@ export async function GET(request) {
     const { count: prevClosedCount, error: prevClosedError } = await supabase
       .from('deals')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
+      .eq('organization_id', organizationId)
       .not('close_date', 'is', null)
       .gte('close_date', prevDateFrom)
       .lte('close_date', prevDateTo);
