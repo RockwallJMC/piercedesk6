@@ -27,7 +27,7 @@ const DealDetails = ({ dealId }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Fetch deal data
-  const { deal, analytics, isLoading, error } = useCRMDealApi(dealId);
+  const { deal, analytics, isLoading, error, updateDeal } = useCRMDealApi(dealId);
 
   const handleDrawerOpen = () => setDrawerOpen(true);
 
@@ -159,7 +159,7 @@ const DealDetails = ({ dealId }) => {
 
   const drawerContent = (
     <Stack direction="column" sx={{ height: 1 }}>
-      <DealInformation dealInformation={dealInformation} />
+      <DealInformation deal={deal} updateDeal={updateDeal} dealInformation={dealInformation} />
       <ActivitySummary activitySummary={activitySummary} />
       <Analytics analyticsData={analyticsData} />
     </Stack>

@@ -1,7 +1,7 @@
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-const DealInfoItem = ({ attribute, value, background = false }) => {
+const DealInfoItem = ({ attribute, value, background = false, children }) => {
   return (
     <Stack
       direction="column"
@@ -14,7 +14,7 @@ const DealInfoItem = ({ attribute, value, background = false }) => {
       <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 700 }}>
         {attribute}:
       </Typography>
-      {value}
+      {children || value}
     </Stack>
   );
 };
