@@ -109,15 +109,15 @@ watch_workflow() {
 
 # Find created PR
 find_pr() {
-  print_color "$BLUE" "🔍 Looking for created PR..."
+  print_color "$BLUE" "🔍 Looking for documentation changes..."
 
   local pr_url=$(gh pr list --label documentation,automated --limit 1 --json url --jq '.[0].url')
 
   if [ -n "$pr_url" ] && [ "$pr_url" != "null" ]; then
-    print_color "$GREEN" "📝 PR created: $pr_url"
+    print_color "$GREEN" "📝 Changes available for review: $pr_url"
     return 0
   else
-    print_color "$YELLOW" "⚠️  No PR created (no changes detected)"
+    print_color "$YELLOW" "⚠️  No reviewable changes detected"
     return 0
   fi
 }

@@ -18,6 +18,7 @@ New Task Received
 ## Core Principles
 
 ### 1. Skills First, Always
+
 **MANDATORY**: Invoke skills before ANY action, even clarifying questions.
 
 ```javascript
@@ -29,19 +30,21 @@ New Task Received
 ```
 
 ### 2. Task Tool for All Execution
+
 **NEVER execute implementation work directly**. Always delegate to specialized agents.
 
 ```javascript
 // Correct
-Task(react-mui-frontend-engineer, "Build user profile page")
-Task(wiring-agent, "Connect profile API")
-Task(playwright-tester, "Create profile tests")
+Task(react - mui - frontend - engineer, 'Build user profile page');
+Task(wiring - agent, 'Connect profile API');
+Task(playwright - tester, 'Create profile tests');
 
 // Incorrect - doing work directly
 // Creating components, writing code, running commands yourself
 ```
 
 ### 3. Evidence-Based Verification
+
 **No claims without fresh command output**
 
 ```bash
@@ -54,7 +57,9 @@ npm run lint    # Show clean output
 ## Workflow Selection
 
 ### Abbreviated Workflow
+
 **Use when ALL criteria met:**
+
 - Single file or ≤3 files modified
 - <50 lines of code total
 - No architectural decisions
@@ -63,6 +68,7 @@ npm run lint    # Show clean output
 - No security implications
 
 **Process:**
+
 1. Skill("using-superpowers")
 2. Create simplified INDEX
 3. Task(appropriate-agent, "implement")
@@ -70,9 +76,11 @@ npm run lint    # Show clean output
 5. Commit with evidence
 
 ### Full Workflow
+
 **Use for everything else**
 
 **Process:**
+
 1. Skill("using-superpowers")
 2. Create INDEX file
 3. Create phase design documents
@@ -84,57 +92,67 @@ npm run lint    # Show clean output
 
 ## Agent Specializations
 
-| Agent | Purpose | When to Use | Example |
-|-------|---------|-------------|---------|
-| `Explore` | Codebase research | Understanding patterns, finding examples | `Task(Explore, "Find auth patterns", thoroughness: "medium")` |
-| `react-mui-frontend-engineer` | UI components | Building interfaces, Aurora duplication | `Task(react-mui-frontend-engineer, "Build settings page")` |
-| `wiring-agent` | API integration | SWR hooks, routing, auth flows | `Task(wiring-agent, "Connect user API")` |
-| `supabase-database-architect` | Database work | Schema, migrations, RLS (uses MCP tools) | `Task(supabase-database-architect, "Create users table")` |
-| `playwright-tester` | E2E testing | Test creation, debugging | `Task(playwright-tester, "Create login tests")` |
-| `documentation-expert` | Documentation | READMEs, API docs, guides | `Task(documentation-expert, "Document auth API")` |
-| `superpowers:code-reviewer` | Code review | Post-implementation review | `Task(superpowers:code-reviewer, "Review auth code")` |
+| Agent                         | Purpose           | When to Use                              | Example                                                       |
+| ----------------------------- | ----------------- | ---------------------------------------- | ------------------------------------------------------------- |
+| `Explore`                     | Codebase research | Understanding patterns, finding examples | `Task(Explore, "Find auth patterns", thoroughness: "medium")` |
+| `react-mui-frontend-engineer` | UI components     | Building interfaces, Aurora duplication  | `Task(react-mui-frontend-engineer, "Build settings page")`    |
+| `wiring-agent`                | API integration   | SWR hooks, routing, auth flows           | `Task(wiring-agent, "Connect user API")`                      |
+| `supabase-database-architect` | Database work     | Schema, migrations, RLS (uses MCP tools) | `Task(supabase-database-architect, "Create users table")`     |
+| `playwright-tester`           | E2E testing       | Test creation, debugging                 | `Task(playwright-tester, "Create login tests")`               |
+| `documentation-expert`        | Documentation     | READMEs, API docs, guides                | `Task(documentation-expert, "Document auth API")`             |
+| `superpowers:code-reviewer`   | Code review       | Post-implementation review               | `Task(superpowers:code-reviewer, "Review auth code")`         |
 
 ## Skills Reference
 
 ### Mandatory Skills
 
 #### using-superpowers
+
 **When**: Start of ANY conversation
 **Purpose**: Establish workflow foundation
+
 ```javascript
-Skill("using-superpowers")
+Skill('using-superpowers');
 ```
 
 #### TDD
+
 **When**: Before ANY implementation
 **Purpose**: Test-driven development
+
 ```javascript
-Skill("TDD")
+Skill('TDD');
 // Then: Write failing test → Implement → Verify test passes
 ```
 
 #### VERIFY-BEFORE-COMPLETE
+
 **When**: Before claiming completion
 **Purpose**: Evidence-based verification
+
 ```javascript
-Skill("VERIFY-BEFORE-COMPLETE")
+Skill('VERIFY-BEFORE-COMPLETE');
 // Then: Run commands, show output, capture evidence
 ```
 
 #### software-architecture
+
 **When**: Architectural decisions, code quality
 **Purpose**: Clean architecture principles
+
 ```javascript
-Skill("software-architecture")
+Skill('software-architecture');
 ```
 
 ### Optional Skills
 
 #### writing-plans
+
 **When**: Multi-step features
 **Purpose**: Planning complex work
 
 #### file-organizer
+
 **When**: File organization tasks
 **Purpose**: Intelligent file structuring
 
@@ -144,9 +162,9 @@ Skill("software-architecture")
 
 ```javascript
 // Correct - Parallel execution
-Task(Explore, "Find dashboard patterns");
-Task(react-mui-frontend-engineer, "Build dashboard UI");
-Task(playwright-tester, "Create dashboard tests");
+Task(Explore, 'Find dashboard patterns');
+Task(react - mui - frontend - engineer, 'Build dashboard UI');
+Task(playwright - tester, 'Create dashboard tests');
 
 // Incorrect - Sequential when could be parallel
 // Task... wait... Task... wait... Task...
@@ -174,12 +192,13 @@ Repository Documentation Structure:
 ## Common Patterns
 
 ### Feature Implementation
+
 ```javascript
 1. Skill("using-superpowers")
 2. Skill("TDD")
 3. TodoWrite([
      "Research Aurora components",
-     "Design architecture", 
+     "Design architecture",
      "Implement UI",
      "Wire API",
      "Create tests"
@@ -193,6 +212,7 @@ Repository Documentation Structure:
 ```
 
 ### Bug Investigation
+
 ```javascript
 1. Skill("using-superpowers")
 2. Skill("systematic-debugging")
@@ -204,6 +224,7 @@ Repository Documentation Structure:
 ```
 
 ### Code Review
+
 ```javascript
 1. Skill("using-superpowers")
 2. Task(superpowers:code-reviewer, "Review implementation")
@@ -215,6 +236,7 @@ Repository Documentation Structure:
 ## Critical Rules
 
 ### ❌ Never Do
+
 - Skip skills invocation (even 1% chance = invoke)
 - Execute implementation work directly
 - Claim completion without verification
@@ -224,6 +246,7 @@ Repository Documentation Structure:
 - Use `run_in_background: true` for dev servers
 
 ### ✅ Always Do
+
 - Invoke skills before actions
 - Use Task tool for all execution
 - Show command output as evidence
@@ -245,4 +268,3 @@ Repository Documentation Structure:
 **For API**: `Task(wiring-agent, "...")`
 **For tests**: `Task(playwright-tester, "...")`
 **For exploration**: `Task(Explore, "...", thoroughness: "medium")`
-

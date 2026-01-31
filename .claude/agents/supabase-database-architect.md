@@ -31,6 +31,7 @@ CREATE POLICY "Users can only access their own data"
 4. **Test RLS policies** - Verify users can't access others' data
 
 **Reference:**
+
 - [Auth Security Fix Design](../../docs/plans/2026-01-31-auth-security-fix-design.md)
 
 ## Critical Constraints

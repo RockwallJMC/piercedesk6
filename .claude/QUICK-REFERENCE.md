@@ -6,12 +6,13 @@
 
 ```javascript
 // ALWAYS start with this
-Skill("using-superpowers")
+Skill('using-superpowers');
 ```
 
 ## 🔄 Common Workflows
 
 ### Simple Fix/Update (Abbreviated)
+
 ```javascript
 1. Skill("using-superpowers")
 2. Task(appropriate-agent, "implement fix")
@@ -20,6 +21,7 @@ Skill("using-superpowers")
 ```
 
 ### New Feature (Full)
+
 ```javascript
 1. Skill("using-superpowers")
 2. Skill("TDD")
@@ -31,6 +33,7 @@ Skill("using-superpowers")
 ```
 
 ### Bug Investigation
+
 ```javascript
 1. Skill("using-superpowers")
 2. Skill("systematic-debugging")
@@ -41,23 +44,23 @@ Skill("using-superpowers")
 
 ## 🎯 Agent Selection
 
-| Need | Agent | Example |
-|------|-------|---------|
-| **Research** | `Explore` | `Task(Explore, "Find auth patterns", thoroughness: "medium")` |
-| **UI Component** | `react-mui-frontend-engineer` | `Task(react-mui-frontend-engineer, "Build settings page")` |
-| **API Integration** | `wiring-agent` | `Task(wiring-agent, "Connect user API")` |
-| **Database** | `supabase-database-architect` | `Task(supabase-database-architect, "Create users table")` |
-| **Tests** | `playwright-tester` | `Task(playwright-tester, "Create login tests")` |
-| **Documentation** | `documentation-expert` | `Task(documentation-expert, "Update README")` |
-| **Code Review** | `superpowers:code-reviewer` | `Task(superpowers:code-reviewer, "Review auth code")` |
+| Need                | Agent                         | Example                                                       |
+| ------------------- | ----------------------------- | ------------------------------------------------------------- |
+| **Research**        | `Explore`                     | `Task(Explore, "Find auth patterns", thoroughness: "medium")` |
+| **UI Component**    | `react-mui-frontend-engineer` | `Task(react-mui-frontend-engineer, "Build settings page")`    |
+| **API Integration** | `wiring-agent`                | `Task(wiring-agent, "Connect user API")`                      |
+| **Database**        | `supabase-database-architect` | `Task(supabase-database-architect, "Create users table")`     |
+| **Tests**           | `playwright-tester`           | `Task(playwright-tester, "Create login tests")`               |
+| **Documentation**   | `documentation-expert`        | `Task(documentation-expert, "Update README")`                 |
+| **Code Review**     | `superpowers:code-reviewer`   | `Task(superpowers:code-reviewer, "Review auth code")`         |
 
 ## ⚡ Parallel Execution
 
 ```javascript
 // ✅ Correct - Single message, multiple tasks
-Task(react-mui-frontend-engineer, "Build dashboard UI");
-Task(wiring-agent, "Implement dashboard API");
-Task(playwright-tester, "Create dashboard tests");
+Task(react - mui - frontend - engineer, 'Build dashboard UI');
+Task(wiring - agent, 'Implement dashboard API');
+Task(playwright - tester, 'Create dashboard tests');
 
 // ❌ Wrong - Sequential when could be parallel
 // Task... wait... Task... wait... Task...
@@ -66,6 +69,7 @@ Task(playwright-tester, "Create dashboard tests");
 ## 🧪 Testing Patterns
 
 ### TDD Flow
+
 ```javascript
 1. Skill("TDD")
 2. Task(playwright-tester, "Write failing test for feature X")
@@ -75,6 +79,7 @@ Task(playwright-tester, "Create dashboard tests");
 ```
 
 ### Verification Commands
+
 ```bash
 # Always show actual output
 npm test        # Show 0 failures
@@ -85,6 +90,7 @@ npm run lint    # Show clean output
 ## 🗂️ File Organization
 
 ### Documentation Hierarchy
+
 ```
 .claude/           # AI framework
 ├── agents/        # Agent definitions
@@ -102,6 +108,7 @@ _sys_documents/    # Internal tracking
 ```
 
 ### Template Usage
+
 ```bash
 # INDEX file (always required)
 cp .claude/templates/INDEX-template.md _sys_documents/execution/INDEX-feature.md
@@ -116,6 +123,7 @@ cp .claude/templates/phase-execution-template.md _sys_documents/execution/phase-
 ## 🎨 UI Development
 
 ### Aurora-First Pattern
+
 ```javascript
 1. Task(Explore, "Find similar Aurora components")
 2. Copy from templates/aurora-next/src/ to src/
@@ -124,6 +132,7 @@ cp .claude/templates/phase-execution-template.md _sys_documents/execution/phase-
 ```
 
 ### MUI v7 Patterns
+
 ```javascript
 // Grid with size prop
 <Grid container spacing={2}>
@@ -139,6 +148,7 @@ cp .claude/templates/phase-execution-template.md _sys_documents/execution/phase-
 ## 🗄️ Database Operations
 
 ### Critical Rules
+
 - ✅ ALWAYS use `supabase-database-architect` agent
 - ✅ Agent uses Supabase MCP tools automatically
 - ❌ NEVER attempt local database connections
@@ -146,7 +156,7 @@ cp .claude/templates/phase-execution-template.md _sys_documents/execution/phase-
 
 ```javascript
 // Correct
-Task(supabase-database-architect, "Create user_profiles table with RLS")
+Task(supabase - database - architect, 'Create user_profiles table with RLS');
 
 // Wrong - trying to connect locally
 // psql -h localhost -p 5432 ...
@@ -155,6 +165,7 @@ Task(supabase-database-architect, "Create user_profiles table with RLS")
 ## 📋 Verification Checklist
 
 ### Before Claiming Complete
+
 ```javascript
 1. Skill("VERIFY-BEFORE-COMPLETE")
 2. Run and show output:
@@ -166,6 +177,7 @@ Task(supabase-database-architect, "Create user_profiles table with RLS")
 ```
 
 ### Evidence Examples
+
 ```bash
 ✅ Tests: "All 15 tests passed"
 ✅ Build: "Build completed successfully"
@@ -175,16 +187,16 @@ Task(supabase-database-architect, "Create user_profiles table with RLS")
 
 ## 🚫 Common Mistakes
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Skip skills invocation | Always invoke relevant skills |
-| Execute work directly | Use Task tool with agents |
-| Claim without evidence | Show command output |
-| Build UI from scratch | Aurora-first pattern |
-| Connect database locally | Use Supabase MCP tools |
-| Sequential independent tasks | Parallel Task calls |
-| Use TodoWrite for execution | TodoWrite = tracking, Task = execution |
-| Skip TDD | Write tests first |
+| ❌ Don't                     | ✅ Do                                  |
+| ---------------------------- | -------------------------------------- |
+| Skip skills invocation       | Always invoke relevant skills          |
+| Execute work directly        | Use Task tool with agents              |
+| Claim without evidence       | Show command output                    |
+| Build UI from scratch        | Aurora-first pattern                   |
+| Connect database locally     | Use Supabase MCP tools                 |
+| Sequential independent tasks | Parallel Task calls                    |
+| Use TodoWrite for execution  | TodoWrite = tracking, Task = execution |
+| Skip TDD                     | Write tests first                      |
 
 ## 🔧 Automation Helpers
 
@@ -199,6 +211,7 @@ node scripts/workflow-automation.js verify
 ## 📞 Emergency Patterns
 
 ### When Stuck
+
 ```javascript
 1. Skill("using-superpowers")
 2. Task(Explore, "Understand the problem context", thoroughness: "medium")
@@ -206,6 +219,7 @@ node scripts/workflow-automation.js verify
 ```
 
 ### When Tests Fail
+
 ```javascript
 1. Skill("systematic-debugging")
 2. Task(playwright-tester, "Debug failing test")
@@ -214,6 +228,7 @@ node scripts/workflow-automation.js verify
 ```
 
 ### When Build Breaks
+
 ```javascript
 1. Show exact error output
 2. Task(Explore, "Find similar error patterns")
@@ -224,4 +239,3 @@ node scripts/workflow-automation.js verify
 ---
 
 **Remember**: Skills guide the process, agents do the work, evidence proves completion.
-

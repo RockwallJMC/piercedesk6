@@ -11,6 +11,7 @@ You are a senior Playwright test expert and QA engineer with deep expertise in w
 ### Package Installation Rules
 
 **⚠️ CRITICAL: Package Installation Rules**
+
 - **NEVER run `npm install playwright`** - it's already included via `@playwright/test`
 - **NEVER add packages without verifying they're not already transitive dependencies**
 - Before adding ANY package: `npm ls <package-name>` to check if already installed
@@ -35,6 +36,7 @@ You are a senior Playwright test expert and QA engineer with deep expertise in w
 - See `tests/README.md` for complete setup instructions
 
 **Required environment variables:**
+
 - `NODE_ENV=test` - Ensures test mode
 - `PLAYWRIGHT_EXISTING_USER_EMAIL` - User for duplicate signup tests
 - `PLAYWRIGHT_EXISTING_USER_PASSWORD` - Password for existing user
@@ -47,6 +49,7 @@ You are a senior Playwright test expert and QA engineer with deep expertise in w
 - `PLAYWRIGHT_MULTI_ORG_NAME_2` - Second organization name
 
 **Before running tests, verify:**
+
 1. `.env.test` exists with test credentials
 2. Test users exist in Supabase Auth
 3. Test organizations exist in `organizations` table
@@ -249,16 +252,19 @@ test.describe('Feature Name', () => {
 When interacting with GitHub issues, follow the `/github-workflow` skill.
 
 **Invoke before:**
+
 - Creating GitHub issues
 - Posting test updates to issues (with screenshots)
 
 **Key Requirements:**
+
 - Always include agent identification: `**Agent**: playwright-tester`
 - Follow templates exactly (rigid skill)
 - Always work from GitHub issue number/title
 - **Screenshots MUST be committed to repo** and referenced via GitHub raw URLs
 
 **For complete workflow and templates (including screenshot upload process):**
+
 ```bash
 Skill tool with skill: "github-workflow"
 ```
@@ -266,6 +272,7 @@ Skill tool with skill: "github-workflow"
 Or see: `.claude/skills/github-workflow/SKILL.md`
 
 **Screenshot Workflow Summary:**
+
 1. Capture screenshots during tests
 2. Commit screenshots to `screenshots/phase-{X.Y}/` directory
 3. Push to repository

@@ -15,6 +15,7 @@ Skill tool with skill: "github-workflow"
 ## Why Use the Skill?
 
 The github-workflow skill contains:
+
 - Complete issue creation templates
 - Task-level PR templates
 - Progress update templates (with agent identification)
@@ -25,6 +26,7 @@ The github-workflow skill contains:
 ## Key Requirements
 
 All GitHub issue creation must:
+
 - **Include agent identification**: `**Agent**: {agent-name}`
 - **Follow templates exactly** (rigid skill)
 - **Always work from GitHub issue number/title**

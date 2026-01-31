@@ -5,6 +5,7 @@
 This guide explains how Claude Code skills (`.claude/skills/`) integrate with agents (`.claude/agents/`) and the overall development workflow for PierceDesk.
 
 ## Quick Navigation
+
 - [🚀 Quick Start](#standard-development-flow) - Standard workflow for any task
 - [🎯 Agent Patterns](#skill--agent-integration-patterns) - How skills integrate with specific agents
 - [⚡ Skills Reference](#available-skills) - When to use each skill
@@ -13,6 +14,7 @@ This guide explains how Claude Code skills (`.claude/skills/`) integrate with ag
 ## CRITICAL: Development Server Constraints
 
 **NEVER run `npm run dev` in the background:**
+
 - If you need to start the dev server, inform the user and let them start it manually
 - NEVER use `run_in_background: true` with Bash tool for `npm run dev`
 - Dev servers must run in the terminal for proper log visibility and clean restarts
@@ -39,12 +41,14 @@ Skills (Quality Gates)     +     Agents (Execution)     =     Consistent Results
 ## Available Skills
 
 ### 🚀 using-superpowers (Foundation Skill)
+
 **Location:** `.claude/skills/using-superpowers/SKILL.md`
 **Invocation:** `/using-superpowers` or Skill tool
 
 **Purpose:** Establish workflow foundation and best practices
 
 **When to Invoke:**
+
 - **ALWAYS** at the start of ANY conversation or task
 - Before any other skills or work
 - When establishing context for complex work
@@ -54,12 +58,14 @@ Skills (Quality Gates)     +     Agents (Execution)     =     Consistent Results
 ---
 
 ### 1. TDD (Test-Driven Development)
+
 **Location:** `.claude/skills/TDD/SKILL.md`
 **Invocation:** `/TDD` or Skill tool with `skill: "TDD"`
 
 **Purpose:** Enforce red-green-refactor cycle for all code implementation
 
 **When to Invoke:**
+
 - BEFORE writing any implementation code
 - When fixing bugs (write failing test first)
 - When adding new features
@@ -67,6 +73,7 @@ Skills (Quality Gates)     +     Agents (Execution)     =     Consistent Results
 **Core Principle:** Write test → Watch it fail → Write minimal code to pass → Refactor
 
 **Key Rules:**
+
 - NO production code without a failing test first
 - Code written before test must be deleted
 - Watch each test fail before implementing
@@ -77,12 +84,14 @@ Skills (Quality Gates)     +     Agents (Execution)     =     Consistent Results
 ---
 
 ### 2. VERIFY-BEFORE-COMPLETE / using-superpowers
+
 **Location:** `.claude/skills/VERIFY-BEFORE-COMPLETE/SKILL.md` or `.claude/skills/using-superpowers/SKILL.md`
 **Invocation:** `/verify` or `/using-superpowers` or Skill tool
 
 **Purpose:** Enforce evidence-based completion claims (no assertions without proof)
 
 **When to Invoke:**
+
 - BEFORE claiming work is complete, fixed, or passing
 - BEFORE committing code
 - BEFORE moving to next task
@@ -90,12 +99,14 @@ Skills (Quality Gates)     +     Agents (Execution)     =     Consistent Results
 **Core Principle:** Evidence before assertions, always
 
 **Key Rules:**
+
 - Run verification command in THIS conversation turn
 - Show full output (test results, build output, API responses)
 - Never use "should", "probably", "seems to"
 - No completion claims without fresh evidence
 
 **Verification Evidence Examples:**
+
 - Tests pass → Show test command output with 0 failures
 - Build succeeds → Show build command with exit code 0
 - API works → Show API response output
@@ -104,18 +115,21 @@ Skills (Quality Gates)     +     Agents (Execution)     =     Consistent Results
 ---
 
 ### 3. software-architecture
+
 **Location:** `.claude/skills/software-architecture/SKILL.md`
 **Invocation:** `/software-architecture` or Skill tool with `skill: "software-architecture"`
 
 **Purpose:** Enforce Clean Architecture and DDD principles
 
 **When to Invoke:**
+
 - When designing code architecture
 - When making architectural decisions
 - When writing any code (for quality standards)
 - During code reviews
 
 **Core Principles:**
+
 - **Library-first approach:** Search npm BEFORE writing custom code
 - **Domain-specific naming:** Avoid generic names like `utils`, `helpers`, `common`
 - **Separation of concerns:** No business logic in UI, no DB queries in controllers
@@ -123,6 +137,7 @@ Skills (Quality Gates)     +     Agents (Execution)     =     Consistent Results
 - **Early returns:** Prefer early returns over nested conditions
 
 **Anti-Patterns to Avoid:**
+
 - Building custom auth instead of using Auth0/Supabase
 - Creating `utils.js` with 50 unrelated functions
 - Writing custom state management instead of using established libraries
@@ -131,12 +146,14 @@ Skills (Quality Gates)     +     Agents (Execution)     =     Consistent Results
 ---
 
 ### 4. file-organizer
+
 **Location:** `.claude/skills/file-organizer/SKILL.md`
 **Invocation:** `/file-organizer` or Skill tool with `skill: "file-organizer"`
 
 **Purpose:** Intelligently organize files and folders
 
 **When to Invoke:**
+
 - When organizing files and folders
 - When codebase structure needs cleanup
 - When finding duplicates or suggesting better structures
@@ -355,20 +372,21 @@ Agent Workflow:
 
 ## Critical Checkpoints
 
-| Checkpoint | Required Skill | Verification Method |
-|------------|----------------|---------------------|
-| Before writing implementation | TDD | Test written and failing |
-| Before claiming "tests pass" | VERIFY-BEFORE-COMPLETE | Test command output shown |
-| Before claiming "build works" | VERIFY-BEFORE-COMPLETE | Build command exit 0 shown |
-| Before commit/PR | VERIFY-BEFORE-COMPLETE | Full verification evidence |
-| During architecture decisions | software-architecture | Clean Architecture principles followed |
-| File organization tasks | file-organizer | Structured cleanup completed |
+| Checkpoint                    | Required Skill         | Verification Method                    |
+| ----------------------------- | ---------------------- | -------------------------------------- |
+| Before writing implementation | TDD                    | Test written and failing               |
+| Before claiming "tests pass"  | VERIFY-BEFORE-COMPLETE | Test command output shown              |
+| Before claiming "build works" | VERIFY-BEFORE-COMPLETE | Build command exit 0 shown             |
+| Before commit/PR              | VERIFY-BEFORE-COMPLETE | Full verification evidence             |
+| During architecture decisions | software-architecture  | Clean Architecture principles followed |
+| File organization tasks       | file-organizer         | Structured cleanup completed           |
 
 ---
 
 ## How to Invoke Skills
 
 ### Method 1: Slash Commands (User or Agent)
+
 ```
 /TDD
 /verify
@@ -378,6 +396,7 @@ Agent Workflow:
 ```
 
 ### Method 2: Skill Tool (Agent)
+
 ```
 Use Skill tool with:
 - skill: "TDD"
@@ -388,6 +407,7 @@ Use Skill tool with:
 ```
 
 ### Method 3: Auto-invocation by Agents
+
 Agents should automatically reference and invoke skills at appropriate workflow points (as documented in their agent files).
 
 ---
@@ -395,7 +415,9 @@ Agents should automatically reference and invoke skills at appropriate workflow 
 ## Common Pitfalls
 
 ### ❌ Pitfall 1: Skipping TDD
+
 **Wrong:**
+
 ```
 1. Write implementation code
 2. Manually test it
@@ -406,6 +428,7 @@ Agents should automatically reference and invoke skills at appropriate workflow 
 **Why it's wrong:** Tests written after code pass immediately, proving nothing. You never verified the test actually catches bugs.
 
 **Right:**
+
 ```
 1. INVOKE TDD skill
 2. Write test, watch it fail
@@ -416,7 +439,9 @@ Agents should automatically reference and invoke skills at appropriate workflow 
 ---
 
 ### ❌ Pitfall 2: Claiming Without Verification
+
 **Wrong:**
+
 ```
 "The API integration should work now"
 "Tests are probably passing"
@@ -426,6 +451,7 @@ Agents should automatically reference and invoke skills at appropriate workflow 
 **Why it's wrong:** No evidence, just assumptions. Code might be broken.
 
 **Right:**
+
 ```
 INVOKE VERIFY-BEFORE-COMPLETE skill
 Run: npm test
@@ -436,7 +462,9 @@ Output: 34/34 tests passed ✓
 ---
 
 ### ❌ Pitfall 3: Building Custom Utilities
+
 **Wrong:**
+
 ```
 // Create custom retry logic
 function retryWithBackoff(fn, maxRetries) {
@@ -447,6 +475,7 @@ function retryWithBackoff(fn, maxRetries) {
 **Why it's wrong:** NIH (Not Invented Here) syndrome. Maintenance burden.
 
 **Right:**
+
 ```
 INVOKE software-architecture skill
 → Search npm for "retry"
@@ -460,7 +489,9 @@ const result = await retry(execute, { maxAttempts: 3 });
 ---
 
 ### ❌ Pitfall 4: Generic Naming
+
 **Wrong:**
+
 ```
 // utils.js
 export function formatData(data) { ... }
@@ -471,6 +502,7 @@ export function processItems(items) { ... }
 **Why it's wrong:** No domain context, hard to find, dumping ground for unrelated functions.
 
 **Right:**
+
 ```
 INVOKE software-architecture skill
 → Use domain-specific names
@@ -489,16 +521,19 @@ export function validateUserRegistrationInput(input) { ... }
 Skills work alongside:
 
 ### PIERCE-SYS-EXE Orchestration
+
 - PIERCE-SYS-EXE handles feature orchestration (phases, checkpoints, INDEX.md)
 - Skills enforce quality practices within each phase
 - Example: During implementation phase, invoke TDD and VERIFY-BEFORE-COMPLETE
 
 ### AGENTS-MAIN Coding Standards
+
 - AGENTS-MAIN provides domain-specific coding standards
 - Skills provide universal quality gates
 - Example: UI/UX agent guidelines + TDD skill + software-architecture skill
 
 ### Workflow Integration
+
 ```
 Feature Request
     ↓
@@ -517,24 +552,25 @@ Quality Code Delivered
 
 ### When to Use Which Skill
 
-| Situation | Skill to Invoke |
-|-----------|-----------------|
-| About to write implementation code | TDD |
-| About to claim work complete | VERIFY-BEFORE-COMPLETE |
-| About to commit/create PR | VERIFY-BEFORE-COMPLETE |
-| Designing architecture | software-architecture |
-| Making code structure decisions | software-architecture |
-| Choosing between libraries | software-architecture |
-| Organizing files | file-organizer |
-| Writing any code | software-architecture (for quality standards) |
-| Before "tests pass" claim | VERIFY-BEFORE-COMPLETE |
-| Before "build succeeds" claim | VERIFY-BEFORE-COMPLETE |
+| Situation                          | Skill to Invoke                               |
+| ---------------------------------- | --------------------------------------------- |
+| About to write implementation code | TDD                                           |
+| About to claim work complete       | VERIFY-BEFORE-COMPLETE                        |
+| About to commit/create PR          | VERIFY-BEFORE-COMPLETE                        |
+| Designing architecture             | software-architecture                         |
+| Making code structure decisions    | software-architecture                         |
+| Choosing between libraries         | software-architecture                         |
+| Organizing files                   | file-organizer                                |
+| Writing any code                   | software-architecture (for quality standards) |
+| Before "tests pass" claim          | VERIFY-BEFORE-COMPLETE                        |
+| Before "build succeeds" claim      | VERIFY-BEFORE-COMPLETE                        |
 
 ---
 
 ## Remember
 
 **Skills are NOT optional suggestions** - they are mandatory quality gates that prevent:
+
 - Broken code being committed
 - Tests written after implementation (proving nothing)
 - Over-engineering and NIH syndrome
